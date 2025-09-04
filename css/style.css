@@ -38,6 +38,13 @@
     font-style: normal;
 }
 
+@font-face {
+    font-family: 'Black Ops One';
+    src: url('../fonts/BlackOpsOne-Regular.otf');
+    font-weight: 400;
+    font-style: normal;
+}
+
 /* Condensed Bold */
 
 @font-face {
@@ -56,6 +63,10 @@ html, body {
     margin: 0;
     padding: 0;
     overflow-x: hidden;
+    min-width: 320px;
+    max-width: 1920px;
+    margin: 0px auto;
+    background-color: var(--dark-gray);
 }
 
 /* 1. Убираем системный тап‑хайлайт */
@@ -146,6 +157,7 @@ input[type=number] {
   --dark-gray: #282828;
   --black: #1A1A1A;
   --red: #D51A1A;
+  --stroke: rgba(0, 0, 0, 0.4);
 }
 
 /* Главынй баннер */
@@ -154,9 +166,10 @@ input[type=number] {
     background-image: url('../images/main-bg.webp');
     background-repeat: no-repeat;
     background-position: center center; 
-    background-size: cover;            
-    min-height: 100vh;                 
+    background-size: cover;                       
     padding: 0px 80px;
+    padding-bottom: 62px;
+    
     width: 100%;
 }
 
@@ -305,6 +318,12 @@ input[type=number] {
 
 .we-produce {
     color: var(--black);
+    background-color: #fff;
+    padding: 80px;
+    background-image: url(../images/we-produce/bg.png);
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center center;
 }
 
 .section-name {
@@ -324,4 +343,192 @@ input[type=number] {
     font-family: 'Helvetica Neue Regular', sans-serif;
     font-size: 16px;
     text-transform: uppercase;
+}
+
+.we-produce-title {
+    font-family: 'Helvetica Neue Light', sans-serif;
+    font-size: 50px;
+    font-weight: 300;
+    text-transform: uppercase;
+    margin-top: 20px;
+    margin-bottom: 32px;
+}
+
+.we-produce-card {
+    border-top: 1px solid var(--stroke);
+    padding: 24px 12px 24px 20px;
+
+    display: grid;
+    grid-template-columns: minmax(0px, 415px) 1fr auto;
+}
+
+.we-produce-card:last-child {
+    border-bottom: 1px solid var(--stroke);
+}
+
+.we-produce-card-second-column {
+    display: flex;
+    gap: 40px;
+}
+
+.we-produce-card-title {
+    font-family: 'Helvetica Neue Regular', sans-serif;
+    font-size: 32px;
+    font-weight: 300;
+    margin-bottom: 16px;
+}
+
+.we-produce-card-banners {
+    max-width: 739px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.we-produce-card-banner {
+    display: inline-flex;
+    font-family: 'Helvetica Neue Regular', sans-serif;
+    font-size: 20px;
+    align-items: center;
+    gap: 6px;
+    border: 1px solid var(--stroke);
+    border-radius: 12px;
+    padding: 4px 8px;
+}
+
+.we-produce-additionally-title {
+    font-family: 'Helvetica Neue Light', sans-serif;
+    font-size: 45px;
+    font-weight: 300;
+    text-transform: uppercase;
+    margin-top: 85px;
+    margin-bottom: 24px;
+}
+
+.we-produce-additionally-card {
+    border-top: 1px solid var(--stroke);
+    padding: 16px 12px;
+}
+
+.we-produce-additionally-card:last-child {
+    border-bottom: 1px solid var(--stroke);
+}
+
+.we-produce-additionally-card p {
+    font-family: 'Helvetica Neue Regular', sans-serif;
+    font-size: 32px;
+}
+
+
+
+/* Секция "О нас" */
+
+.about-us {
+    color: #fff;
+    padding: 100px 80px;
+    background-image: url(../images/about-us-bg.png);
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center center;
+}
+
+.about-us-info {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+}
+
+.about-us-advantages-cards {
+    margin-top: 60px;
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 0px;
+}
+
+.about-us-advantages-card {
+    background-color: var(--dark-gray);
+    padding: 20px;
+    border: 1px solid #535353;
+}
+
+.about-us-title {
+    font-family: 'Helvetica Neue Light', sans-serif;
+    font-size: 50px;
+    font-weight: 300;
+    text-transform: uppercase;
+    margin-top: 20px;
+    margin-bottom: 17px;
+}
+
+.about-us-desc {
+    font-size: 24px;
+    color: rgba(255, 255, 255, 0.6);
+    max-width: 434px;
+    margin-bottom: 32px;
+}
+
+.about-us-right-side {
+  position: relative;         
+  display: block;
+  max-width: 880px;               
+}
+
+.about-us-right-side img{
+  display: block;
+  width: 100%;
+  height: auto;
+  vertical-align: middle;
+}
+
+
+.video-play {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border: 1px solid #fff;  
+  padding: 29px 27px 29px 36px;              
+
+  background: transparent;
+  cursor: pointer;
+  z-index: 5;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.video-play svg {
+  width: 3vw;
+  height: auto;
+  max-width: 40px;  
+  min-width: 20px;   
+  display: block;
+  pointer-events: none;
+}
+
+.video-play:hover {
+  transform: translate(-50%, -50%) scale(1.05);
+}
+
+.about-us-advantages-card-number {
+    font-family: 'Black Ops One', sans-serif;
+    color: #434343;
+    font-size: 50px;
+    text-align: right;
+    margin-bottom: 46px;
+}
+
+.about-us-advantages-card-title {
+    font-size: 24px;
+    font-family: 'Helvetica Neue Regular', sans-serif;
+    margin-bottom: 12px;
+}
+
+.about-us-advantages-card-desc {
+    font-size: 16px;
+    font-family: 'Helvetica Neue Regular', sans-serif;
+    color: #AAAAAA;
+    min-height: 95px;
 }
