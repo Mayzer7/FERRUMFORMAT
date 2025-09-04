@@ -1,0 +1,327 @@
+
+@font-face {
+    font-family: 'Helvetica Neue Thin';
+    src: url('../fonts/HelveticaNeue-Thin.otf');
+    font-weight: 300;
+    font-style: normal;
+}
+
+/* 300 - Light */
+@font-face {
+    font-family: 'Helvetica Neue Light';
+    src: url('../fonts/HelveticaNeue-Light.otf');
+    font-weight: 300;
+    font-style: normal;
+}
+
+/* 400 - Regular */
+@font-face {
+    font-family: 'Helvetica Neue Regular';
+    src: url('../fonts/HelveticaNeue-Roman.otf');
+    font-weight: 300;
+    font-style: normal;
+}
+
+/* 500 - Medium */
+@font-face {
+    font-family: 'Helvetica Neue Medium';
+    src: url('../fonts/HelveticaNeue-Medium.otf');
+    font-weight: 500;
+    font-style: normal;
+}
+
+/* 700 - Bold */
+@font-face {
+    font-family: 'Helvetica Neue Bold';
+    src: url('../fonts/HelveticaNeue-Bold.otf');
+    font-weight: 700;
+    font-style: normal;
+}
+
+/* Condensed Bold */
+
+@font-face {
+    font-family: 'Helvetica Neue Condensed Bold';
+    src: url('../fonts/HelveticaNeue-Condensed-Bold.ttf');
+    font-weight: 700;
+    font-style: normal;
+}
+
+html {
+    box-sizing: border-box;
+    overflow-x: hidden;
+}
+
+html, body {
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+}
+
+/* 1. Убираем системный тап‑хайлайт */
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
+*,
+*::before,
+*::after {
+    box-sizing: inherit;
+}
+
+a {
+    color: inherit;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+a:hover {
+    /* color: var(--white-80); */
+}
+
+button {
+    cursor: pointer;
+}
+
+ul {
+    margin: 0;
+    padding: 0;
+}
+
+li {
+    list-style: none;
+}
+
+ul li {
+    /* font-family: 'Helvetica Neue Regular', sans-serif; */
+}
+
+h1, h2, h3, h4, h5, h6, p {
+    margin: 0;
+}
+
+svg {
+    vertical-align: middle;
+}
+
+body {
+    /* font-family: 'Helvetica Neue Medium', sans-serif;
+    font-size: 20px;
+    background-color: #fff;
+    min-width: 320px; */
+
+    color: #fff;
+    font-family: 'Helvetica Neue Light', sans-serif;
+    font-size: 20px;
+}
+
+html.no-scroll,
+body.no-scroll {
+  overflow: hidden;
+}
+
+input[type=number]::-webkit-outer-spin-button,
+input[type=number]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+/* Для Firefox */
+input[type=number] {
+    -moz-appearance: textfield;
+}
+
+:root {
+  /* --dark-blue: #15284E;
+  --blue: #2F5CB7;
+  --gray-bg: #F8F8F8;
+  --light-blue: #DAE7FC;
+  --light-blue-dark: #B8CCE8;
+  --white-80: rgba(255, 255, 255, 0.8);
+  --border-button: #CDD4DD;
+  --gray: #EEEEEE;
+  --gray-text: #8A93A6;
+  --error-text: #FE3B3B; */
+
+  --dark-gray: #282828;
+  --black: #1A1A1A;
+  --red: #D51A1A;
+}
+
+/* Главынй баннер */
+
+.main-content {
+    background-image: url('../images/main-bg.webp');
+    background-repeat: no-repeat;
+    background-position: center center; 
+    background-size: cover;            
+    min-height: 100vh;                 
+    padding: 0px 80px;
+    width: 100%;
+}
+
+.main-content-first-line {
+    padding-top: 176px;
+}
+
+.current-page-info-banner {
+    font-size: 24px;
+    padding: 4px 10px;
+    background-color: var(--dark-gray);
+    max-width: 56px;
+    display: flex;
+    align-items: center;
+    text-align: center;
+    justify-content: center;
+    margin-bottom: 37px;
+}
+
+.main-content-second-line {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: flex-end;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.main-content-second-line-right-side {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+}
+
+.main-content-second-line-title {
+    font-family: 'Helvetica Neue Thin', sans-serif;
+    font-size: 70px;
+    font-weight: 300;
+    max-width: 680px;
+    width: 100%;
+    margin-bottom: 20px;
+    text-transform: uppercase;
+}
+
+.main-content-second-line-text {
+    font-family: 'Helvetica Neue Light', sans-serif;
+    font-size: 24px;
+    max-width: 550px;
+    width: 100%;
+    margin-bottom: 40px;
+}
+
+.main-content-second-line-buttons {
+    display: flex;
+    gap: 12px;
+}
+
+.red-btn {
+    font-family: 'Helvetica Neue Light', sans-serif;
+    font-size: 20px;
+    color: #fff;
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    border: none;
+    background-color: var(--red);
+    padding: 23px 62px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    opacity: 1;
+}
+
+.red-btn:hover {
+    opacity: 0.9;
+}
+
+.transparent-btn {
+    font-family: 'Helvetica Neue Light', sans-serif;
+    font-size: 20px;
+    color: #fff;
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    border: 1px solid #FFFFFF;
+    background-color: transparent;
+    padding: 23px 62px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.transparent-btn:hover {
+    background-color: #fff;
+    color: var(--red)
+}
+
+.main-content-second-line-navigation-buttons {
+    display: flex;
+    gap: 16px;
+}
+
+.navigation-left-btn,
+.navigation-right-btn {
+    border: 1px solid #CFCFCF;
+    background-color: #F5F5F5;
+    padding: 15px;
+}
+
+.main-content-last-line-info-cards {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    margin-top: 60px;
+}
+
+.main-content-last-line-info-card {
+    background-color: #282828;
+    border: 1px solid #535353;
+    padding: 20px 10px 54px 20px;
+}
+
+.main-content-last-line-info-card-top {
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.info-card-number {
+    font-size: 70px;
+    text-transform: uppercase;
+}
+
+.main-content-last-line-info-card-bottom p {
+    font-size: 20px;
+    max-width: 300px;
+    width: 100%;
+}
+
+
+
+
+/* Секция "Производим" */
+
+.we-produce {
+    color: var(--black);
+}
+
+.section-name {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    text-align: center;
+}
+
+.square {
+    width: 12px;
+    height: 12px;
+    background-color: var(--red);
+}
+
+.section-name-text {
+    font-family: 'Helvetica Neue Regular', sans-serif;
+    font-size: 16px;
+    text-transform: uppercase;
+}
