@@ -48,6 +48,9 @@ document.addEventListener('DOMContentLoaded', function () {
   const header = document.querySelector('.header');
   if (!header) return;
 
+  // проверяем, можно ли делать прозрачной
+  const canBeTransparent = document.body.dataset.headerTransparent === "true";
+
   let lastScrollY = window.scrollY || window.pageYOffset;
   let ticking = false;
   const tolerance = 12;
@@ -55,6 +58,12 @@ document.addEventListener('DOMContentLoaded', function () {
   const offsetToOpaque = 20;
 
   function setOpaque(forceOpaque = null, currentY = window.scrollY || window.pageYOffset) {
+    if (!canBeTransparent) {
+      header.classList.add('header--opaque');
+      header.classList.remove('header--top');
+      return;
+    }
+
     if (header.classList.contains('header--menu-open')) {
       header.classList.add('header--opaque');
       header.classList.remove('header--top');
@@ -164,4 +173,98 @@ document.addEventListener('DOMContentLoaded', function () {
   setOpaque(null, window.scrollY || window.pageYOffset);
   showHeader();
 })();
+});
+
+
+// Переключение карточек в секции "Наши работы"
+
+document.addEventListener('DOMContentLoaded', function () {
+  const autoConvertOldMarkup = true;
+
+  document.querySelectorAll('.our-work').forEach(function (section, index) {
+    let cardsContainer = section.querySelector('.our-work-cards');
+
+    if (!cardsContainer) return;
+
+    if (autoConvertOldMarkup && !cardsContainer.querySelector('.swiper-wrapper')) {
+      const wrapper = document.createElement('div');
+      wrapper.classList.add('swiper-wrapper');
+
+      const slides = Array.from(cardsContainer.querySelectorAll('.our-work-card'));
+      slides.forEach(function (slide) {
+        slide.classList.add('swiper-slide');
+        wrapper.appendChild(slide);
+      });
+
+      cardsContainer.innerHTML = '';
+      cardsContainer.appendChild(wrapper);
+
+      if (!cardsContainer.classList.contains('swiper')) {
+        cardsContainer.classList.add('swiper');
+      }
+    } else {
+      cardsContainer.querySelectorAll('.our-work-card').forEach(s => {
+        if (!s.classList.contains('swiper-slide')) s.classList.add('swiper-slide');
+      });
+    }
+
+    const prevBtn = section.querySelector('.navigation-left-btn');
+    const nextBtn = section.querySelector('.navigation-right-btn');
+
+    const swiperEl = cardsContainer; 
+
+    const swiper = new Swiper(swiperEl, {
+      slidesPerView: 3,
+      spaceBetween: 10,
+      lazy: true,
+      watchOverflow: true,
+      grabCursor: true,
+      breakpoints: {
+        0: {
+          slidesPerView: 1,
+          spaceBetween: 10
+        },
+        640: {
+          slidesPerView: 2,
+          spaceBetween: 10
+        },
+        1100: {
+          slidesPerView: 3,
+          spaceBetween: 10
+        }
+      },
+      navigation: {
+        prevEl: prevBtn || null,
+        nextEl: nextBtn || null
+      },
+      a11y: true,
+      keyboard: {
+        enabled: true,
+        onlyInViewport: true,
+      }
+    });
+
+    function updateNavButtons() {
+      if (!prevBtn || !nextBtn) return;
+
+      if (swiper.isBeginning) {
+        prevBtn.classList.add('is-disabled');
+        prevBtn.setAttribute('disabled', 'disabled');
+      } else {
+        prevBtn.classList.remove('is-disabled');
+        prevBtn.removeAttribute('disabled');
+      }
+
+      if (swiper.isEnd) {
+        nextBtn.classList.add('is-disabled');
+        nextBtn.setAttribute('disabled', 'disabled');
+      } else {
+        nextBtn.classList.remove('is-disabled');
+        nextBtn.removeAttribute('disabled');
+      }
+    }
+
+    swiper.on('init slideChange reachEnd reachBeginning resize', updateNavButtons);
+    swiper.init(); 
+  });
 });

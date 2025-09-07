@@ -5,25 +5,32 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" href="img/favicon/favicon.ico">
     <link rel="stylesheet" href="css/fonts.css">
-    <title>Почтовые ящики - Навигация по сайту</title>
+    <title>FerrumFormat | Навигация по сайту</title>
     <style>
+        @font-face {
+            font-family: 'Helvetica Neue Light';
+            src: url('../fonts/HelveticaNeue-Light.otf');
+            font-weight: 300;
+            font-style: normal;
+        }
 
         body {
-            background-color: black;
-            color: #fff;
-            font-family: 'Prata', sans-serif;
+            background-color: #fff;
+            color: #1A1A1A;
+            font-family: 'Helvetica Neue Light', sans-serif;
             font-weight: 300;
         }
 
         a {
             text-decoration: none;
-            color: #fff;
+            color: #1A1A1A;
             font-size: clamp(18px, 5vw, 40px);
             transition: all 0.3s ease;
+            text-transform: uppercase;
         }
 
         a:hover {
-            color: #CFA567;
+            color: #D51A1A;
         }
 
         .container {
@@ -51,10 +58,16 @@
 <body>
     <div class="container">
         <div class="content">
-            <h1>Почтовые ящики</h1>
+            <h1>FerrumFormat</h1>
 
             <div class="links">
-                <a href="main.html" target="_blank">1. Главная</a>
+                <div>
+                    <a href="main.html" target="_blank">1. Главная</a>
+                </div>
+                
+                <div>
+                    <a href="mdk.html" target="_blank">2. Мдк</a>
+                </div>
             </div>
         </div>
     </div>
