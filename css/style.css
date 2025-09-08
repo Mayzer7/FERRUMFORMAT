@@ -179,6 +179,9 @@ input[type=number] {
   will-change: transform, opacity, background-color;
   padding-top: env(safe-area-inset-top);
   color: var(--black); 
+  min-width: 320px;
+  max-width: 1920px;
+  margin: 0px auto;
 }
 
 .header.header--top {
@@ -735,6 +738,7 @@ input[type=number] {
 .about-us-info {
     display: grid;
     grid-template-columns: 1fr 1fr;
+    gap: 20px;
 }
 
 .about-us-advantages-cards {
@@ -760,7 +764,8 @@ input[type=number] {
 }
 
 .about-us-desc {
-    font-size: 24px;
+    font-family: 'Helvetica Neue Regular', sans-serif;
+    font-size: 20px;
     color: rgba(255, 255, 255, 0.6);
     max-width: 434px;
     margin-bottom: 32px;
@@ -842,7 +847,7 @@ input[type=number] {
     background-image: url(../images/documents-bg.png);
     background-repeat: no-repeat;
     background-size: cover;
-    padding: 90px 60px;
+    padding: 90px 80px;
 }
 
 .documents-title {
@@ -1462,21 +1467,33 @@ input[type=number] {
   align-items: center;
 }
 
-.breadcrumb li + li::before {
+.breadcrumb-container .breadcrumb li + li::before {
   content: "/";
   margin-right: 6px;
   color: var(--black); 
 }
 
-.breadcrumb ul li {
+.breadcrumb-container .breadcrumb ul li {
     font-family: 'Helvetica Neue Regular', sans-serif;
     font-size: 14px;
     line-height: 120%;
     color: var(--gray);
 }
 
-.breadcrumb ul li .active {
+.breadcrumb-container .breadcrumb ul li .active {
     color: var(--black);
+}
+
+.breadcrumb-container-white .breadcrumb ul li {
+    color: #838383;
+}
+
+.breadcrumb-container-white .breadcrumb li + li::before {
+  color: #fff; 
+}
+
+.breadcrumb-container-white .breadcrumb ul li .active {
+    color: #fff;
 }
 
 .mdk-main-first-line {
@@ -1880,4 +1897,477 @@ input[type=number] {
     padding-left: 30px;
     padding-right: 30px;
   }
+}
+
+
+
+
+
+
+/* Страница "О нас" */
+
+.main-content-about {
+    background-image: url(../images/about-bg.webp);
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center center;
+    padding-bottom: 86px;
+}
+
+.main-content-first-line-about {
+    padding-top: 152px;
+}
+
+.main-content-second-line-title-about {
+    margin-top: 200px;
+    max-width: 740px;
+    margin-bottom: 32px;
+}
+
+.main-content-second-line-about {
+    padding-bottom: 25px;
+}
+
+.about-us-page {
+    background-image: url(../images/about-page-bg.png);
+    background-size: cover;
+    background-position: center center;
+    padding: 42px 80px;
+}
+
+.about-us-desc-page {
+    max-width: 100%;
+}
+
+.abous-us-page-buttons {
+    display: flex;
+    gap: 10px;
+}
+
+.abous-us-page-buttons button {
+    width: 100%;
+}
+
+
+
+
+/* Секция "Принципе" */
+
+.principles {
+    background-image: url(../images/principles-bg.png);
+    background-size: cover;
+    background-position: center center;
+    color: var(--black);
+    padding: 70px 80px;
+}
+
+.principles-content {
+    padding: 90px 0px;
+    padding-top: 40px;  
+    padding-left: 25%;
+}
+
+.principles-content .section-name {
+    margin-bottom: 16px;
+}
+
+.principles-cards {
+    display: flex;
+    flex-direction: column;
+    gap: 100px;
+}
+
+
+
+.principles-title {
+    font-family: 'Helvetica Neue Light', sans-serif;
+    font-size: 40px;
+    font-weight: 300;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+}
+
+.principles-desc {
+    font-family: 'Helvetica Neue Regular', sans-serif;
+    font-size: 18px;
+    max-width: 740px;
+    width: 100%;
+}
+
+.principles-texts {
+    margin-top: 24px;
+    display: flex;
+    gap: 16px;
+}
+
+.principles-text {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.principles-text-title {
+    max-width: 340px;
+    width: 100%;
+    font-family: 'Helvetica Neue Regular', sans-serif;
+    font-size: 20px;
+}
+
+.principles-text-desc {
+    font-family: 'Helvetica Neue Regular', sans-serif;
+    font-size: 16px;
+    max-width: 340px;
+    width: 100%;
+    line-height: 130%;
+}
+
+
+
+
+/* Секция "Сильные стороны" */
+
+.strong-sides {
+    background-image: url(../images/strong-sides-bg.png);
+    background-size: cover;
+    background-position: center center;
+    color: #fff;
+    padding: 70px 80px;
+}
+
+.strong-sides-content {
+    margin-left: 25%;
+    padding: 20px 0px;
+}
+
+.strong-sides-title {
+    margin-top: 16px;
+    font-family: 'Helvetica Neue Light', sans-serif;
+    font-size: 45px;
+    font-weight: 300;
+    text-transform: uppercase;
+    margin-bottom: 32px;
+}
+
+.strong-sides-banners {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 30px;
+    row-gap: 24px;
+    max-width: 860px;
+}
+
+.strong-sides-banner {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.strong-sides-banner-title {
+    max-width: 430px;
+    width: 100%;
+    font-family: 'Helvetica Neue Light', sans-serif;
+    font-size: 20px;
+    font-weight: 300;
+}
+
+
+
+
+
+/* Секция "Наше производство" */
+
+.our-production {
+    color: var(--black);
+    background-color: #fff;
+    padding: 80px;
+    background-image: url(../images/we-produce/bg.png);
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center center;
+}
+
+.our-production-text {
+    max-width: 740px;
+    width: 100%;
+    color: var(--gray);
+    font-family: 'Helvetica Neue Regular', sans-serif;
+    font-size: 20px;
+    letter-spacing: -0.02em;
+}
+
+.our-production-info-cards {
+    margin-top: 24px;
+}
+
+.our-production-info-card {
+    padding: 20px 12px;
+    border-top: 1px solid rgba(0, 0, 0, 0.4);
+}
+
+.our-production-info-card:last-child {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.4);
+}
+
+.our-production-info-card-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.our-production-info-card-title {
+    font-family: 'Helvetica Neue Regular', sans-serif;
+    font-size: 28px;
+    font-weight: 300;
+    line-height: 110%;
+}
+
+.open-our-production-info-card-btn {
+    border: none;
+    background-color: transparent;
+    padding: 0;
+    margin: 0;
+}
+
+.our-production-info-card-images {
+    max-width: 1080px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-top: 16px;
+}
+
+.our-production-info-card-text {
+    margin-top: 12px;
+    color: var(--gray);
+    font-family: 'Helvetica Neue Regular', sans-serif;
+    font-size: 16px;
+    line-height: 130%;
+}
+
+.our-production-info-card {
+  cursor: pointer;
+  outline: none;
+}
+
+.our-production-info-card-open,
+.our-production-info-card-open * {
+  cursor: default;
+}
+
+.our-production-info-card-open {
+  height: 0;               
+  overflow: hidden;
+  transition: height 600ms cubic-bezier(.2,.8,.2,1);
+  will-change: height;
+  display: none;         
+  padding-top: 0;        
+}
+
+.open-our-production-info-card-btn {
+  border: none;
+  background: transparent;
+  padding: 0;
+  margin: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.open-our-production-info-card-btn svg .icon-bg {
+  fill: #F5F5F5;
+  transition: fill 220ms ease;
+}
+
+.open-our-production-info-card-btn svg .icon-line {
+  fill: #B2B2B2;
+  transition: transform 260ms cubic-bezier(.2,.8,.2,1), fill 220ms;
+  transform-origin: 50% 50%;
+  transform-box: fill-box; 
+}
+
+.our-production-info-card.is-open .open-our-production-info-card-btn svg .vert {
+  transform: scaleY(0);
+}
+
+.our-production-info-card.is-open .open-our-production-info-card-btn svg .icon-bg {
+  fill: #ffffff;
+}
+.our-production-info-card.is-open .open-our-production-info-card-btn svg .icon-line {
+  fill: #4a4a4a;
+}
+
+.our-production-info-card.is-open .open-our-production-info-card-btn svg .icon-bg {
+  fill: #F5F5F5; 
+}
+
+.open-our-production-info-card-btn svg .icon-line {
+  fill: #B2B2B2; 
+  transition: transform 260ms cubic-bezier(.2,.8,.2,1), fill 220ms, opacity 200ms;
+  transform-origin: 50% 50%;
+  transform-box: fill-box;
+  opacity: 1;
+}
+
+.our-production-info-card.is-open .open-our-production-info-card-btn svg .vert {
+  transform: scaleY(0);
+  opacity: 0;        
+  fill: #B2B2B2;    
+}
+
+.our-production-info-card.is-open .open-our-production-info-card-btn svg .horiz {
+  fill: #B2B2B2;
+  opacity: 1;
+}
+
+
+
+
+
+/* Секция "Контроль качества" */
+
+.quality-control {
+    background-image: url(../images/trust-us-bg.png);
+    background-repeat: no-repeat;
+    background-size: cover;
+
+    color: var(--black);
+    padding: 80px 60px 40px 75px;
+}
+
+.quality-control-cards-lines {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.quality-control-cards-first-line .quality-control-cards {
+    display: grid;
+    grid-template-columns: minmax(0px, 365px) minmax(0px, 740px) minmax(0px, 365px);
+    gap: 10px;
+}
+
+.quality-control-cards-second-line .quality-control-cards {
+    display: grid;
+    grid-template-columns: minmax(0px, 743px) minmax(0px, 743px);
+    gap: 10px;
+}
+
+.quality-control-card {
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center center;
+    padding: 20px 20px 24px 20px;
+}
+
+.quality-control-card.quality-control-card-1 {
+    background-image: url(../images/quality-control-cards/1.png);
+}
+
+.quality-control-card.quality-control-card-2 {
+    background-image: url(../images/quality-control-cards/2.png);
+}
+
+.quality-control-card-icon {
+    margin-bottom: 100px;
+}
+
+.quality-control-card-title {
+    font-family: 'Helvetica Neue Regular', sans-serif;
+    font-size: 22px;
+    line-height: 110%;
+    letter-spacing: -0.02em;
+}
+
+
+
+
+/* Секция "Отзывы" */
+
+.reviews {
+    background-image: url(../images/documents-bg.png);
+    background-repeat: no-repeat;
+    background-size: cover;
+    padding: 90px 80px;
+}
+
+.reviews-cards {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+}
+
+.reviews-card {
+    display: flex;
+    gap: 32px;
+    background-color: #282828;
+    padding: 20px;
+    border: 1px solid #535353;
+}
+
+.reviews-card-left-side {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.reviews-card-author {
+    font-family: 'Helvetica Neue Regular', sans-serif;
+    font-size: 22px;
+    line-height: 110%;
+    letter-spacing: -0.02em;
+    color: var(--gray);
+    max-width: 220px;
+    margin-bottom: 16px;
+}
+
+.reviews-card-text {
+  font-family: 'Helvetica Neue Regular', sans-serif;
+  font-size: 16px;
+  line-height: 130%;
+  color: #fff;
+
+  overflow: hidden;             
+  will-change: height, opacity; 
+  max-height: none;
+  height: auto;
+}
+
+.reviews-card-text.collapsed {
+  display: -webkit-box;
+  -webkit-line-clamp: 7;
+  -webkit-box-orient: vertical;
+}
+
+.read-more-review-btn svg {
+  transition: transform 300ms ease;
+  transform-origin: center;
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.read-more-review-btn[aria-expanded="true"] svg {
+  transform: rotate(180deg);
+}
+
+.read-more-review-btn {
+    display: inline-flex;       
+    align-items: center;
+    gap: 6px;
+    border: none;
+    background-color: transparent;
+    color: #fff;
+    font-family: 'Helvetica Neue Regular', sans-serif;
+    font-size: 18px;
+    padding: 0 0 2px 0;      
+    cursor: pointer;
+    border-bottom: 1px solid #fff; 
+    max-width: max-content;     
+    white-space: nowrap;        
+}
+
+.read-more-reviews-btn {
+    margin-top: 32px;
+    width: 100%;
 }

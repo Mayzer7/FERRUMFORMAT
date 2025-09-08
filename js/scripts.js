@@ -268,3 +268,204 @@ document.addEventListener('DOMContentLoaded', function () {
     swiper.init(); 
   });
 });
+
+
+
+
+
+
+
+
+
+
+
+// Расрытие менюшек "Наше произвосдтво" на странице "О компании"
+
+document.addEventListener('DOMContentLoaded', function () {
+  const cards = document.querySelectorAll('.our-production-info-card');
+
+  cards.forEach(card => {
+    const openArea = card.querySelector('.our-production-info-card-open');
+    const btn = card.querySelector('.open-our-production-info-card-btn');
+
+    // Инициализация состояния
+    openArea.style.display = 'none';
+    openArea.style.height = '0px';
+    btn.setAttribute('aria-expanded', 'false');
+    card.setAttribute('aria-expanded', 'false');
+
+    // открыть
+    function openCard() {
+      if (card.classList.contains('is-open')) return;
+      card.classList.add('is-open');
+      btn.setAttribute('aria-expanded', 'true');
+      card.setAttribute('aria-expanded', 'true');
+
+      // показать блок, установить высоту в scrollHeight для анимации
+      openArea.style.display = 'block';
+      const fullHeight = openArea.scrollHeight + 'px';
+      // сначала force reflow, чтобы transition сработал корректно
+      openArea.style.height = '0px';
+      requestAnimationFrame(() => {
+        openArea.style.height = fullHeight;
+      });
+      // после окончания анимации ставим авто-высоту чтобы контент мог менять размер
+    }
+
+    // закрыть
+    function closeCard() {
+      if (!card.classList.contains('is-open')) return;
+      // перед анимацией установим текущую реальную высоту (в px),
+      // чтобы переход до 0 был плавным (и не от auto)
+      const currentHeight = openArea.scrollHeight + 'px';
+      openArea.style.height = currentHeight;
+      // ensure reflow
+      requestAnimationFrame(() => {
+        openArea.style.height = '0px';
+      });
+
+      card.classList.remove('is-open');
+      btn.setAttribute('aria-expanded', 'false');
+      card.setAttribute('aria-expanded', 'false');
+    }
+
+    // По завершении transition: если открыт — сделать высоту auto, если закрыт — скрыть display
+    openArea.addEventListener('transitionend', (ev) => {
+      if (ev.propertyName !== 'height') return;
+      if (card.classList.contains('is-open')) {
+        openArea.style.height = 'auto';
+      } else {
+        openArea.style.display = 'none';
+      }
+    });
+
+    // Клик по карточке: переключаем, но игнорируем клики по самому открытому контенту
+    card.addEventListener('click', (e) => {
+      if (e.target.closest('.our-production-info-card-open')) return; // не трогаем при клике в контенте
+      // если нажали на кнопку — обработается отдельно (мы остановим всплытие). Но обрабатываем общий клик тоже.
+      if (card.classList.contains('is-open')) {
+        closeCard();
+      } else {
+        openCard();
+      }
+    });
+
+    // Клик по кнопке — останавливаем всплытие и переключаем
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      if (card.classList.contains('is-open')) closeCard(); else openCard();
+    });
+
+    // Клавиши (Enter / Space) для accessibility: переключаем карточку при фокусе
+    card.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ' || e.key === 'Spacebar') {
+        e.preventDefault();
+        if (card.classList.contains('is-open')) closeCard(); else openCard();
+      }
+    });
+  });
+});
+
+
+
+
+
+
+
+
+
+
+
+// Отзывы
+
+document.addEventListener('DOMContentLoaded', () => {
+  const buttons = document.querySelectorAll('.read-more-review-btn');
+
+  buttons.forEach((btn, index) => {
+    const card = btn.closest('.reviews-card');
+    if (!card) {
+      console.warn('Кнопка "Читать далее" не находится внутри .reviews-card', btn);
+      return;
+    }
+
+    const text = card.querySelector('.reviews-card-text');
+    if (!text) {
+      console.warn('Не найден элемент .reviews-card-text в карточке', card);
+      return;
+    }
+
+    const label = btn.querySelector('span') || btn; 
+    const textId = text.id || `review-text-${index}`;
+    text.id = textId;
+    btn.setAttribute('aria-controls', textId);
+    btn.setAttribute('aria-expanded', 'false');
+
+    if (!text.style.transition) {
+      text.style.transition = 'max-height 350ms cubic-bezier(.2,.9,.2,1), opacity 200ms ease';
+    }
+
+    text.classList.add('collapsed');
+
+    const collapsedHeight = text.getBoundingClientRect().height;
+    const fullHeight = text.scrollHeight;
+
+    if (fullHeight <= collapsedHeight + 1) {
+      btn.style.display = 'none';
+      text.style.maxHeight = 'none';
+      return;
+    }
+
+    text.dataset.collapsedHeight = collapsedHeight;
+    text.style.maxHeight = collapsedHeight + 'px';
+
+    text.dataset.animating = 'false';
+
+    btn.addEventListener('click', () => {
+      if (text.dataset.animating === 'true') return; 
+      const expanded = btn.getAttribute('aria-expanded') === 'true';
+
+      if (!expanded) {
+        text.dataset.animating = 'true';
+
+        text.classList.remove('collapsed');
+
+        const full = text.scrollHeight;
+
+        text.style.maxHeight = full + 'px';
+        btn.setAttribute('aria-expanded', 'true');
+        if (label) label.textContent = 'Свернуть';
+
+        const onExpandEnd = (e) => {
+          if (e.propertyName !== 'max-height') return;
+          text.style.maxHeight = 'none';
+          text.dataset.animating = 'false';
+          text.removeEventListener('transitionend', onExpandEnd);
+        };
+        text.addEventListener('transitionend', onExpandEnd);
+
+      } else { 
+        text.dataset.animating = 'true';
+
+        if (text.style.maxHeight === 'none' || !text.style.maxHeight) {
+          text.style.maxHeight = text.scrollHeight + 'px';
+        }
+
+        void text.offsetHeight;
+
+        const collapsed = parseFloat(text.dataset.collapsedHeight);
+        text.style.maxHeight = collapsed + 'px';
+
+        const onCollapseEnd = (e) => {
+          if (e.propertyName !== 'max-height') return;
+          text.classList.add('collapsed');
+          text.dataset.animating = 'false';
+          text.removeEventListener('transitionend', onCollapseEnd);
+        };
+        text.addEventListener('transitionend', onCollapseEnd);
+
+        btn.setAttribute('aria-expanded', 'false');
+        if (label) label.textContent = 'Читать далее';
+      }
+    });
+  });
+});
