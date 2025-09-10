@@ -379,93 +379,160 @@ document.addEventListener('DOMContentLoaded', function () {
 // Отзывы
 
 document.addEventListener('DOMContentLoaded', () => {
-  const buttons = document.querySelectorAll('.read-more-review-btn');
+  const modal = document.getElementById('review-modal');
+  const overlay = modal?.querySelector('.review-modal-overlay');
+  const panel = modal?.querySelector('.review-modal-panel');
+  const closeBtn = modal?.querySelector('.review-modal-close');
+  const authorEl = modal?.querySelector('.review-modal-author');
+  const textEl = modal?.querySelector('.review-modal-text');
+  const imgEl = modal?.querySelector('.review-modal-img');
 
-  buttons.forEach((btn, index) => {
-    const card = btn.closest('.reviews-card');
-    if (!card) {
-      console.warn('Кнопка "Читать далее" не находится внутри .reviews-card', btn);
+  let lastFocusedElement = null;
+  let focusableNodes = [];
+  let firstFocusable = null;
+  let lastFocusable = null;
+
+  function updateFocusable() {
+    focusableNodes = panel.querySelectorAll('a, button, textarea, input, select, [tabindex]:not([tabindex="-1"])');
+    if (focusableNodes.length) {
+      firstFocusable = focusableNodes[0];
+      lastFocusable = focusableNodes[focusableNodes.length - 1];
+    } else {
+      firstFocusable = lastFocusable = closeBtn;
+    }
+  }
+  function trapTab(e) {
+    if (e.key !== 'Tab') return;
+    if (!firstFocusable) return;
+    if (e.shiftKey) {
+      if (document.activeElement === firstFocusable) {
+        e.preventDefault();
+        lastFocusable.focus();
+      }
+    } else {
+      if (document.activeElement === lastFocusable) {
+        e.preventDefault();
+        firstFocusable.focus();
+      }
+    }
+  }
+
+  function openModal() {
+    lastFocusedElement = document.activeElement;
+    modal.setAttribute('aria-hidden', 'false');
+    modal.classList.add('open');
+    document.body.style.overflow = 'hidden';
+    updateFocusable();
+    (firstFocusable || closeBtn).focus();
+    document.addEventListener('keydown', onKeydown);
+  }
+
+  function closeModal() {
+    modal.classList.remove('open');
+    modal.setAttribute('aria-hidden', 'true');
+    document.body.style.overflow = '';
+    document.removeEventListener('keydown', onKeydown);
+    if (lastFocusedElement && typeof lastFocusedElement.focus === 'function') lastFocusedElement.focus();
+  }
+
+  function onKeydown(e) {
+    if (e.key === 'Escape') {
+      closeModal();
       return;
     }
+    trapTab(e);
+  }
 
-    const text = card.querySelector('.reviews-card-text');
-    if (!text) {
-      console.warn('Не найден элемент .reviews-card-text в карточке', card);
-      return;
-    }
+  overlay?.addEventListener('click', closeModal);
+  closeBtn?.addEventListener('click', closeModal);
+  panel?.addEventListener('click', (e) => e.stopPropagation());
 
-    const label = btn.querySelector('span') || btn; 
-    const textId = text.id || `review-text-${index}`;
-    text.id = textId;
+  const CARDS_SELECTOR = '.reviews-card';
+  const BTN_SELECTOR = '.read-more-review-btn';
+  const TEXT_SELECTOR = '.reviews-card-text';
+  const AUTHOR_SELECTOR = '.reviews-card-author';
+  const IMG_SELECTOR = '.reviews-card-right-side img';
+
+  function debounce(fn, ms = 120) {
+    let t;
+    return (...args) => {
+      clearTimeout(t);
+      t = setTimeout(() => fn(...args), ms);
+    };
+  }
+
+  function isTruncated(el) {
+    if (!el) return false;
+
+    return el.scrollHeight > el.clientHeight + 1;
+  }
+
+  const cards = document.querySelectorAll(CARDS_SELECTOR);
+  cards.forEach((card, index) => {
+    const textNode = card.querySelector(TEXT_SELECTOR);
+    const btn = card.querySelector(BTN_SELECTOR);
+    const authorNode = card.querySelector(AUTHOR_SELECTOR);
+    const imgNode = card.querySelector(IMG_SELECTOR);
+
+    if (!textNode || !btn) return;
+
+    textNode.classList.add('collapsed');
+
+    const textId = textNode.id || `review-text-${index}`;
+    textNode.id = textId;
     btn.setAttribute('aria-controls', textId);
     btn.setAttribute('aria-expanded', 'false');
 
-    if (!text.style.transition) {
-      text.style.transition = 'max-height 350ms cubic-bezier(.2,.9,.2,1), opacity 200ms ease';
-    }
-
-    text.classList.add('collapsed');
-
-    const collapsedHeight = text.getBoundingClientRect().height;
-    const fullHeight = text.scrollHeight;
-
-    if (fullHeight <= collapsedHeight + 1) {
-      btn.style.display = 'none';
-      text.style.maxHeight = 'none';
-      return;
-    }
-
-    text.dataset.collapsedHeight = collapsedHeight;
-    text.style.maxHeight = collapsedHeight + 'px';
-
-    text.dataset.animating = 'false';
-
-    btn.addEventListener('click', () => {
-      if (text.dataset.animating === 'true') return; 
-      const expanded = btn.getAttribute('aria-expanded') === 'true';
-
-      if (!expanded) {
-        text.dataset.animating = 'true';
-
-        text.classList.remove('collapsed');
-
-        const full = text.scrollHeight;
-
-        text.style.maxHeight = full + 'px';
-        btn.setAttribute('aria-expanded', 'true');
-        if (label) label.textContent = 'Свернуть';
-
-        const onExpandEnd = (e) => {
-          if (e.propertyName !== 'max-height') return;
-          text.style.maxHeight = 'none';
-          text.dataset.animating = 'false';
-          text.removeEventListener('transitionend', onExpandEnd);
-        };
-        text.addEventListener('transitionend', onExpandEnd);
-
-      } else { 
-        text.dataset.animating = 'true';
-
-        if (text.style.maxHeight === 'none' || !text.style.maxHeight) {
-          text.style.maxHeight = text.scrollHeight + 'px';
-        }
-
-        void text.offsetHeight;
-
-        const collapsed = parseFloat(text.dataset.collapsedHeight);
-        text.style.maxHeight = collapsed + 'px';
-
-        const onCollapseEnd = (e) => {
-          if (e.propertyName !== 'max-height') return;
-          text.classList.add('collapsed');
-          text.dataset.animating = 'false';
-          text.removeEventListener('transitionend', onCollapseEnd);
-        };
-        text.addEventListener('transitionend', onCollapseEnd);
-
+    const recompute = () => {
+      void textNode.offsetHeight;
+      if (!isTruncated(textNode)) {
+        btn.style.display = 'none';
         btn.setAttribute('aria-expanded', 'false');
-        if (label) label.textContent = 'Читать далее';
+      } else {
+        btn.style.display = ''; 
       }
+    };
+
+    requestAnimationFrame(recompute);
+
+    const ro = (typeof ResizeObserver !== 'undefined') ? new ResizeObserver(debounce(recompute, 120)) : null;
+    if (ro) ro.observe(textNode);
+
+    const mo = new MutationObserver(debounce(recompute, 120));
+    mo.observe(textNode, { childList: true, subtree: true, characterData: true });
+
+    window.addEventListener('resize', debounce(recompute, 150));
+
+    btn.addEventListener('click', (ev) => {
+      ev.preventDefault();
+      ev.stopPropagation();
+
+      if (btn.style.display === 'none') return;
+
+      if (authorNode) {
+        authorEl.innerHTML = authorNode.innerHTML.trim();
+      } else {
+        authorEl.textContent = '';
+      }
+
+      if (textNode) {
+        textEl.innerHTML = textNode.innerHTML.trim();
+      } else {
+        textEl.textContent = '';
+      }
+
+      openModal();
     });
   });
+
+  window.reviewsRecomputeButtons = function() {
+    document.querySelectorAll(CARDS_SELECTOR).forEach((card, i) => {
+      const text = card.querySelector(TEXT_SELECTOR);
+      const btn = card.querySelector(BTN_SELECTOR);
+      if (!text || !btn) return;
+      void text.offsetHeight;
+      if (isTruncated(text)) btn.style.display = '';
+      else btn.style.display = 'none';
+    });
+  };
 });
