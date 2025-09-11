@@ -747,3 +747,35 @@ if (maps) {
     });
   });
 }
+
+
+
+// Страница "Гарантия"
+
+const guaranteeSwiper = document.querySelector('.guarantee-content-left-image.swiper');
+
+if (guaranteeSwiper) {
+  const swiper = new Swiper(guaranteeSwiper, {
+    slidesPerView: 1,
+    spaceBetween: 0,
+    loop: false,
+    autoHeight: false,
+    watchOverflow: true,
+    observer: true,
+    observeParents: true,
+    navigation: {
+      nextEl: '.swiper-navigation-right-btn',
+      prevEl: '.swiper-navigation-left-btn',
+      disabledClass: 'swiper-button-disabled',
+    },
+    breakpoints: {
+      0: { slidesPerView: 1 },
+      768: { slidesPerView: 1 },
+      1200: { slidesPerView: 1 },
+    },
+  });
+
+  swiper.update();
+
+  window.addEventListener('resize', () => swiper.update());
+}
