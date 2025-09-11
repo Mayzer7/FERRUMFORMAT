@@ -779,3 +779,91 @@ if (guaranteeSwiper) {
 
   window.addEventListener('resize', () => swiper.update());
 }
+
+
+
+
+
+// Страница "Новости" (теги)
+
+document.addEventListener('DOMContentLoaded', () => {
+  const VISIBLE_COUNT = 5; // показываем первые 5 тегов
+  const swiperEl = document.querySelector('.news-tags.swiper');
+  if (!swiperEl) return;
+
+  const wrapper = swiperEl.querySelector('.swiper-wrapper');
+  const allSlides = Array.from(wrapper.querySelectorAll('.news-tag.swiper-slide'));
+  const btn = document.querySelector('.show-more-tags');
+  if (!btn) return;
+
+  const originalBtnParent = btn.parentNode;
+  const originalBtnNextSibling = btn.nextSibling;
+
+  function hideExtraSlides() {
+    allSlides.forEach((s, i) => {
+      if (i >= VISIBLE_COUNT) s.classList.add('hidden-slide');
+      else s.classList.remove('hidden-slide');
+    });
+  }
+  hideExtraSlides();
+
+  const swiper = new Swiper(swiperEl, {
+    slidesPerView: 'auto',
+    spaceBetween: 60,
+    freeMode: true,
+    grabCursor: true,
+    loop: false,
+  });
+
+  function findBtnSlide() {
+    return wrapper.querySelector('[data-btn-slide="true"]');
+  }
+
+  btn.addEventListener('click', (e) => {
+    e.preventDefault();
+    const expanded = btn.getAttribute('aria-expanded') === 'true';
+
+    if (!expanded) {
+      const currentIndex = swiper.activeIndex;
+
+      allSlides.forEach(s => s.classList.remove('hidden-slide'));
+
+      if (!findBtnSlide()) {
+        const btnSlide = document.createElement('div');
+        btnSlide.className = 'news-tag swiper-slide show-more-slide';
+        btnSlide.setAttribute('data-btn-slide', 'true');
+        btnSlide.appendChild(btn); 
+        wrapper.appendChild(btnSlide);
+      }
+
+      const label = btn.querySelector('.label');
+      if (label) label.textContent = 'Скрыть все теги';
+      btn.classList.add('inside-slide', 'rotated');
+      btn.setAttribute('aria-expanded', 'true');
+
+      swiper.update();
+      setTimeout(() => {
+        const safeIndex = Math.min(currentIndex, swiper.slides.length - 1);
+        swiper.slideTo(safeIndex, 0); 
+      }, 60);
+
+    } else {
+      const btnSlide = findBtnSlide();
+      if (btnSlide) {
+        if (originalBtnNextSibling) originalBtnParent.insertBefore(btn, originalBtnNextSibling);
+        else originalBtnParent.appendChild(btn);
+        btnSlide.remove(); 
+      }
+
+      hideExtraSlides();
+
+      const label = btn.querySelector('.label');
+      if (label) label.textContent = 'Показать все теги';
+      btn.classList.remove('inside-slide', 'rotated');
+      btn.setAttribute('aria-expanded', 'false');
+
+      swiper.update();
+      setTimeout(() => { swiper.slideTo(0, 200); }, 60); 
+    }
+  });
+});
