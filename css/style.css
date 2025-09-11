@@ -1176,7 +1176,7 @@ input[type=number] {
     background-size: cover;
 
     color: #fff;
-    padding: 80px 60px 40px 75px;
+    padding: 80px 60px 80px 75px;
 }
 
 .get-contact-info-cards {
@@ -3045,4 +3045,26 @@ input[type=number] {
     font-size: 18px;
     font-weight: 300;
     color: var(--gray);
+}
+
+
+
+
+/* Страница "Реквизиты" */
+
+/* .mdk-main-requisites {
+    background-image: url(../images/trust-us-bg.png);
+    background-repeat: no-repeat;
+    background-size: cover;
+    padding: 80px 60px 40px 75px;
+    padding-top: 140px;
+} */
+
+.mdk-main-requisites {
+    padding: 0px;
+    background-image: none;
+}
+
+.download-requisites-link-page {
+    padding-bottom: 40px;
 }
