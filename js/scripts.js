@@ -218,7 +218,7 @@ document.addEventListener('DOMContentLoaded', function () {
       spaceBetween: 10,
       lazy: true,
       watchOverflow: true,
-      grabCursor: true,
+      grabCursor: false,
       breakpoints: {
         0: {
           slidesPerView: 1,
@@ -535,4 +535,168 @@ document.addEventListener('DOMContentLoaded', () => {
       else btn.style.display = 'none';
     });
   };
+});
+
+
+
+
+// Модальное окно для просмотра фотографий отзыва
+
+document.addEventListener('DOMContentLoaded', () => {
+  const THUMBS_SELECTOR = '.reviews-card-right-side img';
+  const thumbs = Array.from(document.querySelectorAll(THUMBS_SELECTOR));
+  if (!thumbs.length) return;
+
+  const modal = document.getElementById('image-modal');
+  const overlay = modal?.querySelector('.image-modal-overlay');
+  const panel = modal?.querySelector('.image-modal-panel');
+  const closeBtn = modal?.querySelector('.image-modal-close');
+  const prevBtn = modal?.querySelector('.image-modal-prev');
+  const nextBtn = modal?.querySelector('.image-modal-next');
+  const swiperContainer = modal?.querySelector('.image-modal-swiper');
+  const swiperWrapper = swiperContainer?.querySelector('.swiper-wrapper');
+
+  let swiper = null;
+  let createdSlides = false;
+  let lastFocused = null;
+  let currentNatural = { w: 0, h: 0 };
+
+  function buildSlides() {
+    if (!swiperWrapper) return;
+    swiperWrapper.innerHTML = ''; 
+    thumbs.forEach((t, idx) => {
+      const src = t.getAttribute('src');
+      const alt = t.getAttribute('alt') || '';
+      const slide = document.createElement('div');
+      slide.className = 'swiper-slide';
+      slide.setAttribute('role', 'group');
+      slide.setAttribute('aria-roledescription', 'slide');
+      slide.setAttribute('aria-label', `${idx + 1} of ${thumbs.length}`);
+      const img = document.createElement('img');
+      img.src = src;
+      img.alt = alt;
+      img.loading = 'lazy';
+      img.draggable = false;
+      img.addEventListener('load', () => {
+        img.classList.add('loaded');
+        applyScaleToImg(img);
+      });
+      slide.appendChild(img);
+      swiperWrapper.appendChild(slide);
+    });
+    createdSlides = true;
+  }
+
+  function applyScaleToImg(imgEl) {
+    if (!imgEl) return;
+    imgEl.style.width = '100%';
+    imgEl.style.height = '100%';
+    imgEl.style.objectFit = 'cover'; 
+  }
+
+  function initSwiper(startIndex = 0) {
+    if (!swiperContainer) return;
+    if (!createdSlides) buildSlides();
+
+    if (swiper) {
+      swiper.update();
+      setTimeout(() => swiper.slideTo(startIndex, 0), 0);
+      return;
+    }
+
+    swiper = new Swiper(swiperContainer, {
+      slidesPerView: 1,
+      centeredSlides: true,   
+      spaceBetween: 16,
+      loop: false,
+      speed: 360,
+      navigation: {
+        nextEl: nextBtn,
+        prevEl: prevBtn
+      },
+      keyboard: { enabled: false },
+      on: {
+        slideChange: function() {
+          const imgs = swiperWrapper.querySelectorAll('img');
+          const currentImg = imgs[swiper.activeIndex];
+          if (currentImg) setTimeout(() => applyScaleToImg(currentImg), 80);
+        },
+        init: function() {
+          if (closeBtn) closeBtn.focus();
+        }
+      }
+    });
+
+    swiperWrapper.addEventListener('pointerdown', (e) => {
+      const img = e.target.closest('img');
+      if (!img) return;
+      img.classList.remove('dragging');
+      img.setPointerCapture(e.pointerId);
+      img.addEventListener('pointermove', onPointerMove);
+      img.addEventListener('pointerup', onPointerUp);
+      function onPointerMove() {
+        img.classList.add('dragging');
+      }
+      function onPointerUp(ev) {
+        img.classList.remove('dragging');
+        try { img.releasePointerCapture(ev.pointerId); } catch (err) {}
+        img.removeEventListener('pointermove', onPointerMove);
+        img.removeEventListener('pointerup', onPointerUp);
+      }
+    });
+  }
+
+  function openImageModal(index = 0) {
+    lastFocused = document.activeElement;
+    initSwiper(index);
+
+    if (swiper) {
+      setTimeout(() => {
+        const idx = Math.max(0, Math.min(index, thumbs.length - 1));
+        swiper.slideTo(idx, 0);
+
+        const targetImg = swiperWrapper.querySelectorAll('img')[idx];
+        if (targetImg && targetImg.complete) applyScaleToImg(targetImg);
+      }, 0);
+    }
+    modal.setAttribute('aria-hidden', 'false');
+    modal.classList.add('open');
+    document.body.style.overflow = 'hidden';
+    if (closeBtn) closeBtn.focus();
+    document.addEventListener('keydown', onKey);
+  }
+
+  function closeImageModal() {
+    modal.classList.remove('open');
+    modal.setAttribute('aria-hidden', 'true');
+    document.body.style.overflow = '';
+    document.removeEventListener('keydown', onKey);
+    if (lastFocused && typeof lastFocused.focus === 'function') lastFocused.focus();
+  }
+
+  function onKey(e) {
+    if (e.key === 'Escape') { closeImageModal(); return; }
+    if (e.key === 'ArrowLeft') { e.preventDefault(); if (swiper) swiper.slidePrev(); return; }
+    if (e.key === 'ArrowRight') { e.preventDefault(); if (swiper) swiper.slideNext(); return; }
+  }
+
+  thumbs.forEach((node, idx) => {
+    node.style.cursor = 'pointer';
+    node.addEventListener('click', (ev) => {
+      ev.preventDefault();
+      ev.stopPropagation();
+      openImageModal(idx);
+    });
+  });
+
+  overlay?.addEventListener('click', closeImageModal);
+  closeBtn?.addEventListener('click', closeImageModal);
+
+  window.addEventListener('resize', () => {
+    if (!modal.classList.contains('open')) return;
+    if (!swiper) return;
+    const imgs = swiperWrapper.querySelectorAll('img');
+    const currentImg = imgs[swiper.activeIndex];
+    if (currentImg) applyScaleToImg(currentImg);
+  });
 });

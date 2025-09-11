@@ -2437,6 +2437,45 @@
         </div>
     </div>
 
+    <!-- Модальное окно для просмотра фотографий отзывов -->
+    <div id="image-modal" class="image-modal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="image-modal-title">
+        <div class="image-modal-overlay" data-close></div>
+
+        <div class="image-modal-panel" role="document">
+        <button class="image-modal-close" aria-label="Закрыть">
+            <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M17.942 1.94295L16.0566 0.0576172L8.99931 7.11495L1.94197 0.0576172L0.0566406 1.94295L7.11397 9.00028L0.0566406 16.0576L1.94197 17.943L8.99931 10.8856L16.0566 17.943L17.942 16.0576L10.8846 9.00028L17.942 1.94295Z" fill="currentColor"/>
+            </svg>
+        </button>
+
+        <div class="image-modal-body">
+            <button class="image-modal-nav image-modal-prev" aria-label="Предыдущая фотография" type="button">
+                <svg width="56" height="56" viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="0.5" y="0.5" width="55" height="55" fill="#F5F5F5"/>
+                    <rect x="0.5" y="0.5" width="55" height="55" stroke="#C1C1C1"/>
+                    <path d="M21.5358 27.804C21.5352 27.4538 21.6037 27.107 21.7376 26.7835C21.8715 26.4599 22.068 26.166 22.3158 25.9187L29.3744 18.8613L31.2598 20.7467L24.2024 27.804L31.2598 34.8613L29.3744 36.7467L22.3171 29.6893C22.069 29.4421 21.8723 29.1482 21.7382 28.8247C21.6041 28.5011 21.5353 28.1542 21.5358 27.804Z" fill="#D51A1A"/>
+                </svg>
+            </button>
+
+            <div class="swiper image-modal-swiper" aria-label="Галерея фотографий отзывов">
+            <div class="swiper-wrapper">
+                <!-- slides будут создаваться динамически -->
+            </div>
+
+            <div class="swiper-pagination" aria-hidden="true"></div>
+            </div>
+
+            <button class="image-modal-nav image-modal-next" aria-label="Следующая фотография" type="button">
+                <svg width="56" height="56" viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="0.5" y="0.5" width="55" height="55" fill="#F5F5F5"/>
+                    <rect x="0.5" y="0.5" width="55" height="55" stroke="#C1C1C1"/>
+                    <path d="M34.4584 27.8044C34.459 28.1545 34.3904 28.5014 34.2565 28.8249C34.1227 29.1485 33.9262 29.4424 33.6784 29.6897L26.6197 36.7471L24.7344 34.8617L31.7917 27.8044L24.7344 20.7471L26.6197 18.8617L33.677 25.9191C33.9251 26.1663 34.1218 26.4602 34.2559 26.7837C34.39 27.1073 34.4588 27.4542 34.4584 27.8044Z" fill="#D51A1A"/>
+                </svg>
+            </button>
+        </div>
+        </div>
+    </div>
+
     <script src="js/libs/swiper-bundle.min.js"></script>
     <script src="js/scripts.js"></script>
 </body>
