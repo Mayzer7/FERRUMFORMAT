@@ -704,50 +704,46 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 // Яндекс карта
-const  maps = document.querySelector(".maps");
+const maps = document.querySelectorAll(".maps");
 
-if (maps) {
-  let center = [55.01313106967953, 60.096861499999896];
-  let mapInstance = null;
+let center = [55.01313106967953, 60.096861499999896];
 
-  function createMap(mapId) {
-    mapInstance = new ymaps.Map(mapId, {
-      center: center,
-      zoom: 16.5,
-      controls: [],
-      type: "yandex#map",
-    });
-
-    mapInstance.options.set('preset', 'islands#dark');
-
-    let placemark = new ymaps.Placemark(center, {}, {
-      iconLayout: "default#image",
-      iconImageHref: "/images/marker.svg",
-      iconImageSize: [40, 40],
-      iconImageOffset: [-19, -44],
-    });
-
-    placemark.events.add("click", function () {
-      const url = "https://yandex.ru/maps/11212/miass/house/ulitsa_60_let_oktyabrya_13a_2/YkkYdg5mQUMGQFtvfXxwcn1gZQ==/?ll=60.096861%2C55.013131&z=17.13";
-      window.open(url, "_blank");
-    });
-
-    mapInstance.geoObjects.add(placemark);
-
-    mapInstance.container.fitToViewport();
-  }
-
-  ymaps.ready(() => {
-    createMap("map");
-
-    window.addEventListener("resize", () => {
-      if (mapInstance && mapInstance.container) {
-        mapInstance.container.fitToViewport();
-      }
-    });
+function createMap(mapId) {
+  const mapInstance = new ymaps.Map(mapId, {
+    center: center,
+    zoom: 16.5,
+    controls: [],
+    type: "yandex#map",
   });
+
+  mapInstance.options.set('preset', 'islands#dark');
+
+  let placemark = new ymaps.Placemark(center, {}, {
+    iconLayout: "default#image",
+    iconImageHref: "/images/marker.svg",
+    iconImageSize: [40, 40],
+    iconImageOffset: [-19, -44],
+  });
+
+  placemark.events.add("click", function () {
+    const url = "https://yandex.ru/maps/11212/miass/house/ulitsa_60_let_oktyabrya_13a_2/YkkYdg5mQUMGQFtvfXxwcn1gZQ==/?ll=60.096861%2C55.013131&z=17.13";
+    window.open(url, "_blank");
+  });
+
+  mapInstance.geoObjects.add(placemark);
+  mapInstance.container.fitToViewport();
 }
 
+ymaps.ready(() => {
+  maps.forEach(mapDiv => createMap(mapDiv.id));
+
+  window.addEventListener("resize", () => {
+    maps.forEach(mapDiv => {
+      const mapObj = ymaps.Map(mapDiv.id);
+      if (mapObj && mapObj.container) mapObj.container.fitToViewport();
+    });
+  });
+});
 
 
 // Страница "Гарантия"
