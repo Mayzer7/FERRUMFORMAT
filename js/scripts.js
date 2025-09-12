@@ -867,3 +867,184 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 });
+
+
+
+
+
+
+
+// Загрузка карты
+
+(async function () {
+  const container = document.getElementById('svgContainer');
+  const tooltip = document.getElementById('mapTooltip');
+  const wrap = document.getElementById('svgWrap');
+
+  const svgPath = wrap.dataset.svg; // <-- путь из data-svg
+
+  const fallbackDelivery = {
+    'zone-1': '1–2 дня',
+    'region-12': '3–5 дней',
+  };
+
+  function showLog(...args) {
+    // console.log('[map]', ...args);
+  }
+
+  function normalizeDeliveryFromAttrs(el) {
+    if (!el || !el.attributes) return;
+    if (el.dataset && el.dataset.delivery) return;
+    for (let i = 0; i < el.attributes.length; i++) {
+      const name = el.attributes[i].name.toLowerCase();
+      const val  = el.attributes[i].value;
+      if (name.includes('deliv') || name.includes('deli') || name.includes('dilev') || name.includes('delivery')) {
+        try { el.dataset.delivery = val; showLog('fixed dataset.delivery from attr', name, val, el.id || el.tagName); } catch (e) { }
+        return;
+      }
+    }
+  }
+
+  function getDeliveryText(el) {
+    if (!el) return '';
+    if (el.dataset && el.dataset.delivery) return el.dataset.delivery;
+    if (el.id && fallbackDelivery[el.id]) return fallbackDelivery[el.id];
+    const title = el.querySelector && el.querySelector('title');
+    if (title) return title.textContent.trim();
+    return 'время доставки неизвестно';
+  }
+
+  function showTooltip(text, clientX, clientY) {
+    tooltip.innerHTML = `
+      <div style="display:flex;align-items:center;gap:8px;">
+        <svg width="20" height="21" viewBox="0 0 20 21" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <g clip-path="url(#clip0_1240_2732)">
+          <path d="M19.999 9.25016C19.999 7.18266 18.3165 5.50016 16.249 5.50016H14.1657V3.41683C14.1657 2.2685 13.2315 1.3335 12.0824 1.3335H9.99902V2.16683H12.0824C12.7715 2.16683 13.3324 2.72766 13.3324 3.41683V15.5002H0.832357V10.5002H-0.000976562V16.3335H1.81236C1.71518 16.6006 1.66554 16.8826 1.66569 17.1668C1.66569 18.5452 2.78736 19.6668 4.16569 19.6668C5.54402 19.6668 6.66569 18.5452 6.66569 17.1668C6.66569 16.8802 6.61569 16.5993 6.51902 16.3335H13.479C13.3818 16.6006 13.3322 16.8826 13.3324 17.1668C13.3324 18.5452 14.454 19.6668 15.8324 19.6668C17.2107 19.6668 18.3324 18.5452 18.3324 17.1668C18.3324 16.8802 18.2824 16.5993 18.1857 16.3335H19.999V9.25016ZM5.83236 17.1668C5.83236 18.086 5.08486 18.8335 4.16569 18.8335C3.24652 18.8335 2.49902 18.086 2.49902 17.1668C2.49902 16.8735 2.57819 16.5893 2.72986 16.3335H5.60152C5.75319 16.5893 5.83236 16.8735 5.83236 17.1668ZM16.249 6.3335C17.8574 6.3335 19.1657 7.64183 19.1657 9.25016V10.5002H14.1657V6.3335H16.249ZM17.499 17.1668C17.499 18.086 16.7515 18.8335 15.8324 18.8335C14.9132 18.8335 14.1657 18.086 14.1657 17.1668C14.1657 16.8735 14.2449 16.5893 14.3965 16.3335H17.2682C17.4199 16.5893 17.499 16.8735 17.499 17.1668ZM14.1657 15.5002V11.3335H19.1657V15.5002H14.1657ZM8.33236 2.16683H-0.000976562V1.3335H8.33236V2.16683ZM6.66569 5.50016H-0.000976562V4.66683H6.66569V5.50016ZM4.99902 8.8335H-0.000976562V8.00016H4.99902V8.8335Z" fill="white"/>
+          </g>
+          <defs>
+          <clipPath id="clip0_1240_2732">
+          <rect width="20" height="20" fill="white" transform="translate(-0.000976562 0.5)"/>
+          </clipPath>
+          </defs>
+        </svg>
+
+        <span>${text}</span>
+      </div>
+    `;
+    tooltip.setAttribute('aria-hidden', 'false');
+    tooltip.classList.add('show');
+    const pad = 12;
+    const tipRect = tooltip.getBoundingClientRect();
+    const vw = document.documentElement.clientWidth;
+    const vh = document.documentElement.clientHeight;
+    let left = clientX + 14;
+    let top = clientY + 14;
+    if (left + tipRect.width + pad > vw) { left = clientX - tipRect.width - 14; }
+    if (left < pad) left = pad;
+    if (top + tipRect.height + pad > vh) { top = clientY - tipRect.height - 14; }
+    if (top < pad) top = pad;
+    tooltip.style.left = Math.round(left) + 'px';
+    tooltip.style.top = Math.round(top) + 'px';
+  }
+  function hideTooltip() { tooltip.classList.remove('show'); tooltip.setAttribute('aria-hidden', 'true'); }
+
+  try {
+    const res = await fetch(svgPath, { cache: 'no-cache' });
+    if (!res.ok) throw new Error('SVG not found: ' + res.status);
+    const svgText = await res.text();
+    container.innerHTML = svgText;
+    const svgEl = container.querySelector('svg');
+    if (!svgEl) throw new Error('Вставленный файл не содержит <svg>');
+    svgEl.setAttribute('role', 'img');
+    svgEl.setAttribute('aria-hidden', 'false');
+
+    const prims = Array.from(svgEl.querySelectorAll('path, polygon, rect, circle, g'));
+    prims.forEach(el => {
+      normalizeDeliveryFromAttrs(el);
+
+      try {
+        if (!el.classList.contains('region')) {
+          let keep = true;
+          if (typeof el.getBBox === 'function') {
+            const bb = el.getBBox();
+            if (bb.width <= 1 || bb.height <= 1) keep = false;
+          }
+          if (keep) el.classList.add('region');
+        }
+      } catch (e) {
+        if (!el.classList.contains('region')) el.classList.add('region');
+      }
+    });
+
+    let targets = Array.from(svgEl.querySelectorAll('[data-delivery], .region, [id^="zone"], [id^="region"], path[data-delivery], polygon[data-delivery], rect[data-delivery]'));
+    if (!targets.length) {
+      targets = Array.from(svgEl.querySelectorAll('path, polygon, rect')).slice(0, 200);
+      showLog('used fallback elements count=', targets.length);
+      targets.forEach(t => t.classList.add('region'));
+    }
+
+    showLog('Interactive SVG ready, regions found:', targets.length);
+    showLog(targets.slice(0,20).map(el => ({ tag: el.tagName, id: el.id || null, class: el.getAttribute('class'), data_delivery: el.dataset ? el.dataset.delivery : null })));
+
+    let activeTouchTarget = null;
+    let lastPointerType = null;
+
+    targets.forEach(el => {
+      if (!el.classList.contains('region')) el.classList.add('region');
+      el.style.pointerEvents = 'auto';
+
+      el.addEventListener('mouseenter', (ev) => {
+        lastPointerType = ev.pointerType || 'mouse';
+        normalizeDeliveryFromAttrs(el);
+        el.classList.add('hovered');
+        const text = getDeliveryText(el);
+        const clientX = ev.clientX || (ev.touches && ev.touches[0] && ev.touches[0].clientX) || 0;
+        const clientY = ev.clientY || (ev.touches && ev.touches[0] && ev.touches[0].clientY) || 0;
+        showTooltip(text, clientX, clientY);
+      });
+
+      el.addEventListener('mousemove', (ev) => {
+        const clientX = ev.clientX || 0;
+        const clientY = ev.clientY || 0;
+        if (tooltip.classList.contains('show')) showTooltip(getDeliveryText(el), clientX, clientY);
+      });
+
+      el.addEventListener('mouseleave', (ev) => {
+        el.classList.remove('hovered');
+        if (lastPointerType !== 'touch') hideTooltip();
+      });
+
+      el.addEventListener('click', (ev) => {
+        ev.preventDefault();
+        ev.stopPropagation();
+        const isSame = activeTouchTarget === el;
+        if (isSame) {
+          el.classList.remove('hovered');
+          hideTooltip();
+          activeTouchTarget = null;
+        } else {
+          if (activeTouchTarget) activeTouchTarget.classList.remove('hovered');
+          activeTouchTarget = el;
+          el.classList.add('hovered');
+          const clientX = (ev.clientX || 0);
+          const clientY = (ev.clientY || 0);
+          showTooltip(getDeliveryText(el), clientX, clientY);
+        }
+      }, { passive: false });
+    });
+
+    document.addEventListener('click', (ev) => {
+      if (!wrap.contains(ev.target)) {
+        targets.forEach(t => t.classList.remove('hovered'));
+        hideTooltip();
+        activeTouchTarget = null;
+      }
+    });
+
+    window.addEventListener('resize', () => { if (tooltip.classList.contains('show')) hideTooltip(); });
+
+  } catch (err) {
+    console.error('Ошибка при загрузке или инициализации SVG:', err);
+    container.innerHTML = '<p style="color:#c00">Не удалось загрузить карту. Проверьте путь к SVG (svgPath) и что файл доступен.</p>';
+  }
+})();

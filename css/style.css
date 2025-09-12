@@ -852,6 +852,105 @@ input[type=number] {
 
 
 
+/* Секция "Доставка" */
+
+.delivery {
+    color: var(--black);
+    background-color: #fff;
+    padding: 80px;
+    background-image: url(../images/delivery-bg.png);
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center center;
+}
+
+
+.svg-wrap { 
+    width: 100%; 
+    max-width: 1400px; 
+    margin: 0 auto; 
+    position: relative; 
+    touch-action: manipulation; 
+}
+  
+.svg-wrap svg { 
+    display: block; 
+    width: 100%; 
+    height: auto; 
+}
+  
+.region { 
+    transition: fill 160ms ease, opacity 160ms ease, transform 160ms ease; 
+    cursor: pointer; 
+    vector-effect: non-scaling-stroke; 
+}
+
+.region.hovered, .region:active { 
+    fill: #cfcfcf !important; 
+    opacity: 0.95; 
+    transform-origin: center; 
+}
+  
+.map-tooltip { 
+    display: flex;
+    align-items: center;
+    gap: 50px;
+    font-family: 'Helvetica Neue Regular', sans-serif;
+    font-size: 16px;
+    font-weight: 300;
+    line-height: 130%;
+    position: fixed; 
+    pointer-events: none; 
+    background: var(--red); 
+    color: #fff;
+    padding: 8px 16px;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.35); 
+    transform-origin: left top; 
+    z-index: 9999; 
+    transition: opacity 120ms ease, transform 120ms ease; opacity: 0; transform: translateY(6px) scale(0.98); 
+}
+
+.map-tooltip.show { 
+    opacity: 1; 
+    transform: translateY(0) scale(1); 
+}
+
+@media (max-width: 480px) { 
+    .map-tooltip { 
+        font-size: 13px;
+        padding: 6px 8px; 
+    } 
+}
+
+/* Подсказки по карте во время разработки */
+
+path[data-delivery="ЗЕЛЕНАЯ ОБЛАСТЬ"] {
+  fill: rgba(0, 255, 0, 0.4);
+  stroke: #008000;
+  stroke-width: 1;
+}
+
+path[data-delivery="ПОИСК СОДЕРЖИМОГО"] {
+  fill: rgba(0, 0, 255, 0.4); 
+  stroke: #0000ff;
+  stroke-width: 1;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 /* Секция "Документы" */
 
 .documents {
