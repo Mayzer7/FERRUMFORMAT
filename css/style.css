@@ -2772,10 +2772,18 @@ path[data-delivery="ПОИСК СОДЕРЖИМОГО"] {
     margin-top: 10px;
 }
 
+.team-card-image {
+    display: block;
+    width: 100%;
+    height: 100%;
+    max-height: 370px;
+}
+
 .team-card-image img{
   display: block;
   width: 100%;
-  height: auto;
+  height: 100%;
+  max-height: 370px;
   vertical-align: middle;
 }
 
@@ -3964,4 +3972,87 @@ path[data-delivery="ПОИСК СОДЕРЖИМОГО"] {
 
 .mdk-portfolio-info {
     padding-bottom: 40px;
+}
+
+
+
+
+
+
+/* Страница "Дилерам и оптовикам" */
+
+.contacts-content-dealers {
+    gap: 60px;
+}
+
+.contacts-content-dealers .get-contact-right-side {
+    margin-top: 30px;
+}
+
+.dealers-content {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+.dealers-left-side-text {
+    font-family: 'Helvetica Neue Regular', sans-serif;
+    font-size: 16px;
+    line-height: 130%;
+}
+
+.dealers-left-side-descs {
+    margin-left: 6px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.dealers-left-side-desc {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.dealers-left-side-title {
+    font-family: 'Helvetica Neue Regular', sans-serif;
+    font-size: 28px;
+    line-height: 110%;
+    letter-spacing: -0.02em;
+    font-weight: 300;
+    margin-bottom: 12px;
+    margin-top: 24px;
+}
+
+.dealers-left-side-desc-text {
+    font-family: 'Helvetica Neue Regular', sans-serif;
+    font-size: 16px;
+    line-height: 130%;
+}
+
+.dealers-right-side img {
+    width: 100%;
+    object-fit: cover;
+    object-position: center center;
+}
+
+.get-contact-right-side-title {
+    font-family: 'Helvetica Neue Regular', sans-serif;
+    font-size: 28px;
+    line-height: 110%;
+    letter-spacing: -0.02em;
+    font-weight: 300;
+}
+
+.get-contact-right-side-descs {
+    margin-top: 40px;
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+}
+
+.get-contact-right-side-desc {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
 }
