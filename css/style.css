@@ -2171,6 +2171,25 @@ path[data-delivery="ПОИСК СОДЕРЖИМОГО"] {
   align-items: center;
 }
 
+.our-work-navigation-buttons button {
+  width: 56px;
+  height: 56px;
+  padding: 0;               
+  display: inline-flex;     
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;   
+  cursor: pointer;
+  overflow: hidden;          
+}
+
+
+.our-work-navigation-buttons button svg {
+  width: 32px;  
+  height: 32px; 
+  display: block; 
+}
+
 .our-work .our-work-navigation-buttons .is-disabled,
 .our-work .our-work-navigation-buttons button[disabled] {
   opacity: 0.35;
@@ -3633,4 +3652,172 @@ path[data-delivery="ПОИСК СОДЕРЖИМОГО"] {
 
 .mdk-main-payment {
     padding-bottom: 20px;
+}
+
+
+
+/* Страница "news-info.html" */
+
+.news-info {
+    font-family: 'Helvetica Neue Regular', sans-serif;
+    font-weight: 300;
+}
+
+.news-info-texts {
+    max-width: 1050px;
+}
+
+.news-info-date {
+    font-size: 16px;
+    color: var(--gray);
+    margin-bottom: 20px;
+}
+
+.news-info h2 {
+    font-size: 20px;
+    letter-spacing: -0.02em;
+    padding-bottom: 20px;
+    font-weight: 300;
+}
+
+.news-info h3 {
+    color: var(--gray);
+    font-size: 18px;
+    padding-bottom: 12px;
+    font-weight: 300;
+}
+
+.news-info ol {
+    padding: 0;
+    margin: 0;
+    padding-left: 30px;
+    padding-bottom: 12px;
+}
+
+.news-info ol li {
+    font-size: 16px;
+}
+
+.news-info ul {
+    padding: 0px;
+    padding-left: 10px;
+}
+
+.news-info ul li {
+    font-size: 16px;
+}
+
+.news-info-text {
+    padding-bottom: 40px;
+}
+
+.news-info p {
+    font-size: 16px;
+    line-height: 130%;
+}
+
+.news-info-tags {
+    padding-top: 40px;
+}
+
+.news-info-tags a {
+    font-size: 16px;
+    color: var(--red);
+}
+
+.news-card-info,
+.news-card-info * {
+  -webkit-user-select: none; 
+  -moz-user-select: none;    
+  -ms-user-select: none;     
+  user-select: none;       
+  -webkit-touch-callout: none; 
+  -webkit-tap-highlight-color: transparent; 
+}
+
+.news-card-info {
+    margin-top: 12px;
+}
+
+.news-card-info-title {
+    font-family: 'Helvetica Neue Regular', sans-serif;
+    font-size: 20px;
+    letter-spacing: -0.02em;
+    font-weight: 300;
+    padding-bottom: 8px;
+}
+
+.news-card-info-desc {
+    font-family: 'Helvetica Neue Regular', sans-serif;
+    font-size: 16px;
+    line-height: 130%;
+    color: var(--gray);
+    padding-bottom: 16px;
+}
+
+.news-card-info-price {
+    font-family: 'Helvetica Neue Medium', sans-serif;
+    font-size: 28px;
+    color: var(--black);
+    line-height: 110%;
+    padding-bottom: 16px;
+    letter-spacing: -0.02em;
+}
+
+.get-kp-btn {
+    font-size: 16px;
+    width: 100%;
+    border: 1px solid var(--black);
+    color: var(--black);
+    padding: 17.5px;
+    transition: all 0.3s ease;
+    background: #fff;
+}
+
+.get-kp-btn:hover {
+    background: var(--black);
+    color: #fff;
+}
+
+.our-work .news-info-cards.swiper {
+  padding: 0px 75px 32px 80px;
+  box-sizing: border-box;
+  position: relative;
+}
+
+.our-work .news-info-cards .swiper-wrapper {
+  display: flex;           
+  gap: 10px;              
+  align-items: stretch;
+}
+
+.our-work .news-info-cards .swiper-slide {
+  width: auto;             
+  flex: 0 0 auto;          
+  max-width: 360px;
+  box-sizing: border-box;
+}
+
+.news-info-card-image {
+  width: 100%;
+  width: 360px;
+  height: 317px;      
+  overflow: hidden;   
+  position: relative;
+  background: #F5F5F5;  
+}
+
+.news-info-card-image model-viewer {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: contain;
+  transform-origin: center center;
+}
+
+.news-info-card-image-3d-icon {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    pointer-events: none;
 }

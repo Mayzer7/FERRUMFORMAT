@@ -1,3 +1,5 @@
+// Появление шапки
+
 document.addEventListener('DOMContentLoaded', function () {
   const buttons = document.querySelectorAll('.header-navigation[data-open]');
   const menus = document.querySelectorAll('.header-menu-open[data-open]');
@@ -48,7 +50,6 @@ document.addEventListener('DOMContentLoaded', function () {
   const header = document.querySelector('.header');
   if (!header) return;
 
-  // проверяем, можно ли делать прозрачной
   const canBeTransparent = document.body.dataset.headerTransparent === "true";
 
   let lastScrollY = window.scrollY || window.pageYOffset;
@@ -1044,3 +1045,65 @@ document.addEventListener('DOMContentLoaded', () => {
     container.innerHTML = '<p style="color:#c00">Не удалось загрузить карту. Проверьте путь к SVG (svgPath) и что файл доступен.</p>';
   }
 })();
+
+
+
+// Переключение карточек в секции "Товары из статьи" с 3d моделями
+
+const newsInfoCardsSwiper = document.querySelector('.news-info-cards.swiper');
+
+if (newsInfoCardsSwiper) {
+  const swiper = new Swiper('.news-info-cards.swiper', {
+      slidesPerView: 'auto',
+      spaceBetween: 10,
+      grabCursor: true,
+      loop: false,
+      navigation: {
+        nextEl: '.navigation-right-btn',
+        prevEl: '.navigation-left-btn',
+      },
+      pagination: {
+        el: '.swiper-pagination',
+        clickable: true,
+      },
+    });
+
+    document.querySelectorAll('model-viewer, [data-interactive="true"]').forEach(el => {
+      el.addEventListener('pointerdown', (e) => {
+        e.stopPropagation();  
+        try { swiper.allowTouchMove = false; } catch (err) {}
+      }, {passive: false});
+
+      const enableSwiper = (e) => {
+        e && e.stopPropagation();
+        try { swiper.allowTouchMove = true; } catch (err) {}
+      };
+
+      el.addEventListener('pointerup', enableSwiper);
+      el.addEventListener('pointercancel', enableSwiper);
+      el.addEventListener('mouseleave', enableSwiper);
+      el.addEventListener('touchend', enableSwiper);
+
+      el.addEventListener('click', (e) => {
+        e.stopPropagation();
+      });
+
+      el.addEventListener('wheel', e => {
+        e.stopPropagation();
+      }, { passive: true });
+
+      el.addEventListener('touchstart', e => e.stopPropagation(), { passive: true });
+      el.addEventListener('touchmove', e => e.stopPropagation(), { passive: true });
+    });
+
+    let dragging = false;
+    swiper.on('touchStart', () => { dragging = false; });
+    swiper.on('touchMove', () => { dragging = true; });
+    document.querySelectorAll('.our-work-card').forEach(card => {
+      card.addEventListener('click', (e) => {
+        if (dragging) e.preventDefault(); 
+      });
+    });
+}
+
+
