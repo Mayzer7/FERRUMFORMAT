@@ -114,8 +114,7 @@ li {
 }
 
 li::marker {
-  font-size: 14px; /* размер точки меньше текста */
-  color: var(--black);
+  font-size: 14px; 
 }
 
 h1, h2, h3, h4, h5, h6, p {
@@ -1307,6 +1306,7 @@ path[data-delivery="ПОИСК СОДЕРЖИМОГО"] {
     height: 200px; 
     overflow: hidden;
     margin-bottom: 20px;
+    position: relative;
 }
 
 .blog-card-image img {
@@ -1314,6 +1314,15 @@ path[data-delivery="ПОИСК СОДЕРЖИМОГО"] {
     height: 100%;
     object-fit: cover; 
     display: block;
+}
+
+.blog-card-image-banner {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    background-color: #F5F5F5;
+    padding: 0px 49px;
+    border: 1px solid #C1C1C1;
 }
 
 .blog-card-title {
@@ -3498,7 +3507,7 @@ path[data-delivery="ПОИСК СОДЕРЖИМОГО"] {
 
 .news-tags {
     display: inline-flex;
-    border-bottom: 1px solid #E9E9E9; 
+    border-bottom: 1px solid #E9E9E9;
 }
 
 .news-tag {
@@ -3537,6 +3546,7 @@ path[data-delivery="ПОИСК СОДЕРЖИМОГО"] {
     align-items: center;
     gap: 6px;
     position: relative;
+    padding-bottom: 4px; 
 }
 
 .text-and-icon::after {
@@ -3821,3 +3831,42 @@ path[data-delivery="ПОИСК СОДЕРЖИМОГО"] {
     right: 20px;
     pointer-events: none;
 }
+
+
+
+
+
+/* Страница "Портфолио" */
+
+.mdk-main-portfolio {
+    padding-bottom: 40px;
+}
+
+.delivery-portfolio {
+    padding-bottom: 0px;
+}
+
+.portfolio-card-title {
+    color: var(--gray);
+    font-family: 'Helvetica Neue Regular', sans-serif;
+    font-size: 18px;
+    font-weight: 300;
+}
+
+.portfolio-card-info-last {
+    margin-top: 12px;
+}
+
+.portfolio-card-info ul {
+    margin-top: 4px;
+    margin-left: 10px;
+    min-height: 50px;
+}
+
+.portfolio-card-desc {
+    font-family: 'Helvetica Neue Regular', sans-serif;
+    font-size: 16px;
+    line-height: 130%;
+    margin-top: 4px;
+}
+

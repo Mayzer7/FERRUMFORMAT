@@ -808,7 +808,7 @@ document.addEventListener('DOMContentLoaded', () => {
     slidesPerView: 'auto',
     spaceBetween: 60,
     freeMode: true,
-    grabCursor: true,
+    grabCursor: false,
     loop: false,
   });
 
