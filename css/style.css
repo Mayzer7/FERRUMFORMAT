@@ -4056,3 +4056,39 @@ path[data-delivery="ПОИСК СОДЕРЖИМОГО"] {
     flex-direction: column;
     gap: 12px;
 }
+
+
+
+
+
+/* Страница "404" */
+
+.mdk-main-404 {
+    background-image: url("../images/404-bg.png");
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center center;
+    padding: 170px 80px;
+    padding-bottom: 200px;
+}
+
+.content-404 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: center;
+}
+
+.title-404 {
+    font-family: 'Helvetica Neue Light', sans-serif;
+    font-size: 200px;
+    line-height: 110%;
+    font-weight: 300;
+    color: #CDCDCD;
+}
+
+.content-right-404 p {
+    font-family: 'Helvetica Neue Regular', sans-serif;
+    font-size: 20px;
+    letter-spacing: -0.02em;
+    font-weight: 300;
+}
