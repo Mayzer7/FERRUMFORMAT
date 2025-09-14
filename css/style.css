@@ -1750,6 +1750,9 @@ path[data-delivery="ПОИСК СОДЕРЖИМОГО"] {
 }
 
 .mdk-main-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
     font-family: 'Helvetica Neue Light', sans-serif;
     font-size: 45px;
     font-weight: 300;
@@ -4091,4 +4094,91 @@ path[data-delivery="ПОИСК СОДЕРЖИМОГО"] {
     font-size: 20px;
     letter-spacing: -0.02em;
     font-weight: 300;
+}
+
+
+
+
+
+/* Страница "Успех отправки" */
+
+.success-content-left-text,
+.error-content-left-text {
+    font-family: 'Helvetica Neue Regular', sans-serif;
+    font-size: 22px;
+    letter-spacing: -0.02em;
+    font-weight: 300;
+    line-height: 110%;
+    margin-bottom: 20px;
+}
+
+.success-content {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+}
+
+.success-link {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: center;
+    gap: 10px;
+    border-top: 1px solid #C1C1C1;
+    padding: 17px 12px;
+}
+
+.success-link:last-child {
+    border-bottom: 1px solid #C1C1C1;
+}
+
+.success-link-title {
+    font-family: 'Helvetica Neue Regular', sans-serif;
+    font-size: 16px;
+    font-weight: 300;
+    color: var(--gray);
+}
+
+.success-link a {
+    font-family: 'Helvetica Neue Regular', sans-serif;
+    font-size: 18px;
+    font-weight: 300;
+}
+
+.success-banners-text {
+    font-family: 'Helvetica Neue Regular', sans-serif;
+    font-size: 20px;
+    letter-spacing: -0.02em;
+    font-weight: 300;
+}
+
+.success-banners {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    max-width: 513px;
+    width: 100%;
+}
+
+.success-banner {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.success-banner svg {
+    flex-shrink: 0; 
+    width: 48px;
+    height: 48px;
+}
+
+.try-again-btn {
+    padding: 17.5px;
+    font-size: 16px;
+    max-width: 250px;
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+.error-content-left-text {
+    margin-bottom: 32px;
 }
