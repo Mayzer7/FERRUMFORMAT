@@ -3870,3 +3870,98 @@ path[data-delivery="ПОИСК СОДЕРЖИМОГО"] {
     margin-top: 4px;
 }
 
+
+
+
+
+/* Страница "Портфолио детальная" */
+
+.portfolio-info-title {
+    max-width: 1480px;
+    width: 100%;
+}
+
+.portfolio-info-descs {
+    display: flex;
+    flex-direction: column;
+    gap: 0px;
+    margin-bottom: 32px;
+}
+
+.portfolio-info-desc {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    border-bottom: 1px solid #C1C1C1;
+    padding: 16px 12px;
+}
+
+.portfolio-info-desc-title {
+    font-family: 'Helvetica Neue Regular', sans-serif;
+    font-size: 16px;
+    color: #8A8A8A;
+    font-weight: 300;
+}
+
+.portfolio-info-content {
+    align-items: flex-start;
+}
+
+.portfolio-info-desc-text {
+    font-family: 'Helvetica Neue Regular', sans-serif;
+    font-size: 18px;
+}
+
+.portfolio-info-right-title {
+    font-family: 'Helvetica Neue Regular', sans-serif;
+    font-size: 28px;
+    line-height: 110%;
+    letter-spacing: -0.02em;
+    font-weight: 300;
+    margin-bottom: 20px;
+}
+
+.portfolio-info-right-desc {
+    font-family: 'Helvetica Neue Regular', sans-serif;
+    font-size: 16px;
+    line-height: 130%;
+    margin-bottom: 16px;
+}
+
+.portfolio-info-right-subtitle {
+    font-family: 'Helvetica Neue Regular', sans-serif;
+    font-size: 22px;
+    color: var(--gray);
+    line-height: 110%;
+    letter-spacing: -0.02em;
+    font-weight: 300;
+    margin-bottom: 8px;
+}
+
+.key-features {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.key-feature {
+    display: flex;
+    align-items: center;
+    text-align: center;
+    gap: 10px;
+}
+
+.key-feature-text {
+    font-family: 'Helvetica Neue Regular', sans-serif;
+    font-size: 16px;
+    line-height: 130%;
+}
+
+.request-payment-btn {
+    width: 100%;
+    margin-top: 32px;
+    padding: 17.5px;
+}
+
+.mdk-portfolio-info {
+    padding-bottom: 40px;
+}
