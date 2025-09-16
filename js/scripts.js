@@ -4,6 +4,40 @@ document.addEventListener('DOMContentLoaded', function () {
   const buttons = document.querySelectorAll('.header-navigation[data-open]');
   const menus = document.querySelectorAll('.header-menu-open[data-open]');
   const header = document.querySelector('.header');
+  const headerFirstLine = document.querySelector('.header-first-line');
+  const headerMobileLine = document.querySelector('.header-mobile-line');
+  const headerMobileLineP = document.querySelector('.header-mobile-line p');
+  const headerMobileEmail = document.querySelector('.header-mobile-email');
+  const headerMobilePhone = document.querySelector('.header-mobile-phone');
+  const headerLastLine = document.querySelector('.header-last-line');
+
+  const burgerBtn = document.querySelector('.burger-btn');
+  const burgerMenu = document.querySelector('.header-menu-open-burger');
+
+  let _scrollPosition = null; 
+
+  function lockBodyScroll() {
+    if (_scrollPosition !== null) return; 
+    _scrollPosition = window.scrollY || window.pageYOffset || 0;
+    document.body.style.top = `-${_scrollPosition}px`;
+    document.body.classList.add('no-scroll');
+  }
+
+  function unlockBodyScroll() {
+    if (_scrollPosition === null) return; 
+    document.body.classList.remove('no-scroll');
+    document.body.style.top = '';
+    window.scrollTo(0, _scrollPosition);
+    _scrollPosition = null;
+  }
+
+  function positionBurgerMenu() {
+    if (!burgerMenu) return;
+    const headerEl = document.querySelector('.header');
+    const headerHeight = headerEl ? headerEl.getBoundingClientRect().height : 0;
+    burgerMenu.style.top = `${headerHeight}px`;
+    burgerMenu.style.height = `calc(100vh - ${headerHeight}px)`;
+  }
 
   function closeAllMenus() {
     menus.forEach(m => m.classList.remove('is-open'));
@@ -12,7 +46,39 @@ document.addEventListener('DOMContentLoaded', function () {
       b.setAttribute('aria-expanded', 'false');
     });
 
+    if (burgerMenu) burgerMenu.classList.remove('is-open');
+    if (burgerBtn) {
+      burgerBtn.classList.remove('is-active');
+      burgerBtn.setAttribute('aria-expanded', 'false');
+    }
+
     if (header) header.classList.remove('header--menu-open');
+
+    unlockBodyScroll();
+  }
+
+  if (burgerBtn && burgerMenu) {
+    burgerBtn.addEventListener('click', function (e) {
+      e.stopPropagation();
+      const opened = burgerMenu.classList.contains('is-open');
+      closeAllMenus();
+      if (!opened) {
+        positionBurgerMenu();
+        burgerMenu.classList.add('is-open');
+        burgerBtn.classList.add('is-active');
+        burgerBtn.setAttribute('aria-expanded', 'true');
+
+        lockBodyScroll();
+
+        if (header) header.classList.add('header--menu-open');
+      } else {
+        burgerBtn.setAttribute('aria-expanded', 'false');
+      }
+    });
+
+    burgerMenu.addEventListener('click', function (e) {
+      e.stopPropagation();
+    });
   }
 
   buttons.forEach(btn => {
@@ -28,7 +94,6 @@ document.addEventListener('DOMContentLoaded', function () {
         menu.classList.add('is-open');
         btn.classList.add('is-active');
         btn.setAttribute('aria-expanded', 'true');
-
         if (header) header.classList.add('header--menu-open');
       }
     });
@@ -43,138 +108,203 @@ document.addEventListener('DOMContentLoaded', function () {
   });
 
   document.addEventListener('keydown', function (e) {
-    if (e.key === 'Escape') closeAllMenus();
+    if (e.key === 'Escape' || e.key === 'Esc') closeAllMenus();
   });
 
-  (function () {
-  const header = document.querySelector('.header');
-  if (!header) return;
+  (function headerScrollController() {
+    if (!header) return;
 
-  const canBeTransparent = document.body.dataset.headerTransparent === "true";
+    const canBeTransparent = document.body.dataset.headerTransparent === "true";
+    let lastScrollY = window.scrollY || window.pageYOffset || 0;
+    let ticking = false;
+    const tolerance = 12;
+    const offsetToHide = 60;
+    const offsetToOpaque = 20;
 
-  let lastScrollY = window.scrollY || window.pageYOffset;
-  let ticking = false;
-  const tolerance = 12;
-  const offsetToHide = 60;
-  const offsetToOpaque = 20;
-
-  function setOpaque(forceOpaque = null, currentY = window.scrollY || window.pageYOffset) {
-    if (!canBeTransparent) {
-      header.classList.add('header--opaque');
-      header.classList.remove('header--top');
-      return;
+    function setOpaque(forceOpaque = null, currentY = window.scrollY || window.pageYOffset || 0) {
+      if (!canBeTransparent) {
+        header.classList.add('header--opaque');
+        header.classList.remove('header--top');
+        return;
+      }
+      if (header.classList.contains('header--menu-open')) {
+        header.classList.add('header--opaque');
+        header.classList.remove('header--top');
+        return;
+      }
+      if (forceOpaque === true) {
+        header.classList.add('header--opaque');
+        header.classList.remove('header--top');
+        return;
+      }
+      if (forceOpaque === false) {
+        header.classList.remove('header--opaque');
+        header.classList.add('header--top');
+        return;
+      }
+      if (currentY > offsetToOpaque) {
+        header.classList.add('header--opaque');
+        header.classList.remove('header--top');
+        if (burgerBtn) burgerBtn.classList.remove('opaque');
+        if (headerFirstLine) headerFirstLine.classList.remove('opaque');
+        if (headerMobileLine) headerMobileLine.classList.remove('opaque');
+        if (headerMobileLineP) headerMobileLineP.classList.remove('opaque');
+        if (headerMobileEmail) headerMobileEmail.classList.remove('opaque');
+        if (headerMobilePhone) headerMobilePhone.classList.remove('opaque');
+        if (headerLastLine) headerLastLine.classList.remove('opaque');
+      } else {
+        header.classList.remove('header--opaque');
+        header.classList.add('header--top');
+        if (burgerBtn) burgerBtn.classList.add('opaque');
+        if (headerFirstLine) headerFirstLine.classList.add('opaque');
+        if (headerMobileLine) headerMobileLine.classList.add('opaque');
+        if (headerMobileLineP) headerMobileLineP.classList.add('opaque');
+        if (headerMobileEmail) headerMobileEmail.classList.add('opaque');
+        if (headerMobilePhone) headerMobilePhone.classList.add('opaque');
+        if (headerLastLine) headerLastLine.classList.add('opaque');
+      }
     }
 
-    if (header.classList.contains('header--menu-open')) {
-      header.classList.add('header--opaque');
-      header.classList.remove('header--top');
-      return;
-    }
-
-    if (forceOpaque === true) {
-      header.classList.add('header--opaque');
-      header.classList.remove('header--top');
-      return;
-    }
-    if (forceOpaque === false) {
-      header.classList.remove('header--opaque');
-      header.classList.add('header--top');
-      return;
-    }
-
-    if (currentY > offsetToOpaque) {
-      header.classList.add('header--opaque');
-      header.classList.remove('header--top');
-    } else {
-      header.classList.remove('header--opaque');
-      header.classList.add('header--top');
-    }
-  }
-
-  function showHeader() {
-    header.classList.remove('header--hidden');
-    header.classList.add('header--visible');
-    setOpaque(null);
-  }
-
-  function hideHeader() {
-    header.classList.add('header--hidden');
-    header.classList.remove('header--visible');
-  }
-
-  function updateOnScroll() {
-    const currentY = window.scrollY || window.pageYOffset;
-    
-    if (document.querySelector('.header-menu-open.is-open') || header.classList.contains('header--menu-open')) {
+    function showHeader() {
       header.classList.remove('header--hidden');
       header.classList.add('header--visible');
-      setOpaque(true);
-      lastScrollY = currentY;
-      ticking = false;
-      return;
+      setOpaque(null);
     }
 
-    const delta = currentY - lastScrollY;
+    function hideHeader() {
+      header.classList.add('header--hidden');
+      header.classList.remove('header--visible');
+    }
 
-    if (Math.abs(delta) > tolerance) {
-      if (delta > 0 && currentY > offsetToHide) {
-        // скролл вниз
-        hideHeader();
-      } else if (delta < 0) {
-        // скролл вверх
-        showHeader();
+    function updateOnScroll() {
+      const currentY = window.scrollY || window.pageYOffset || 0;
+
+      if (document.querySelector('.header-menu-open.is-open') || header.classList.contains('header--menu-open')) {
+        header.classList.remove('header--hidden');
+        header.classList.add('header--visible');
+        setOpaque(true);
+        lastScrollY = currentY;
+        ticking = false;
+        return;
       }
-      lastScrollY = currentY;
+
+      const delta = currentY - lastScrollY;
+      if (Math.abs(delta) > tolerance) {
+        if (delta > 0 && currentY > offsetToHide) {
+          // скролл вниз
+          hideHeader();
+        } else if (delta < 0) {
+          // скролл вверх
+          showHeader();
+        }
+        lastScrollY = currentY;
+      }
+
+      // если вверху страницы шапка прозрачная
+      if (currentY <= 0) {
+        showHeader();
+        setOpaque(false);
+      } else {
+        setOpaque(null, currentY);
+      }
+
+      ticking = false;
     }
 
-    // если вверху страницы шапка прозрачная
-    if (currentY <= 0) {
-      showHeader();
-      setOpaque(false);
-    } else {
-      setOpaque(null, currentY);
-    }
+    window.addEventListener('scroll', function () {
+      if (!ticking) {
+        window.requestAnimationFrame(updateOnScroll);
+        ticking = true;
+      }
+    }, { passive: true });
 
-    ticking = false;
+    window.addEventListener('wheel', function (e) {
+      if (document.querySelector('.header-menu-open.is-open') || (burgerMenu && burgerMenu.classList.contains('is-open'))) return;
+      if (Math.abs(e.deltaY) < 1) return;
+      if (e.deltaY > 0 && window.scrollY > offsetToHide) hideHeader();
+      else if (e.deltaY < 0) showHeader();
+    }, { passive: true });
+
+    let touchStartY = null;
+    window.addEventListener('touchstart', function (e) {
+      if (e.touches && e.touches.length) touchStartY = e.touches[0].clientY;
+    }, { passive: true });
+
+    window.addEventListener('touchmove', function (e) {
+      if (!touchStartY) return;
+
+      if (document.querySelector('.header-menu-open.is-open') || (burgerMenu && burgerMenu.classList.contains('is-open'))) return;
+      const y = e.touches[0].clientY;
+      const delta = touchStartY - y;
+      if (Math.abs(delta) > tolerance) {
+        if (delta > 0 && window.scrollY > offsetToHide) hideHeader();
+        else if (delta < 0) showHeader();
+        touchStartY = y;
+      }
+    }, { passive: true });
+
+    window.addEventListener('resize', function () {
+      lastScrollY = window.scrollY || window.pageYOffset || 0;
+      positionBurgerMenu();
+    });
+
+    setOpaque(null, window.scrollY || window.pageYOffset || 0);
+    showHeader();
+  })();
+
+  positionBurgerMenu();
+
+  if (burgerMenu && burgerMenu.classList.contains('is-open')) {
+    lockBodyScroll();
+    positionBurgerMenu();
   }
-
-  window.addEventListener('scroll', function () {
-    if (!ticking) {
-      window.requestAnimationFrame(updateOnScroll);
-      ticking = true;
-    }
-  }, { passive: true });
-
-  window.addEventListener('wheel', function (e) {
-    if (document.querySelector('.header-menu-open.is-open')) return;
-    if (Math.abs(e.deltaY) < 1) return;
-    if (e.deltaY > 0 && window.scrollY > offsetToHide) hideHeader();
-    else if (e.deltaY < 0) showHeader();
-  }, { passive: true });
-
-  let touchStartY = null;
-  window.addEventListener('touchstart', function (e) {
-    if (e.touches && e.touches.length) touchStartY = e.touches[0].clientY;
-  }, { passive: true });
-
-  window.addEventListener('touchmove', function (e) {
-    if (!touchStartY || document.querySelector('.header-menu-open.is-open')) return;
-    const y = e.touches[0].clientY;
-    const delta = touchStartY - y;
-    if (Math.abs(delta) > tolerance) {
-      if (delta > 0 && window.scrollY > offsetToHide) hideHeader();
-      else if (delta < 0) showHeader();
-      touchStartY = y;
-    }
-  }, { passive: true });
-
-  window.addEventListener('resize', function () {
-    lastScrollY = window.scrollY || window.pageYOffset;
-  });
-  setOpaque(null, window.scrollY || window.pageYOffset);
-  showHeader();
-})();
 });
+
+
+
+
+
+
+
+const swiperBgElement = document.querySelector('.bg-swiper');
+
+if (swiperBgElement) {
+  const bgSwiper = new Swiper('.bg-swiper', {
+    loop: false,
+    effect: 'fade',
+    speed: 600,
+    allowTouchMove: true,
+    simulateTouch: true,
+    autoplay: { delay: 5000 },
+    navigation: {
+      nextEl: '.navigation-right-btn',
+      prevEl: '.navigation-left-btn',
+    },
+  });
+
+    const banner = document.querySelector('.current-page-info-banner');
+    function updateBanner() {
+      const real = bgSwiper.realIndex + 1;
+      const total = bgSwiper.slides.length - (bgSwiper.loop ? 0 : 0); 
+      if (banner) banner.textContent = `${real}-${bgSwiper.slides.length - bgSwiper.loop ? bgSwiper.slides.length : bgSwiper.slides.length}`;
+    }
+    bgSwiper.on('slideChange', updateBanner);
+    updateBanner();
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 // Переключение карточек в секции "Наши работы"
@@ -289,7 +419,6 @@ document.addEventListener('DOMContentLoaded', function () {
     const openArea = card.querySelector('.our-production-info-card-open');
     const btn = card.querySelector('.open-our-production-info-card-btn');
 
-    // Инициализация состояния
     openArea.style.display = 'none';
     openArea.style.height = '0px';
     btn.setAttribute('aria-expanded', 'false');
@@ -302,25 +431,21 @@ document.addEventListener('DOMContentLoaded', function () {
       btn.setAttribute('aria-expanded', 'true');
       card.setAttribute('aria-expanded', 'true');
 
-      // показать блок, установить высоту в scrollHeight для анимации
       openArea.style.display = 'block';
       const fullHeight = openArea.scrollHeight + 'px';
-      // сначала force reflow, чтобы transition сработал корректно
       openArea.style.height = '0px';
       requestAnimationFrame(() => {
         openArea.style.height = fullHeight;
       });
-      // после окончания анимации ставим авто-высоту чтобы контент мог менять размер
     }
 
     // закрыть
     function closeCard() {
       if (!card.classList.contains('is-open')) return;
-      // перед анимацией установим текущую реальную высоту (в px),
-      // чтобы переход до 0 был плавным (и не от auto)
+
       const currentHeight = openArea.scrollHeight + 'px';
       openArea.style.height = currentHeight;
-      // ensure reflow
+
       requestAnimationFrame(() => {
         openArea.style.height = '0px';
       });
@@ -329,8 +454,7 @@ document.addEventListener('DOMContentLoaded', function () {
       btn.setAttribute('aria-expanded', 'false');
       card.setAttribute('aria-expanded', 'false');
     }
-
-    // По завершении transition: если открыт — сделать высоту auto, если закрыт — скрыть display
+    
     openArea.addEventListener('transitionend', (ev) => {
       if (ev.propertyName !== 'height') return;
       if (card.classList.contains('is-open')) {
@@ -340,10 +464,9 @@ document.addEventListener('DOMContentLoaded', function () {
       }
     });
 
-    // Клик по карточке: переключаем, но игнорируем клики по самому открытому контенту
     card.addEventListener('click', (e) => {
-      if (e.target.closest('.our-production-info-card-open')) return; // не трогаем при клике в контенте
-      // если нажали на кнопку — обработается отдельно (мы остановим всплытие). Но обрабатываем общий клик тоже.
+      if (e.target.closest('.our-production-info-card-open')) return;
+  
       if (card.classList.contains('is-open')) {
         closeCard();
       } else {
@@ -351,13 +474,11 @@ document.addEventListener('DOMContentLoaded', function () {
       }
     });
 
-    // Клик по кнопке — останавливаем всплытие и переключаем
     btn.addEventListener('click', (e) => {
       e.stopPropagation();
       if (card.classList.contains('is-open')) closeCard(); else openCard();
     });
 
-    // Клавиши (Enter / Space) для accessibility: переключаем карточку при фокусе
     card.addEventListener('keydown', (e) => {
       if (e.key === 'Enter' || e.key === ' ' || e.key === 'Spacebar') {
         e.preventDefault();
