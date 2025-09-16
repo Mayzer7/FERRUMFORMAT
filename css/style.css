@@ -1036,7 +1036,7 @@ input[type=number] {
 
 .transparent-btn {
     font-family: 'Helvetica Neue Light', sans-serif;
-    font-size: 20px;
+    font-size: 16px;
     color: #fff;
     text-transform: uppercase;
     display: flex;
@@ -1123,7 +1123,6 @@ input[type=number] {
 
 .main-content-last-line-info-card-bottom p {
     font-size: 20px;
-    max-width: 300px;
     width: 100%;
 }
 
