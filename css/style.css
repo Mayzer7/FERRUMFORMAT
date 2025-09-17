@@ -1934,7 +1934,8 @@ input[type=number] {
     }
 
     .about-us {
-        background-image: url("../images/about-us-bg-mobile.png");
+        background-image: none;
+        background-color: var(--black);
     }
 }
 
@@ -1960,7 +1961,6 @@ input[type=number] {
     background-color: #fff;
     padding: 0px 80px;
     padding-bottom: 100px;
-    background-image: url(../images/delivery-bg.png);
     background-repeat: no-repeat;
     background-size: cover;
     background-position: center center;
@@ -1968,10 +1968,17 @@ input[type=number] {
     z-index: 2;
 }
 
+.delivery-map {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
 .delivery-content-top-left {
     position: absolute;
     top: 100px;
     z-index: 3;
+    pointer-events: none;
 }
 
 .delivery-content-top-right {
@@ -2207,6 +2214,11 @@ path[data-delivery="ПОИСК СОДЕРЖИМОГО"] {
     color: var(--black);
 }
 
+/* Адаптив секции "Доставка" */
+
+@media (max-width: 1500px) {
+    
+}
 
 
 /* Секция "Документы" */
