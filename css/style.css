@@ -165,23 +165,13 @@ input[type=number] {
 }
 
 :root {
-  /* --dark-blue: #15284E;
-  --blue: #2F5CB7;
-  --gray-bg: #F8F8F8;
-  --light-blue: #DAE7FC;
-  --light-blue-dark: #B8CCE8;
-  --white-80: rgba(255, 255, 255, 0.8);
-  --border-button: #CDD4DD;
-  --gray: #EEEEEE;
-  --gray-text: #8A93A6;
-  --error-text: #FE3B3B; */
-
   --dark-gray: #282828;
   --black: #1A1A1A;
   --red: #D51A1A;
   --stroke: rgba(0, 0, 0, 0.4);
   --gray: #8A8A8A;
   --outline-black: #535353;
+  --stroke-gray: #C1C1C1;
 }
 
 
@@ -1137,12 +1127,14 @@ input[type=number] {
 }
 
 @media (max-width: 1580px) {
-    .main-content {
-        padding: 0px 40px;
-    }
+    
 }
 
 @media (max-width: 1500px) {
+    .main-content {
+        padding: 0px 40px;
+    }
+
     .bg-swiper {
         height: 832px;
     }
@@ -1364,7 +1356,7 @@ input[type=number] {
 
 .we-produce-card {
     position: relative;
-    border-top: 1px solid var(--stroke);
+    border-top: 1px solid var(--stroke-gray);
     padding: 24px 12px 24px 20px;
 
     display: grid;
@@ -1372,7 +1364,7 @@ input[type=number] {
 }
 
 .we-produce-card:last-child {
-    border-bottom: 1px solid var(--stroke);
+    border-bottom: 1px solid var(--stroke-gray);
 }
 
 .we-produce-card-second-column {
@@ -1454,12 +1446,12 @@ input[type=number] {
 }
 
 .we-produce-additionally-card {
-    border-top: 1px solid var(--stroke);
+    border-top: 1px solid var(--stroke-gray);
     padding: 16px 12px;
 }
 
 .we-produce-additionally-card:last-child {
-    border-bottom: 1px solid var(--stroke);
+    border-bottom: 1px solid var(--stroke-gray);
 }
 
 .we-produce-additionally-card p {
@@ -1582,6 +1574,24 @@ input[type=number] {
         max-width: 280px;
         max-height: 194px;
     }
+
+    .we-produce-additionally-title {
+        margin-top: 50px;
+        margin-bottom: 20px;
+        font-size: 32px;
+    }
+
+    .we-produce-additionally-card {
+        padding: 12px;
+    }
+
+    .we-produce-additionally-card p {
+        font-size: 24px;
+    }
+
+    .section-name-text {
+        font-size: 14px;
+    } 
 }
 
 @media (max-width: 1330px) {
@@ -1693,14 +1703,28 @@ input[type=number] {
     .we-produce-card-banner {
         font-size: 14px;
         padding: 2px 8px;
-        padding-top: 5px;
+        /* padding-top: 5px; */
     }
 
     .we-produce-card-banners svg {
         flex-shrink: 0;
         width: 10px;
         height: 10px;
-        margin-bottom: 2px;
+        /* margin-bottom: 2px; */
+    }
+
+    .we-produce-additionally-title {
+        font-size: 24px;
+        margin-top: 40px;
+        margin-bottom: 16px;
+    }
+
+    .we-produce-additionally-card {
+        padding: 12px 8px;
+    }
+
+    .we-produce-additionally-card p {
+        font-size: 20px;
     }
 }
 
@@ -1708,7 +1732,7 @@ input[type=number] {
 
 .about-us {
     color: #fff;
-    padding: 100px 80px;
+    padding: 90px 80px;
     background-image: url(../images/about-us-bg.png);
     background-repeat: no-repeat;
     background-size: cover;
@@ -1722,7 +1746,7 @@ input[type=number] {
 }
 
 .about-us-advantages-cards {
-    margin-top: 60px;
+    margin-top: 40px;
     display: grid;
     grid-template-columns: repeat(5, 1fr);
     gap: 0px;
@@ -1766,35 +1790,31 @@ input[type=number] {
 
 
 .video-play {
+  padding: 23px; 
+  border: 1px solid #fff;
+  background: transparent;
+  cursor: pointer;
   position: absolute;
   left: 50%;
   top: 50%;
-  transform: translate(-50%, -50%);
-
+  transform: translate(-50%, -50%) scale(1);
   display: flex;
   align-items: center;
   justify-content: center;
-
-  border: 1px solid #fff;  
-  padding: 29px 27px 29px 36px;              
-
-  background: transparent;
-  cursor: pointer;
-  z-index: 5;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-.video-play svg {
-  width: 3vw;
-  height: auto;
-  max-width: 40px;  
-  min-width: 20px;   
-  display: block;
-  pointer-events: none;
 }
 
 .video-play:hover {
   transform: translate(-50%, -50%) scale(1.05);
+}
+
+.video-play svg {
+  max-width: 30px;  
+  min-width: 30px;   
+  max-height: 33px;
+  min-height: 33px;
+  display: block;
+  pointer-events: none;
 }
 
 .about-us-advantages-card-number {
@@ -1802,7 +1822,7 @@ input[type=number] {
     color: #434343;
     font-size: 50px;
     text-align: right;
-    margin-bottom: 46px;
+    margin-bottom: 13px;
 }
 
 .about-us-advantages-card-title {
@@ -1819,8 +1839,113 @@ input[type=number] {
     line-height: 130%;
 }
 
+/* Адаптив секции "О нас" */
 
+@media (max-width: 1500px) {
+    .about-us {
+        padding: 70px 40px;
+    }
+}
 
+@media (max-width: 1350px) {
+    .about-us-title {
+        font-size: 36px;
+        margin-top: 12px;
+        margin-bottom: 12px;
+    }
+
+    .about-us-desc {
+        font-size: 18px;
+        margin-bottom: 24px;
+    }
+
+    .about-us-btn {
+        font-size: 14px !important;
+        padding: 15.5px !important;
+        max-width: 299px;
+        width: 100%;
+    }
+
+    .about-us-btn svg {
+        flex-shrink: 0;
+        width: 16px;
+        height: 16px;
+    }
+
+    .video-play {
+        padding: 14px;
+    }
+
+    .video-play svg {
+        max-width: 22px;
+        min-width: 22px;
+        max-height: 25px;
+        min-height: 25px;
+    }
+
+    .about-us-advantages-card-number {
+        font-size: 32px;
+    }
+
+    .about-us-advantages-card-title {
+        font-size: 18px;
+        margin-bottom: 8px;
+    }
+
+    .about-us-advantages-card-desc {
+        font-size: 14px;
+    }
+
+    .about-us-advantages-cards {
+        margin-top: 32px;
+    }
+}
+
+@media (max-width: 1150px) {
+    .about-us-title {
+        font-size: 28px;
+    }
+
+    .about-us-desc {
+        font-size: 16px;
+    }
+}
+
+@media (max-width: 1100px) {
+    .about-us-advantages-cards {
+        grid-template-columns: 1fr;
+    }
+
+    .about-us-advantages-card {
+        padding: 12px 16px 16px 16px;
+        border-bottom: none;
+    }
+
+    .about-us-advantages-card:last-child {
+        border-bottom: 1px solid #535353;
+    }
+
+    .about-us-advantages-card-number {
+        margin-bottom: 8px;
+    }
+
+    .about-us-advantages-card-desc {
+        min-height: 42px;
+    }
+}
+
+@media (max-width: 950px) {
+    .about-us-info {
+        grid-template-columns: 1fr;
+        gap: 40px;
+    }
+}
+
+@media (max-width: 700px) {
+    .about-us {
+        padding: 60px 16px;
+    }
+}
 
 /* Секция "Доставка" */
 
