@@ -1932,6 +1932,10 @@ input[type=number] {
     .about-us-advantages-card-desc {
         min-height: 42px;
     }
+
+    .about-us {
+        background-image: url("../images/about-us-bg-mobile.png");
+    }
 }
 
 @media (max-width: 950px) {
@@ -1939,6 +1943,8 @@ input[type=number] {
         grid-template-columns: 1fr;
         gap: 40px;
     }
+
+    
 }
 
 @media (max-width: 700px) {
