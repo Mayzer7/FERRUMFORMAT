@@ -3021,6 +3021,12 @@ path[data-delivery="ПОИСК СОДЕРЖИМОГО"] {
     font-family: 'Helvetica Neue Regular', sans-serif;
     font-size: 28px;
     line-height: 110%;
+    transition: all 0.3s ease;
+}
+
+.footer-address:hover,
+.footer-phone:hover {
+    color: var(--red);
 }
 
 .footer-second-line {
@@ -3036,9 +3042,15 @@ path[data-delivery="ПОИСК СОДЕРЖИМОГО"] {
 }
 
 .footer-links a {
+    align-self: flex-start;
     font-family: 'Helvetica Neue Regular', sans-serif;
     font-size: 16px;
     line-height: 130%;
+    transition: all 0.3s ease;
+}
+
+.footer-links a:hover {
+    color: var(--red);
 }
 
 .footer-second-line {
