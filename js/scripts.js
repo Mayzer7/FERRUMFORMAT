@@ -910,83 +910,174 @@ document.addEventListener('DOMContentLoaded', () => {
   if (!swiperEl) return;
 
   const wrapper = swiperEl.querySelector('.swiper-wrapper');
-  const allSlides = Array.from(wrapper.querySelectorAll('.news-tag.swiper-slide'));
   const btn = document.querySelector('.show-more-tags');
-  if (!btn) return;
+  if (!wrapper || !btn) return;
 
   const originalBtnParent = btn.parentNode;
   const originalBtnNextSibling = btn.nextSibling;
 
+  function isOverflowing() {
+    const container = swiperEl;
+    return wrapper.scrollWidth > container.clientWidth + 1;
+  }
+
+  function getTagSlides() {
+    return Array.from(wrapper.querySelectorAll('.news-tag.swiper-slide:not(.show-more-slide)'));
+  }
+
   function hideExtraSlides() {
-    allSlides.forEach((s, i) => {
+    const tagSlides = getTagSlides();
+    tagSlides.forEach((s, i) => {
       if (i >= VISIBLE_COUNT) s.classList.add('hidden-slide');
       else s.classList.remove('hidden-slide');
     });
   }
-  hideExtraSlides();
 
-  const swiper = new Swiper(swiperEl, {
-    slidesPerView: 'auto',
-    spaceBetween: 60,
-    freeMode: true,
-    grabCursor: false,
-    loop: false,
-  });
-
-  function findBtnSlide() {
-    return wrapper.querySelector('[data-btn-slide="true"]');
+  let btnSlide = wrapper.querySelector('.show-more-slide');
+  function ensureBtnIsSlide() {
+    if (!btnSlide) {
+      btnSlide = document.createElement('div');
+      btnSlide.className = 'news-tag swiper-slide show-more-slide';
+      btnSlide.appendChild(btn);
+      wrapper.appendChild(btnSlide);
+    }
   }
+
+  function decideBtnVisibilityInitial() {
+    const tagSlides = getTagSlides();
+    if (tagSlides.length <= VISIBLE_COUNT && !isOverflowing()) {
+      btn.style.display = 'none';
+      return false;
+    } else {
+      btn.style.display = '';
+      return true;
+    }
+  }
+
+  const SWIPER_BREAKPOINTS = {
+    0: { spaceBetween: 50 },    
+    700: { spaceBetween: 60 },   
+    1920: { spaceBetween: 60 }   
+  };
+
+  let swiper = null;
+  function initSwiper() {
+    ensureBtnIsSlide();
+
+    if (swiper) swiper.destroy(true, true);
+
+    swiper = new Swiper(swiperEl, {
+      slidesPerView: 'auto',
+      spaceBetween: 60,
+      freeMode: true,
+      loop: false,
+      watchOverflow: false, 
+      grabCursor: true,
+      breakpoints: SWIPER_BREAKPOINTS
+    });
+
+    updateSlidesOffsetAfter();
+  }
+
+  function updateSlidesOffsetAfter() {
+    if (!swiper) return;
+    const btnSlideEl = wrapper.querySelector('.show-more-slide');
+    const btnWidth = btnSlideEl ? btnSlideEl.offsetWidth : 0;
+    swiper.params.slidesOffsetAfter = btnWidth + 24;
+    swiper.update();
+  }
+
+  const shouldShowBtn = decideBtnVisibilityInitial();
+
+
+  if (!shouldShowBtn) {
+    if (btn.parentNode !== originalBtnParent) {
+      if (originalBtnNextSibling) originalBtnParent.insertBefore(btn, originalBtnNextSibling);
+      else originalBtnParent.appendChild(btn);
+    }
+
+    swiper = new Swiper(swiperEl, {
+      slidesPerView: 'auto',
+      spaceBetween: 60,
+      freeMode: true,
+      loop: false,
+      watchOverflow: true,
+      grabCursor: true,
+      breakpoints: SWIPER_BREAKPOINTS
+    });
+    hideExtraSlides();
+    return;
+  }
+
+  ensureBtnIsSlide();
+  hideExtraSlides();
+  initSwiper();
 
   btn.addEventListener('click', (e) => {
     e.preventDefault();
     const expanded = btn.getAttribute('aria-expanded') === 'true';
+    const label = btn.querySelector('.label');
 
     if (!expanded) {
-      const currentIndex = swiper.activeIndex;
+      const tagSlides = getTagSlides();
+      tagSlides.forEach(s => s.classList.remove('hidden-slide'));
 
-      allSlides.forEach(s => s.classList.remove('hidden-slide'));
-
-      if (!findBtnSlide()) {
-        const btnSlide = document.createElement('div');
-        btnSlide.className = 'news-tag swiper-slide show-more-slide';
-        btnSlide.setAttribute('data-btn-slide', 'true');
-        btnSlide.appendChild(btn); 
-        wrapper.appendChild(btnSlide);
-      }
-
-      const label = btn.querySelector('.label');
       if (label) label.textContent = 'Скрыть все теги';
-      btn.classList.add('inside-slide', 'rotated');
+      btn.classList.add('rotated', 'inside-slide');
       btn.setAttribute('aria-expanded', 'true');
 
+      const currentIndex = swiper ? swiper.activeIndex : 0;
+      updateSlidesOffsetAfter();
       swiper.update();
       setTimeout(() => {
         const safeIndex = Math.min(currentIndex, swiper.slides.length - 1);
-        swiper.slideTo(safeIndex, 0); 
+        swiper.slideTo(safeIndex, 0);
       }, 60);
 
     } else {
-      const btnSlide = findBtnSlide();
-      if (btnSlide) {
-        if (originalBtnNextSibling) originalBtnParent.insertBefore(btn, originalBtnNextSibling);
-        else originalBtnParent.appendChild(btn);
-        btnSlide.remove(); 
-      }
-
       hideExtraSlides();
-
-      const label = btn.querySelector('.label');
       if (label) label.textContent = 'Показать все теги';
-      btn.classList.remove('inside-slide', 'rotated');
+      btn.classList.remove('rotated', 'inside-slide');
       btn.setAttribute('aria-expanded', 'false');
 
+      updateSlidesOffsetAfter();
       swiper.update();
-      setTimeout(() => { swiper.slideTo(0, 200); }, 60); 
+      setTimeout(() => { swiper.slideTo(0, 200); }, 60);
     }
   });
+
+  let resizeTimer = null;
+  window.addEventListener('resize', () => {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(() => {
+      const needBtn = decideBtnVisibilityInitial();
+      if (!needBtn) {
+        btn.style.display = 'none';
+        if (btn.parentNode !== originalBtnParent) {
+          if (originalBtnNextSibling) originalBtnParent.insertBefore(btn, originalBtnNextSibling);
+          else originalBtnParent.appendChild(btn);
+        }
+        if (swiper) { swiper.destroy(true, true); swiper = null; }
+        new Swiper(swiperEl, {
+          slidesPerView: 'auto',
+          spaceBetween: 60,
+          freeMode: true,
+          loop: false,
+          watchOverflow: true,
+          grabCursor: true,
+          breakpoints: SWIPER_BREAKPOINTS
+        });
+        hideExtraSlides();
+        return;
+      } else {
+        btn.style.display = '';
+        ensureBtnIsSlide();
+        hideExtraSlides();
+        initSwiper();
+      }
+    }, 120);
+  });
 });
-
-
 
 
 
@@ -1226,5 +1317,8 @@ if (newsInfoCardsSwiper) {
       });
     });
 }
+
+
+
 
 

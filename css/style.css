@@ -942,6 +942,8 @@ input[type=number] {
 
 .main-content-first-line {
     padding-top: 200px;
+    position: relative;
+    z-index: 2;
 }
 
 .current-page-info-banner {
@@ -961,6 +963,8 @@ input[type=number] {
 }
 
 .main-content-second-line {
+    position: relative;
+    z-index: 2;
     display: grid;
     grid-template-columns: 1fr 1fr;
     align-items: flex-end;
@@ -1081,6 +1085,10 @@ input[type=number] {
   transition: opacity .18s ease;
 }
 
+.main-content-last-line {
+    position: relative;
+    z-index: 2;
+}
 
 .main-content-last-line-info-cards {
     display: grid;
@@ -1273,6 +1281,7 @@ input[type=number] {
 
     .main-content {
         padding: 0px 16px;
+        width: 100%;
     }
 
     .main-content-last-line-info-card-top {
@@ -1324,10 +1333,6 @@ input[type=number] {
     color: var(--black);
     background-color: #fff;
     padding: 80px;
-    background-image: url(../images/we-produce/bg.png);
-    background-repeat: no-repeat;
-    background-size: cover;
-    background-position: center center;
 }
 
 .section-name {
@@ -1348,6 +1353,11 @@ input[type=number] {
     font-family: 'Helvetica Neue Regular', sans-serif;
     font-size: 16px;
     text-transform: uppercase;
+}
+
+.we-produce-content {
+    position: relative;
+    z-index: 2;
 }
 
 .we-produce-title {
@@ -1480,9 +1490,13 @@ input[type=number] {
 
 /* Адаптив секции "Производим" */
 
-@media (max-width: 1825px) {
+@media (max-width: 1850px) {
     .we-produce-card {
-        grid-template-columns: minmax(0px, 375px) 1fr auto;
+        grid-template-columns: minmax(0px, 405px) 1fr auto;
+    }
+
+    .we-produce-card-second-column {
+        gap: 24px;
     }
 }
 
@@ -1530,7 +1544,7 @@ input[type=number] {
 
 @media (max-width: 1500px) {
     .we-produce {
-        padding: 60px 40px 50px 40px;
+        padding: 60px 40px;
     }
 }
 
@@ -1742,6 +1756,11 @@ input[type=number] {
     background-repeat: no-repeat;
     background-size: cover;
     background-position: center center;
+}
+
+.about-us-content {
+    position: relative;
+    z-index: 2;
 }
 
 .about-us-info {
@@ -1964,10 +1983,6 @@ input[type=number] {
     background-color: #fff;
     padding: 0px 80px;
     padding-bottom: 100px;
-    background-image: url(../images/delivery-bg.png);
-    background-repeat: no-repeat;
-    background-size: cover;
-    background-position: center center;
     position: relative;
     z-index: 2;
 }
@@ -1994,6 +2009,11 @@ input[type=number] {
   background: #555;
 }
 
+.delivery-content {
+    position: relative;
+    z-index: 2;
+}
+
 .delivery-content-top-left {
     position: absolute;
     top: 100px;
@@ -2004,7 +2024,7 @@ input[type=number] {
 .delivery-content-top-right {
     position: absolute;
     top: 180px;
-    right: 320px;
+    right: 250px;
     z-index: 3;
 }
 
@@ -2330,12 +2350,8 @@ path[data-delivery="ПОИСК СОДЕРЖИМОГО"] {
 
 @media (max-width: 1500px) {
     .delivery {
-        padding: 0px 50px;
+        padding: 0px 40px;
         padding-bottom: 60px;
-    }
-
-    .delivery {
-        background-image: url("../images/delivery-bg-1280.png");
     }
 }
 
@@ -2509,10 +2525,13 @@ path[data-delivery="ПОИСК СОДЕРЖИМОГО"] {
 /* Секция "Документы" */
 
 .documents {
-    background-image: url(../images/documents-bg.png);
-    background-repeat: no-repeat;
-    background-size: cover;
+    background-color: var(--black);
     padding: 90px 80px;
+}
+
+.documents-content {
+    position: relative;
+    z-index: 2;
 }
 
 .documents-title {
@@ -2539,9 +2558,10 @@ path[data-delivery="ПОИСК СОДЕРЖИМОГО"] {
 
 .documents-card {
     display: flex;
+    gap: 12px;
     justify-content: space-between;
     background-color: #282828;
-    padding: 20px 20px 20px 20px;
+    padding: 20px;
     border: 1px solid #535353;
 }
 
@@ -2562,10 +2582,10 @@ path[data-delivery="ПОИСК СОДЕРЖИМОГО"] {
 }
 
 .documents-card-right-side {
-    padding-right: 65px;
+    margin-right: 20px;
     padding-top: 28px;
     padding-bottom: 28px;
-    max-width: 210px;
+    max-width: 150px;
     width: 100%;
     height: 100%;
 }
@@ -2578,28 +2598,124 @@ path[data-delivery="ПОИСК СОДЕРЖИМОГО"] {
 
 .watch-more {
     margin-left: auto;
-    display: block;
+    display: flex;
+    align-items: center;
+    gap: 10px;
     margin-top: 32px;
 }
 
+/* Адаптив секции "Документы" */
 
+@media (max-width: 1700px) {
+    .documents-card-right-side {
+        max-width: 113px;
+        margin-right: 40px;
+    }
+}
+
+@media (max-width: 1500px) {
+    .documents {
+        padding: 70px 40px;
+    }
+}
+
+@media (max-width: 1350px) {
+    .documents-title {
+        font-size: 36px;
+    }
+
+    .documents-card-title {
+        font-size: 24px;
+    }
+
+    .documents-card {
+        padding: 16px;
+    }
+
+    .documents-card-right-side {
+        padding-top: 0px;
+        padding-bottom: 0px;
+        margin-right: 25px;
+    }
+
+    .watch-more {
+        font-size: 14px;
+    }
+
+    .watch-more  svg {
+        flex-shrink: 0;
+        width: 14px;
+        height: 14px;
+    }
+}
+
+@media (max-width: 1100px) {
+    .documents-cards {
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+}
+
+@media (max-width: 700px) {
+    .documents {
+        padding: 60px 16px;
+    }
+
+    .documents-card-title {
+        font-size: 20px;
+    }
+
+    .documents-title {
+        font-size: 28px;
+    }
+
+    .documents-card-btn svg {
+        flex-shrink: 0;
+        width: 24px;
+        height: 24px;
+    }
+
+    .documents-card-right-side {
+        margin-right: 0px;
+    }
+
+    .watch-more {
+        width: 100%;
+    }
+}
+
+@media (max-width: 370px) {
+    .documents-card-title {
+        font-size: 18px;
+    }
+}
 
 
 /* Секция "Нам доверяют" */
 
 .trust-us {
-    background-image: url(../images/trust-us-bg.png);
-    background-repeat: no-repeat;
-    background-size: cover;
-
+    background-color: #fff;
     color: var(--black);
-    padding: 80px 60px 40px 75px;
+    padding: 80px 70px 40px 80px;
+}
+
+.trust-us-content {
+    position: relative;
+    z-index: 2;
 }
 
 .trust-us-buttons {
+    white-space: nowrap;
+    overflow-x: auto;
     display: flex;
-    gap: 40px;
+    gap: 60px;
+    scrollbar-width: none;     
+    -ms-overflow-style: none;  
 }
+
+.trust-us-buttons::-webkit-scrollbar {
+    display: none; 
+}   
 
 .trust-us-btn {
     border: none;
@@ -2618,7 +2734,7 @@ path[data-delivery="ПОИСК СОДЕРЖИМОГО"] {
 
 .trust-us-cards {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(4, minmax(290px, 1fr));
     gap: 10px;
     margin-top: 20px;
 }
@@ -2629,6 +2745,7 @@ path[data-delivery="ПОИСК СОДЕРЖИМОГО"] {
     justify-content: center;
     background-color: #F5F5F5;
     max-width: 420px;
+    max-height: 100px;
 }
 
 .trust-us-content {
@@ -2640,6 +2757,7 @@ path[data-delivery="ПОИСК СОДЕРЖИМОГО"] {
     margin-left: auto;
     margin-top: 20px;
     display: flex;
+    align-items: center;
     gap: 12px;
 }
 
@@ -2655,16 +2773,75 @@ path[data-delivery="ПОИСК СОДЕРЖИМОГО"] {
 }
 
 
+/* Адаптив секции "Нам доверяют" */
+
+@media (max-width: 1700px) {
+    .trust-us {
+        padding: 80px 60px;
+    }
+
+    .trust-us-info-text {
+        font-size: 16px;
+        max-width: 275px;
+    }
+}
+
+@media (max-width: 1500px) {
+    .trust-us {
+        padding: 60px 40px;
+    }
+}
+
+@media (max-width: 1350px) {
+    .trust-us-btn {
+        font-size: 18px;
+    }
+
+    .trust-us-info-number {
+        font-size: 36px;
+    }
+
+    .trust-us-info-text {
+        font-size: 14px;
+        max-width: 185px;
+    }
+
+    .trust-us-card {
+        max-height: 80px;
+    }
+}
+
+@media (max-width: 1270px) {
+    .trust-us-cards {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .trust-us-card {
+        max-width: 100%;
+        width: 100%;
+        max-height: 100px;
+    }
+}
+
+@media (max-width: 700px) {
+    .trust-us {
+        padding: 60px 16px;
+    }
+}
+
+
 
 /* Секция "Блог" */
 
 .blog {
-    background-image: url(../images/trust-us-bg.png);
-    background-repeat: no-repeat;
-    background-size: cover;
-
+    background-color: #fff;
     color: var(--black);
     padding: 80px 60px 40px 75px;
+}
+
+.blog-content {
+    position: relative;
+    z-index: 2;
 }
 
 .blog-cards {
@@ -2781,15 +2958,14 @@ path[data-delivery="ПОИСК СОДЕРЖИМОГО"] {
 
 
 .contacts {
-    background-image: url(../images/trust-us-bg.png);
-    background-repeat: no-repeat;
-    background-size: cover;
-
+    background-color: #fff;
     color: var(--black);
     padding: 80px 60px 40px 75px;
-}
+}   
 
 .contacts-content {
+    position: relative;
+    z-index: 2;
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 32px;
@@ -2850,10 +3026,7 @@ path[data-delivery="ПОИСК СОДЕРЖИМОГО"] {
 /* Секция "Оставить заявку" */
 
 .get-contact {
-    background-image: url(../images/documents-bg.png);
-    background-repeat: no-repeat;
-    background-size: cover;
-
+    background-color: var(--black);
     color: #fff;
     padding: 80px 60px 80px 75px;
 }
@@ -2996,12 +3169,15 @@ path[data-delivery="ПОИСК СОДЕРЖИМОГО"] {
 /* Footer */
 
 .footer {
-    background-image: url(../images/footer-bg.png);
-    background-repeat: no-repeat;
-    background-size: cover;
-
+    background-color: #fff;
     color: var(--black);
     padding: 40px 73px;
+    position: relative;
+}
+
+.footer-content {
+    position: relative;
+    z-index: 2;
 }
 
 .footer-first-line {
@@ -3973,9 +4149,7 @@ path[data-delivery="ПОИСК СОДЕРЖИМОГО"] {
     .card-open-delivery-left-last {
         gap: 20px;
     }
-}
 
-@media (max-width: 1250px) {
     .our-production-info-card-title {
         font-size: 24px;
     } 
@@ -4005,7 +4179,7 @@ path[data-delivery="ПОИСК СОДЕРЖИМОГО"] {
     .card-open-delivery-info-card {
         padding: 12px;
     }
-}   
+}
 
 @media (max-width: 1100px) {
     .card-open-delivery-info-card {
@@ -4811,6 +4985,7 @@ path[data-delivery="ПОИСК СОДЕРЖИМОГО"] {
     background-color: #F5F5F5;
     border: 1px solid #C1C1C1;
     padding: 20px;
+    gap: 10px;
 }
 
 .certificates-cards .documents-card .documents-card-right-side {
@@ -5035,14 +5210,24 @@ path[data-delivery="ПОИСК СОДЕРЖИМОГО"] {
 /* Страница "Статьи и новости" */
 
 .news-tags-container {
-    display: flex;
-    align-items: center;
-    margin-bottom: 20px;
+  display: flex;
+  width: 100%; 
+  align-items: center;
+}
+
+.news-tags .swiper-wrapper {
+  display: flex;
+  align-items: center;
 }
 
 .news-tags {
-    display: inline-flex;
-    border-bottom: 1px solid #E9E9E9;
+  overflow: hidden;
+  border-bottom: 1px solid #E9E9E9;
+  width: 100%;
+}
+
+.news-tags .swiper-wrapper.swiper-grab-cursor {
+  cursor: grab;
 }
 
 .news-tag {
@@ -5055,6 +5240,7 @@ path[data-delivery="ПОИСК СОДЕРЖИМОГО"] {
     cursor: pointer;
     text-transform: uppercase;
     transition: color .18s ease;
+    padding-bottom: 5px;
 }
 
 .news-tag.active {
@@ -5066,6 +5252,7 @@ path[data-delivery="ПОИСК СОДЕРЖИМОГО"] {
 }
 
 .show-more-tags {
+    white-space: nowrap;
     display: flex;
     background: transparent;
     border: none;
@@ -5135,7 +5322,6 @@ path[data-delivery="ПОИСК СОДЕРЖИМОГО"] {
 }
 
 .show-more-tags.inside-slide {
-  padding: 6px 10px;
   background: transparent;
   border: none;
 }
@@ -5705,4 +5891,83 @@ path[data-delivery="ПОИСК СОДЕРЖИМОГО"] {
 
 .error-content-left-text {
     margin-bottom: 32px;
+}
+
+
+
+
+
+
+
+section {
+  position: relative; 
+}
+
+.lines {
+  position: absolute;   
+  top: 0;
+  left: 0;
+  right: 0;        
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.line {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 1px;   
+}
+
+.main-content .lines {
+    height: 980px;
+}
+
+.main-content .line { background: #2e2e2e; }
+.we-produce .line { background: #e9e9e9; }
+.about-us .line { background: #2e2e2e; }
+.delivery .line { background: #e9e9e9; }
+.documents .line { background: #2e2e2e; }
+.trust-us .line { background: #e9e9e9; }
+.blog .line { background: #e9e9e9; }
+.contacts .line { background: #e9e9e9; }
+.get-contact .line { background: #2e2e2e; }
+.footer .line { background: #e9e9e9; }
+
+.line1 { left: 3.6%; }
+.line2 { left: 27%; }
+.line3 { left: 50%; }
+.line4 { left: 73%; }
+.line5 { right: 3.8%; }
+
+@media (max-width: 1500px) {
+    .main-content .lines {
+        height: 832px;
+    }
+
+    .line1 { left: 2.5%; }
+    .line2 { left: 27%; }
+    .line3 { left: 50%; }
+    .line4 { left: 73%; }
+    .line5 { right: 2.8%; }
+}
+
+@media (max-width: 1200px) {
+    .main-content .lines {
+        height: 920px;
+    }
+}
+
+@media (max-width: 700px) {
+    .main-content .lines,
+    .we-produce .line,
+    .about-us .line,
+    .delivery .line,
+    .documents .line,
+    .trust-us .line,
+    .blog .line {
+        display: none;
+    }
 }
