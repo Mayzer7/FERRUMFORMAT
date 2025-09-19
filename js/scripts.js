@@ -830,10 +830,14 @@ const maps = document.querySelectorAll(".maps");
 
 let center = [55.01313106967953, 60.096861499999896];
 
+function getZoom() {
+  return window.innerWidth <= 500 ? 17 : 16.5;
+}
+
 function createMap(mapId) {
   const mapInstance = new ymaps.Map(mapId, {
     center: center,
-    zoom: 16.5,
+    zoom: getZoom(),
     controls: [],
     type: "yandex#map",
   });
@@ -854,15 +858,23 @@ function createMap(mapId) {
 
   mapInstance.geoObjects.add(placemark);
   mapInstance.container.fitToViewport();
+
+  return mapInstance;
 }
 
 ymaps.ready(() => {
-  maps.forEach(mapDiv => createMap(mapDiv.id));
+  const mapInstances = {};
+
+  maps.forEach(mapDiv => {
+    mapInstances[mapDiv.id] = createMap(mapDiv.id);
+  });
 
   window.addEventListener("resize", () => {
-    maps.forEach(mapDiv => {
-      const mapObj = ymaps.Map(mapDiv.id);
-      if (mapObj && mapObj.container) mapObj.container.fitToViewport();
+    Object.values(mapInstances).forEach(mapObj => {
+      if (mapObj && mapObj.container) {
+        mapObj.setZoom(getZoom());
+        mapObj.container.fitToViewport();
+      }
     });
   });
 });
