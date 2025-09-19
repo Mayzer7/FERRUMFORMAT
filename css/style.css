@@ -1415,6 +1415,7 @@ input[type=number] {
 
     display: grid;
     grid-template-columns: minmax(0px, 415px) 1fr auto;
+    transition: all 0.3s ease;
 }
 
 .we-produce-card:last-child {
@@ -1456,6 +1457,11 @@ input[type=number] {
     height: 22px;
 }
 
+.we-produce-card-last-column svg path,
+.we-produce-card-info-head svg path {
+  transition: fill 0.3s ease;
+}
+
 .we-produce-card-title {
     font-family: 'Helvetica Neue Regular', sans-serif;
     font-size: 32px;
@@ -1463,7 +1469,24 @@ input[type=number] {
     margin-bottom: 16px;
     max-width: 550px;
     width: 100%;
+    color: var(--black);
+    transition: all 0.3s ease;
 }
+
+.we-produce-card:hover .we-produce-card-title,
+.we-produce-card:focus-within .we-produce-card-title {
+  color: var(--red);
+}
+
+.we-produce-card:hover .we-produce-card-last-column svg path,
+.we-produce-card:hover .we-produce-card-info-head svg path,
+.we-produce-card:focus-within .we-produce-card-last-column svg path {
+  fill: var(--red);
+}
+
+
+
+
 
 .we-produce-card-banners {
     max-width: 739px;
