@@ -151,7 +151,7 @@
         <div class="header-menu-open-burger">
             <div class="burger-menu-open-links-container">
                 <div class="burger-menu-open-links">
-                    <button class="burger-menu-open-link">
+                    <button class="burger-menu-open-link" data-submenu-id="mdk">
                         Для подъездов МДК
 
                         <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -159,7 +159,7 @@
                         </svg>
                     </button>
 
-                    <button  class="burger-menu-open-link">
+                    <button  class="burger-menu-open-link" data-submenu-id="private">
                         Для частных домов
 
                         <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -167,7 +167,7 @@
                         </svg>
                     </button>
 
-                    <button class="burger-menu-open-link">
+                    <button class="burger-menu-open-link" data-submenu-id="smart">
                         Умные почтовые ящики
 
                         <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -175,7 +175,7 @@
                         </svg>
                     </button>
 
-                    <button class="burger-menu-open-link">
+                    <button class="burger-menu-open-link" data-submenu-id="material">
                         По материалу и цвету
 
                         <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -183,7 +183,7 @@
                         </svg>
                     </button>
 
-                    <button class="burger-menu-open-link">
+                    <button class="burger-menu-open-link" data-submenu-id="section">
                         По секциям
 
                         <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -191,7 +191,7 @@
                         </svg>
                     </button>
 
-                    <button class="burger-menu-open-link">
+                    <button class="burger-menu-open-link" data-submenu-id="antivandal">
                         Антивандальные
 
                         <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -199,7 +199,7 @@
                         </svg>
                     </button>
 
-                    <button class="burger-menu-open-link">
+                    <button class="burger-menu-open-link" data-submenu-id="about">
                         О компании
 
                         <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -207,13 +207,13 @@
                         </svg>
                     </button>
 
-                    <button class="burger-menu-open-link">
+                    <a href="contacts.html" class="burger-menu-open-link-click">
                         Контакты
 
-                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M14.0365 9.87763C14.0369 10.0965 13.994 10.3132 13.9103 10.5154C13.8267 10.7177 13.7039 10.9014 13.549 11.056L9.13732 15.4668L7.95898 14.2885L12.3698 9.87763L7.95898 5.4668L9.13732 4.28846L13.5482 8.6993C13.7032 8.85383 13.8261 9.03749 13.9099 9.23972C13.9938 9.44194 14.0368 9.65873 14.0365 9.87763Z" fill="#1A1A1A"/>
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12.8899 2H4.89231V3.11071H12.1046L2.0293 12.5194L2.81457 13.3047L12.8899 3.89599V11.775H14.0006V3.11071C14.0006 2.49815 13.5025 2 12.8899 2Z" fill="#1A1A1A"/>
                         </svg>
-                    </button>
+                    </a>
                 </div>
 
                 <div class="burger-menu-open-socials">
@@ -250,6 +250,582 @@
                     <button class="get-an-offer-burger-btn red-btn">
                         Получить предложение
                     </button>
+                </div>
+            </div>
+
+            <div class="burger-submenu-container">
+                <div class="burger-submenu" data-submenu-id="mdk">
+                    <div class="burger-submenu-header">
+                        <button class="go-back-btn">
+                            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M5.95961 9.87774C5.95923 9.6589 6.0021 9.44214 6.08576 9.23992C6.16942 9.0377 6.29223 8.85401 6.44711 8.69941L10.8588 4.28857L12.0371 5.46691L7.62628 9.87774L12.0371 14.2886L10.8588 15.4669L6.44794 11.0561C6.29291 10.9015 6.16995 10.7179 6.08615 10.5157C6.00234 10.3134 5.95934 10.0966 5.95961 9.87774Z" fill="#1A1A1A"/>
+                            </svg>
+                        </button>
+
+                        <span class="burger-submenu-title">
+                            Для подъездов МДК
+                        </span>
+                    </div>
+
+                    <div class="burger-submenu-links">
+                        <a href="mdk.html" class="burger-submenu-link">
+                            Настенные 
+                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M12.8899 2H4.89231V3.11071H12.1046L2.0293 12.5194L2.81457 13.3047L12.8899 3.89599V11.775H14.0006V3.11071C14.0006 2.49815 13.5025 2 12.8899 2Z" fill="#1A1A1A"/>
+                            </svg>
+                        </a>
+
+                        <a href="mdk.html" class="burger-submenu-link">
+                            На столб
+                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M12.8899 2H4.89231V3.11071H12.1046L2.0293 12.5194L2.81457 13.3047L12.8899 3.89599V11.775H14.0006V3.11071C14.0006 2.49815 13.5025 2 12.8899 2Z" fill="#1A1A1A"/>
+                            </svg>
+                        </a>
+
+                        <a href="mdk.html" class="burger-submenu-link">
+                            С отделением для спама
+                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M12.8899 2H4.89231V3.11071H12.1046L2.0293 12.5194L2.81457 13.3047L12.8899 3.89599V11.775H14.0006V3.11071C14.0006 2.49815 13.5025 2 12.8899 2Z" fill="#1A1A1A"/>
+                            </svg>
+                        </a>
+
+                        <a href="mdk.html" class="burger-submenu-link">
+                            Для офисов
+                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M12.8899 2H4.89231V3.11071H12.1046L2.0293 12.5194L2.81457 13.3047L12.8899 3.89599V11.775H14.0006V3.11071C14.0006 2.49815 13.5025 2 12.8899 2Z" fill="#1A1A1A"/>
+                            </svg>
+                        </a>
+
+                        <a href="mdk.html" class="burger-submenu-link">
+                            Уличные 
+                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M12.8899 2H4.89231V3.11071H12.1046L2.0293 12.5194L2.81457 13.3047L12.8899 3.89599V11.775H14.0006V3.11071C14.0006 2.49815 13.5025 2 12.8899 2Z" fill="#1A1A1A"/>
+                            </svg>
+                        </a>
+                    </div>
+
+                    <div class="burger-menu-open-socials">
+                        <a href="https://yandex.ru/maps/-/CLUt6Jkr" target="_blank" class="burger-menu-open-link-address">
+                            г. Миасс, ул. 60 лет Октября 13А, офис 1
+                        </a>
+
+                        <div class="burger-menu-open-socials-links">
+                            <a href="#">
+                                <img src="images/whats.svg" alt="">
+                            </a>
+
+                            <a href="#">
+                                <img src="images/tg.svg" alt="">
+                            </a>
+
+                            <a href="#">
+                                <img src="images/vk.svg" alt="">
+                            </a>
+
+                            <a href="#">
+                                <img src="images/yandex_zen.svg" alt="">
+                            </a>
+
+                            <a href="#">
+                                <img src="images/youtube.svg" alt="">
+                            </a>
+                        </div>
+
+                        <button class="get-an-offer-burger-btn red-btn">
+                            Получить предложение
+                        </button>
+                    </div>  
+                </div>
+
+                <div class="burger-submenu" data-submenu-id="private">
+                    <div class="burger-submenu-header">
+                        <button class="go-back-btn">
+                            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M5.95961 9.87774C5.95923 9.6589 6.0021 9.44214 6.08576 9.23992C6.16942 9.0377 6.29223 8.85401 6.44711 8.69941L10.8588 4.28857L12.0371 5.46691L7.62628 9.87774L12.0371 14.2886L10.8588 15.4669L6.44794 11.0561C6.29291 10.9015 6.16995 10.7179 6.08615 10.5157C6.00234 10.3134 5.95934 10.0966 5.95961 9.87774Z" fill="#1A1A1A"/>
+                            </svg>
+                        </button>
+
+                        <span class="burger-submenu-title">
+                            Для частных домов
+                        </span>
+                    </div>
+
+                    <div class="burger-submenu-links">
+                        <a href="mdk.html" class="burger-submenu-link">
+                            Для офисов
+                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M12.8899 2H4.89231V3.11071H12.1046L2.0293 12.5194L2.81457 13.3047L12.8899 3.89599V11.775H14.0006V3.11071C14.0006 2.49815 13.5025 2 12.8899 2Z" fill="#1A1A1A"/>
+                            </svg>
+                        </a>
+
+                        <a href="mdk.html" class="burger-submenu-link">
+                            Для МДК  
+                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M12.8899 2H4.89231V3.11071H12.1046L2.0293 12.5194L2.81457 13.3047L12.8899 3.89599V11.775H14.0006V3.11071C14.0006 2.49815 13.5025 2 12.8899 2Z" fill="#1A1A1A"/>
+                            </svg>
+                        </a>
+                    </div>
+
+                    <div class="burger-menu-open-socials">
+                        <a href="https://yandex.ru/maps/-/CLUt6Jkr" target="_blank" class="burger-menu-open-link-address">
+                            г. Миасс, ул. 60 лет Октября 13А, офис 1
+                        </a>
+
+                        <div class="burger-menu-open-socials-links">
+                            <a href="#">
+                                <img src="images/whats.svg" alt="">
+                            </a>
+
+                            <a href="#">
+                                <img src="images/tg.svg" alt="">
+                            </a>
+
+                            <a href="#">
+                                <img src="images/vk.svg" alt="">
+                            </a>
+
+                            <a href="#">
+                                <img src="images/yandex_zen.svg" alt="">
+                            </a>
+
+                            <a href="#">
+                                <img src="images/youtube.svg" alt="">
+                            </a>
+                        </div>
+
+                        <button class="get-an-offer-burger-btn red-btn">
+                            Получить предложение
+                        </button>
+                    </div>  
+                </div>
+
+                <div class="burger-submenu" data-submenu-id="smart">
+                    <div class="burger-submenu-header">
+                        <button class="go-back-btn">
+                            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M5.95961 9.87774C5.95923 9.6589 6.0021 9.44214 6.08576 9.23992C6.16942 9.0377 6.29223 8.85401 6.44711 8.69941L10.8588 4.28857L12.0371 5.46691L7.62628 9.87774L12.0371 14.2886L10.8588 15.4669L6.44794 11.0561C6.29291 10.9015 6.16995 10.7179 6.08615 10.5157C6.00234 10.3134 5.95934 10.0966 5.95961 9.87774Z" fill="#1A1A1A"/>
+                            </svg>
+                        </button>
+
+                        <span class="burger-submenu-title">
+                            Умные почтовые ящики
+                        </span>
+                    </div>
+
+                    <div class="burger-submenu-links">
+                        <a href="mdk.html" class="burger-submenu-link">
+                            Для батареек/показаний
+                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M12.8899 2H4.89231V3.11071H12.1046L2.0293 12.5194L2.81457 13.3047L12.8899 3.89599V11.775H14.0006V3.11071C14.0006 2.49815 13.5025 2 12.8899 2Z" fill="#1A1A1A"/>
+                            </svg>
+                        </a>
+                    </div>
+
+                    <div class="burger-menu-open-socials">
+                        <a href="https://yandex.ru/maps/-/CLUt6Jkr" target="_blank" class="burger-menu-open-link-address">
+                            г. Миасс, ул. 60 лет Октября 13А, офис 1
+                        </a>
+
+                        <div class="burger-menu-open-socials-links">
+                            <a href="#">
+                                <img src="images/whats.svg" alt="">
+                            </a>
+
+                            <a href="#">
+                                <img src="images/tg.svg" alt="">
+                            </a>
+
+                            <a href="#">
+                                <img src="images/vk.svg" alt="">
+                            </a>
+
+                            <a href="#">
+                                <img src="images/yandex_zen.svg" alt="">
+                            </a>
+
+                            <a href="#">
+                                <img src="images/youtube.svg" alt="">
+                            </a>
+                        </div>
+
+                        <button class="get-an-offer-burger-btn red-btn">
+                            Получить предложение
+                        </button>
+                    </div>  
+                </div>
+
+                <div class="burger-submenu" data-submenu-id="material">
+                    <div class="burger-submenu-header">
+                        <button class="go-back-btn">
+                            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M5.95961 9.87774C5.95923 9.6589 6.0021 9.44214 6.08576 9.23992C6.16942 9.0377 6.29223 8.85401 6.44711 8.69941L10.8588 4.28857L12.0371 5.46691L7.62628 9.87774L12.0371 14.2886L10.8588 15.4669L6.44794 11.0561C6.29291 10.9015 6.16995 10.7179 6.08615 10.5157C6.00234 10.3134 5.95934 10.0966 5.95961 9.87774Z" fill="#1A1A1A"/>
+                            </svg>
+                        </button>
+
+                        <span class="burger-submenu-title">
+                            По материалу и цвету
+                        </span>
+                    </div>
+
+                    <div class="burger-submenu-links">
+                        <a href="mdk.html" class="burger-submenu-link">
+                            На столб
+                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M12.8899 2H4.89231V3.11071H12.1046L2.0293 12.5194L2.81457 13.3047L12.8899 3.89599V11.775H14.0006V3.11071C14.0006 2.49815 13.5025 2 12.8899 2Z" fill="#1A1A1A"/>
+                            </svg>
+                        </a>
+
+                        <a href="mdk.html" class="burger-submenu-link">
+                            С отделением для спама
+                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M12.8899 2H4.89231V3.11071H12.1046L2.0293 12.5194L2.81457 13.3047L12.8899 3.89599V11.775H14.0006V3.11071C14.0006 2.49815 13.5025 2 12.8899 2Z" fill="#1A1A1A"/>
+                            </svg>
+                        </a>
+
+                        <a href="mdk.html" class="burger-submenu-link">
+                            Для офисов
+                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M12.8899 2H4.89231V3.11071H12.1046L2.0293 12.5194L2.81457 13.3047L12.8899 3.89599V11.775H14.0006V3.11071C14.0006 2.49815 13.5025 2 12.8899 2Z" fill="#1A1A1A"/>
+                            </svg>
+                        </a>
+
+                        <a href="mdk.html" class="burger-submenu-link">
+                            Для МДК  
+                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M12.8899 2H4.89231V3.11071H12.1046L2.0293 12.5194L2.81457 13.3047L12.8899 3.89599V11.775H14.0006V3.11071C14.0006 2.49815 13.5025 2 12.8899 2Z" fill="#1A1A1A"/>
+                            </svg>
+                        </a>
+
+                        <a href="mdk.html" class="burger-submenu-link">
+                            Постаматы
+                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M12.8899 2H4.89231V3.11071H12.1046L2.0293 12.5194L2.81457 13.3047L12.8899 3.89599V11.775H14.0006V3.11071C14.0006 2.49815 13.5025 2 12.8899 2Z" fill="#1A1A1A"/>
+                            </svg>
+                        </a>
+
+                        <a href="mdk.html" class="burger-submenu-link">
+                            Для батареек/показаний
+                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M12.8899 2H4.89231V3.11071H12.1046L2.0293 12.5194L2.81457 13.3047L12.8899 3.89599V11.775H14.0006V3.11071C14.0006 2.49815 13.5025 2 12.8899 2Z" fill="#1A1A1A"/>
+                            </svg>
+                        </a>
+                    </div>
+
+                    <div class="burger-menu-open-socials">
+                        <a href="https://yandex.ru/maps/-/CLUt6Jkr" target="_blank" class="burger-menu-open-link-address">
+                            г. Миасс, ул. 60 лет Октября 13А, офис 1
+                        </a>
+
+                        <div class="burger-menu-open-socials-links">
+                            <a href="#">
+                                <img src="images/whats.svg" alt="">
+                            </a>
+
+                            <a href="#">
+                                <img src="images/tg.svg" alt="">
+                            </a>
+
+                            <a href="#">
+                                <img src="images/vk.svg" alt="">
+                            </a>
+
+                            <a href="#">
+                                <img src="images/yandex_zen.svg" alt="">
+                            </a>
+
+                            <a href="#">
+                                <img src="images/youtube.svg" alt="">
+                            </a>
+                        </div>
+
+                        <button class="get-an-offer-burger-btn red-btn">
+                            Получить предложение
+                        </button>
+                    </div>  
+                </div>
+
+                <div class="burger-submenu" data-submenu-id="section">
+                    <div class="burger-submenu-header">
+                        <button class="go-back-btn">
+                            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M5.95961 9.87774C5.95923 9.6589 6.0021 9.44214 6.08576 9.23992C6.16942 9.0377 6.29223 8.85401 6.44711 8.69941L10.8588 4.28857L12.0371 5.46691L7.62628 9.87774L12.0371 14.2886L10.8588 15.4669L6.44794 11.0561C6.29291 10.9015 6.16995 10.7179 6.08615 10.5157C6.00234 10.3134 5.95934 10.0966 5.95961 9.87774Z" fill="#1A1A1A"/>
+                            </svg>
+                        </button>
+
+                        <span class="burger-submenu-title">
+                            По секциям
+                        </span>
+                    </div>
+
+                    <div class="burger-submenu-links">
+                        <a href="mdk.html" class="burger-submenu-link">
+                            Для МДК  
+                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M12.8899 2H4.89231V3.11071H12.1046L2.0293 12.5194L2.81457 13.3047L12.8899 3.89599V11.775H14.0006V3.11071C14.0006 2.49815 13.5025 2 12.8899 2Z" fill="#1A1A1A"/>
+                            </svg>
+                        </a>
+
+                        <a href="mdk.html" class="burger-submenu-link">
+                            Постаматы
+                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M12.8899 2H4.89231V3.11071H12.1046L2.0293 12.5194L2.81457 13.3047L12.8899 3.89599V11.775H14.0006V3.11071C14.0006 2.49815 13.5025 2 12.8899 2Z" fill="#1A1A1A"/>
+                            </svg>
+                        </a>
+
+                        <a href="mdk.html" class="burger-submenu-link">
+                            Уличные
+                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M12.8899 2H4.89231V3.11071H12.1046L2.0293 12.5194L2.81457 13.3047L12.8899 3.89599V11.775H14.0006V3.11071C14.0006 2.49815 13.5025 2 12.8899 2Z" fill="#1A1A1A"/>
+                            </svg>
+                        </a>
+
+                        <a href="mdk.html" class="burger-submenu-link">
+                            Настенные
+                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M12.8899 2H4.89231V3.11071H12.1046L2.0293 12.5194L2.81457 13.3047L12.8899 3.89599V11.775H14.0006V3.11071C14.0006 2.49815 13.5025 2 12.8899 2Z" fill="#1A1A1A"/>
+                            </svg>
+                        </a>
+
+                        <a href="mdk.html" class="burger-submenu-link">
+                            Для батареек/показаний
+                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M12.8899 2H4.89231V3.11071H12.1046L2.0293 12.5194L2.81457 13.3047L12.8899 3.89599V11.775H14.0006V3.11071C14.0006 2.49815 13.5025 2 12.8899 2Z" fill="#1A1A1A"/>
+                            </svg>
+                        </a>
+                    </div>
+
+                    <div class="burger-menu-open-socials">
+                        <a href="https://yandex.ru/maps/-/CLUt6Jkr" target="_blank" class="burger-menu-open-link-address">
+                            г. Миасс, ул. 60 лет Октября 13А, офис 1
+                        </a>
+
+                        <div class="burger-menu-open-socials-links">
+                            <a href="#">
+                                <img src="images/whats.svg" alt="">
+                            </a>
+
+                            <a href="#">
+                                <img src="images/tg.svg" alt="">
+                            </a>
+
+                            <a href="#">
+                                <img src="images/vk.svg" alt="">
+                            </a>
+
+                            <a href="#">
+                                <img src="images/yandex_zen.svg" alt="">
+                            </a>
+
+                            <a href="#">
+                                <img src="images/youtube.svg" alt="">
+                            </a>
+                        </div>
+
+                        <button class="get-an-offer-burger-btn red-btn">
+                            Получить предложение
+                        </button>
+                    </div>  
+                </div>
+
+                <div class="burger-submenu" data-submenu-id="antivandal">
+                    <div class="burger-submenu-header">
+                        <button class="go-back-btn">
+                            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M5.95961 9.87774C5.95923 9.6589 6.0021 9.44214 6.08576 9.23992C6.16942 9.0377 6.29223 8.85401 6.44711 8.69941L10.8588 4.28857L12.0371 5.46691L7.62628 9.87774L12.0371 14.2886L10.8588 15.4669L6.44794 11.0561C6.29291 10.9015 6.16995 10.7179 6.08615 10.5157C6.00234 10.3134 5.95934 10.0966 5.95961 9.87774Z" fill="#1A1A1A"/>
+                            </svg>
+                        </button>
+
+                        <span class="burger-submenu-title">
+                            Антивандальные
+                        </span>
+                    </div>
+
+                    <div class="burger-submenu-links">
+                        <a href="mdk.html" class="burger-submenu-link">
+                            Уличные
+                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M12.8899 2H4.89231V3.11071H12.1046L2.0293 12.5194L2.81457 13.3047L12.8899 3.89599V11.775H14.0006V3.11071C14.0006 2.49815 13.5025 2 12.8899 2Z" fill="#1A1A1A"/>
+                            </svg>
+                        </a>
+
+                        <a href="mdk.html" class="burger-submenu-link">
+                            Настенные
+                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M12.8899 2H4.89231V3.11071H12.1046L2.0293 12.5194L2.81457 13.3047L12.8899 3.89599V11.775H14.0006V3.11071C14.0006 2.49815 13.5025 2 12.8899 2Z" fill="#1A1A1A"/>
+                            </svg>
+                        </a>
+
+                        <a href="mdk.html" class="burger-submenu-link">
+                            На столб
+                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M12.8899 2H4.89231V3.11071H12.1046L2.0293 12.5194L2.81457 13.3047L12.8899 3.89599V11.775H14.0006V3.11071C14.0006 2.49815 13.5025 2 12.8899 2Z" fill="#1A1A1A"/>
+                            </svg>
+                        </a>
+
+                        <a href="mdk.html" class="burger-submenu-link">
+                            Для МДК  
+                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M12.8899 2H4.89231V3.11071H12.1046L2.0293 12.5194L2.81457 13.3047L12.8899 3.89599V11.775H14.0006V3.11071C14.0006 2.49815 13.5025 2 12.8899 2Z" fill="#1A1A1A"/>
+                            </svg>
+                        </a>
+
+                        <a href="mdk.html" class="burger-submenu-link">
+                            Постаматы
+                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M12.8899 2H4.89231V3.11071H12.1046L2.0293 12.5194L2.81457 13.3047L12.8899 3.89599V11.775H14.0006V3.11071C14.0006 2.49815 13.5025 2 12.8899 2Z" fill="#1A1A1A"/>
+                            </svg>
+                        </a>
+
+                        <a href="mdk.html" class="burger-submenu-link">
+                            С отделением для спама
+                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M12.8899 2H4.89231V3.11071H12.1046L2.0293 12.5194L2.81457 13.3047L12.8899 3.89599V11.775H14.0006V3.11071C14.0006 2.49815 13.5025 2 12.8899 2Z" fill="#1A1A1A"/>
+                            </svg>
+                        </a>
+
+                        <a href="mdk.html" class="burger-submenu-link">
+                            Для офисов
+                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M12.8899 2H4.89231V3.11071H12.1046L2.0293 12.5194L2.81457 13.3047L12.8899 3.89599V11.775H14.0006V3.11071C14.0006 2.49815 13.5025 2 12.8899 2Z" fill="#1A1A1A"/>
+                            </svg>
+                        </a>
+                    </div>
+
+                    <div class="burger-menu-open-socials">
+                        <a href="https://yandex.ru/maps/-/CLUt6Jkr" target="_blank" class="burger-menu-open-link-address">
+                            г. Миасс, ул. 60 лет Октября 13А, офис 1
+                        </a>
+
+                        <div class="burger-menu-open-socials-links">
+                            <a href="#">
+                                <img src="images/whats.svg" alt="">
+                            </a>
+
+                            <a href="#">
+                                <img src="images/tg.svg" alt="">
+                            </a>
+
+                            <a href="#">
+                                <img src="images/vk.svg" alt="">
+                            </a>
+
+                            <a href="#">
+                                <img src="images/yandex_zen.svg" alt="">
+                            </a>
+
+                            <a href="#">
+                                <img src="images/youtube.svg" alt="">
+                            </a>
+                        </div>
+
+                        <button class="get-an-offer-burger-btn red-btn">
+                            Получить предложение
+                        </button>
+                    </div>  
+                </div>
+
+                <div class="burger-submenu" data-submenu-id="about">
+                    <div class="burger-submenu-header">
+                        <button class="go-back-btn">
+                            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M5.95961 9.87774C5.95923 9.6589 6.0021 9.44214 6.08576 9.23992C6.16942 9.0377 6.29223 8.85401 6.44711 8.69941L10.8588 4.28857L12.0371 5.46691L7.62628 9.87774L12.0371 14.2886L10.8588 15.4669L6.44794 11.0561C6.29291 10.9015 6.16995 10.7179 6.08615 10.5157C6.00234 10.3134 5.95934 10.0966 5.95961 9.87774Z" fill="#1A1A1A"/>
+                            </svg>
+                        </button>
+
+                        <span class="burger-submenu-title">
+                            О компании
+                        </span>
+                    </div>
+
+                    <div class="burger-submenu-links">
+                        <a href="mdk.html" class="burger-submenu-link">
+                            Уличные
+                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M12.8899 2H4.89231V3.11071H12.1046L2.0293 12.5194L2.81457 13.3047L12.8899 3.89599V11.775H14.0006V3.11071C14.0006 2.49815 13.5025 2 12.8899 2Z" fill="#1A1A1A"/>
+                            </svg>
+                        </a>
+
+                        <a href="mdk.html" class="burger-submenu-link">
+                            Настенные
+                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M12.8899 2H4.89231V3.11071H12.1046L2.0293 12.5194L2.81457 13.3047L12.8899 3.89599V11.775H14.0006V3.11071C14.0006 2.49815 13.5025 2 12.8899 2Z" fill="#1A1A1A"/>
+                            </svg>
+                        </a>
+
+                        <a href="mdk.html" class="burger-submenu-link">
+                            На столб
+                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M12.8899 2H4.89231V3.11071H12.1046L2.0293 12.5194L2.81457 13.3047L12.8899 3.89599V11.775H14.0006V3.11071C14.0006 2.49815 13.5025 2 12.8899 2Z" fill="#1A1A1A"/>
+                            </svg>
+                        </a>
+
+                        <a href="mdk.html" class="burger-submenu-link">
+                            С отделением для спама
+                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M12.8899 2H4.89231V3.11071H12.1046L2.0293 12.5194L2.81457 13.3047L12.8899 3.89599V11.775H14.0006V3.11071C14.0006 2.49815 13.5025 2 12.8899 2Z" fill="#1A1A1A"/>
+                            </svg>
+                        </a>
+
+                        <a href="mdk.html" class="burger-submenu-link">
+                            Для офисов
+                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M12.8899 2H4.89231V3.11071H12.1046L2.0293 12.5194L2.81457 13.3047L12.8899 3.89599V11.775H14.0006V3.11071C14.0006 2.49815 13.5025 2 12.8899 2Z" fill="#1A1A1A"/>
+                            </svg>
+                        </a>
+
+                        <a href="mdk.html" class="burger-submenu-link">
+                            Для МДК  
+                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M12.8899 2H4.89231V3.11071H12.1046L2.0293 12.5194L2.81457 13.3047L12.8899 3.89599V11.775H14.0006V3.11071C14.0006 2.49815 13.5025 2 12.8899 2Z" fill="#1A1A1A"/>
+                            </svg>
+                        </a>
+
+                        <a href="mdk.html" class="burger-submenu-link">
+                            Постаматы
+                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M12.8899 2H4.89231V3.11071H12.1046L2.0293 12.5194L2.81457 13.3047L12.8899 3.89599V11.775H14.0006V3.11071C14.0006 2.49815 13.5025 2 12.8899 2Z" fill="#1A1A1A"/>
+                            </svg>
+                        </a>
+
+                        <a href="mdk.html" class="burger-submenu-link">
+                            Для батареек/показаний
+                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M12.8899 2H4.89231V3.11071H12.1046L2.0293 12.5194L2.81457 13.3047L12.8899 3.89599V11.775H14.0006V3.11071C14.0006 2.49815 13.5025 2 12.8899 2Z" fill="#1A1A1A"/>
+                            </svg>
+                        </a>
+                    </div>
+
+                    <div class="burger-menu-open-socials">
+                        <a href="https://yandex.ru/maps/-/CLUt6Jkr" target="_blank" class="burger-menu-open-link-address">
+                            г. Миасс, ул. 60 лет Октября 13А, офис 1
+                        </a>
+
+                        <div class="burger-menu-open-socials-links">
+                            <a href="#">
+                                <img src="images/whats.svg" alt="">
+                            </a>
+
+                            <a href="#">
+                                <img src="images/tg.svg" alt="">
+                            </a>
+
+                            <a href="#">
+                                <img src="images/vk.svg" alt="">
+                            </a>
+
+                            <a href="#">
+                                <img src="images/yandex_zen.svg" alt="">
+                            </a>
+
+                            <a href="#">
+                                <img src="images/youtube.svg" alt="">
+                            </a>
+                        </div>
+
+                        <button class="get-an-offer-burger-btn red-btn">
+                            Получить предложение
+                        </button>
+                    </div>  
                 </div>
             </div>
         </div>
