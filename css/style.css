@@ -4421,14 +4421,18 @@ path[data-delivery="ПОИСК СОДЕРЖИМОГО"] {
     }
 }
 
+@media (max-width: 370px) {
+    .mdk-main-title {
+        font-size: 24px;
+    }
+}
 
 
 
 
 
 
-
-/* Секиця "Производим" на странице МДК */
+/* Секция "Производим" на странице МДК */
 
 .mdk-we-produce {
     background-color: var(--black);
@@ -4451,12 +4455,42 @@ path[data-delivery="ПОИСК СОДЕРЖИМОГО"] {
     gap: 40px;
 }
 
-.mdk-we-produce-rigth-side img {
+.mdk-we-produce-rigth-side {
+    position: relative;
+    width: 100%;
+    max-width: 835px;
+    aspect-ratio: 835 / 473; 
+    max-height: 473px;     
+    overflow: hidden;
+    display: block; 
+}
+
+.mdk-we-produce-rigth-side img.mdk-we-produce-preview {
+    position: absolute;
+    inset: 0;
     width: 100%;
     height: 100%;
     object-fit: cover;
+    object-position: center;
     display: block;
+    opacity: 0;
+    transition: opacity 380ms ease; 
+    will-change: opacity;
+    pointer-events: none;
+    background-color: transparent;
+    border: none;
+    z-index: 1;
 }
+
+.mdk-we-produce-rigth-side img.mdk-we-produce-preview.mdk-visible {
+    opacity: 1;
+    z-index: 2;
+}
+
+.mdk-we-produce-rigth-side img.mdk-we-produce-preview.mdk-back {
+    z-index: 1;
+}
+
 
 .mdk-we-produce-title {
     font-size: 45px;
@@ -4496,7 +4530,84 @@ path[data-delivery="ПОИСК СОДЕРЖИМОГО"] {
     color: var(--black);
 }
 
+/* Адаптив секиции "Производим" на странице МДК */
 
+@media (max-width: 1700px) {
+    .mdk-we-produce {
+        padding: 90px 60px;
+    }
+}
+
+@media (max-width: 1500px) {
+    .mdk-we-produce {
+        padding: 70px 40px;
+    }
+}
+
+@media (max-width: 1350px) {
+    .mdk-we-produce-title {
+        font-size: 36px;
+    }
+
+    .mdk-we-produce-banner {
+        font-size: 16px;
+    }
+}
+
+@media (max-width: 1280px) {
+    .mdk-we-produce {
+        background-image: url("../images/we-produce-bg-1280.png");
+    }
+}
+
+@media (max-width: 1200px) {
+    .mdk-we-produce-container {
+        grid-template-columns: 1fr;
+    }
+
+    .mdk-we-produce-banners {
+        max-width: 100%;
+    }
+
+    .mdk-we-produce {
+        background-image: none;
+    }  
+    
+    .mdk-we-produce-rigth-side {
+        max-width: 100%;
+    }
+
+    .mdk-we-produce-rigth-side {
+        display: none;
+    } 
+}
+
+@media (max-width: 1200px) and (hover: none) and (pointer: coarse) {
+    .mdk-we-produce-rigth-side {
+        display: none;
+    } 
+}
+
+@media (max-width: 700px) {
+    .mdk-we-produce {
+        padding: 60px 16px;
+        background-image: none;
+    }
+
+    .mdk-we-produce-title {
+        font-size: 28px;
+    }
+
+    .mdk-we-produce-banner {
+        font-size: 14px;
+        padding: 2px 8px;
+    }
+
+    .mdk-we-produce-banner svg {
+        width: 14px;
+        height: 14px;
+    }
+}
 
 /* Секция "Компания" */
 
