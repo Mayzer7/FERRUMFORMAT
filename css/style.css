@@ -4613,11 +4613,17 @@ path[data-delivery="ПОИСК СОДЕРЖИМОГО"] {
 
 .company {
     color: #fff;
-    padding: 100px 80px;
+    padding: 90px 80px;
+    background-color: var(--black);
     background-image: url(../images/about-us-bg.png);
     background-repeat: no-repeat;
     background-size: cover;
     background-position: center center;
+}
+
+.company-content {
+    position: relative;
+    z-index: 2;
 }
 
 .company-desc {
@@ -4633,6 +4639,10 @@ path[data-delivery="ПОИСК СОДЕРЖИМОГО"] {
     grid-template-columns: 1fr 1fr;
 }
 
+.company-info-left-side {
+    padding-right: 20px;
+}
+
 .company-info-right-side {
     position: relative;
 }
@@ -4645,14 +4655,14 @@ path[data-delivery="ПОИСК СОДЕРЖИМОГО"] {
 }
 
 .company-advantages-cards {
-    margin-top: 27px;
+    margin-top: 40px;
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: 0px;
 }
 
 .company-advantages-card {
-    padding: 16px 20px 37px 20px;
+    padding: 0px 20px 20px 20px;
     border-left: 1px solid #FFFFFF;
 }
 
@@ -4682,6 +4692,97 @@ path[data-delivery="ПОИСК СОДЕРЖИМОГО"] {
     line-height: 130%;
     color: #8A8A8A;
 }
+
+/* Адаптив секции "Компания" */
+
+@media (max-width: 1700px) {
+    .company {
+        padding: 90px 60px;
+    }
+}
+
+@media (max-width: 1500px) {
+    .company {
+        padding: 70px 40px;
+    }
+}
+
+@media (max-width: 1350px) {
+    .company-desc {
+        font-size: 18px;
+    }
+
+    .company-advantages-card-number {
+        font-size: 20px;
+    }
+
+    .company-advantages-card-title {
+        font-size: 18px;
+    }
+
+    .company-advantages-card-desc-text {
+        font-size: 14px;
+    }
+
+    .company-advantages-card {
+        padding: 0px 16px 16px 16px;
+    }
+
+    .company {
+        background-image: none;
+    }
+}
+
+@media (max-width: 1270px) {
+    .company-advantages-cards {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 32px;
+    }
+
+    .company-desc {
+        font-size: 16px;
+    }
+}
+
+@media (max-width: 900px) {
+    .company-info {
+        grid-template-columns: 1fr;
+        gap: 40px;
+    }
+
+    .company-advantages-cards {
+        margin-top: 50px;
+        grid-template-columns: 1fr;
+    }
+
+    .company-advantages-card {
+        padding: 0px;
+        padding-left: 16px;
+    }
+}
+
+@media (max-width: 700px) {
+    .company {
+        padding: 60px 16px;
+    }
+
+    .documents-title {
+        padding-top: 12px;
+        padding-bottom: 12px;
+    }
+
+    .company-advantages-card-number {
+        font-size: 18px;
+    }
+
+    .company-advantages-card-title {
+        font-size: 16px;
+    }
+}
+
+
+
+
 
 
 
@@ -7072,6 +7173,7 @@ section {
 .mdk-main .line { background: #e9e9e9; }
 .mdk-we-produce .line { background: #2e2e2e; }
 .our-work .line { background: #e9e9e9; }
+.company .line { background: #2e2e2e; }
 
 .line1 { left: 3.6%; }
 .line2 { left: 27%; }
@@ -7109,7 +7211,8 @@ section {
     .get-contact .line,
     .footer .line,
     .mdk-we-produce .line,
-    .our-work .line {
+    .our-work .line,
+    .company .line {
         display: none;
     }
 
