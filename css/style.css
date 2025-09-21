@@ -5468,9 +5468,9 @@ path[data-delivery="ПОИСК СОДЕРЖИМОГО"] {
         padding-left: 325px;
     }
 }
-
+/* 
 @media (max-width: 1190px) {
-    /* .principles-content {
+    .principles-content {
         padding-left: 20px;
         max-height: 100%;
     }
@@ -5481,8 +5481,8 @@ path[data-delivery="ПОИСК СОДЕРЖИМОГО"] {
 
     .principles-texts {
         flex-direction: column;
-    } */
-}
+    }
+} */
 
 @media (max-width: 1170px) {
     .principles-content {
@@ -5551,7 +5551,7 @@ path[data-delivery="ПОИСК СОДЕРЖИМОГО"] {
 
 @media (max-width: 700px) {
     .principles {
-        background-image: url("../images/principles-bg-mob.png");
+        background-image: url("../images/principles-bg-mob.svg");
         background-position: left 10px;
     }
 
@@ -5586,16 +5586,20 @@ path[data-delivery="ПОИСК СОДЕРЖИМОГО"] {
 /* Секция "Сильные стороны" */
 
 .strong-sides {
-    background-image: url(../images/strong-sides-bg.png);
+    background-color: var(--black);
+    background-image: url(../images/strong-sides-bg.svg);
     background-size: cover;
-    background-position: center center;
+    background-position: left center;
     color: #fff;
-    padding: 70px 80px;
+    padding: 90px 80px;
+    max-height: 515px;
+    height: 100%;
 }
 
 .strong-sides-content {
     margin-left: 25%;
-    padding: 20px 0px;
+    position: relative;
+    z-index: 2;
 }
 
 .strong-sides-title {
@@ -5629,6 +5633,76 @@ path[data-delivery="ПОИСК СОДЕРЖИМОГО"] {
     font-weight: 300;
 }
 
+/* Адаптив секции "Сильные стороны" */
+
+@media (max-width: 1500px) {
+    .strong-sides {
+        padding: 70px 60px 90px 60px;
+    }
+}
+
+@media (max-width: 1350px) {
+    .strong-sides {
+        max-height: 441px;
+    }
+
+    .strong-sides-title {
+        font-size: 36px;
+    }
+
+    .strong-sides-banner-title {
+        font-size: 18px;
+    }
+}
+
+@media (max-width: 1100px) {
+    .strong-sides-content {
+        margin-left: 0%;
+    }
+
+    .strong-sides {
+        padding: 70px 40px 90px 40px;
+    }
+    
+}
+
+@media (max-width: 700px) {
+    .strong-sides {
+        padding: 60px 16px;
+    }
+
+    .strong-sides-banners {
+        grid-template-columns: 1fr;
+    }
+
+    .strong-sides {
+        max-height: 100%;
+    }
+
+    .strong-sides-title {
+        font-size: 28px;
+    }
+
+    .strong-sides-banner svg {
+        flex-shrink: 0;
+        width: 40px;
+        height: 40px;
+    }
+
+    .strong-sides-banner-title {
+        font-size: 16px;
+    }
+}
+
+@media (max-width: 500px) {
+    .strong-sides {
+        background-image: none;
+    }
+
+    .strong-sides-banner-title {
+        max-width: 100%;
+    }
+}
 
 
 
@@ -5642,7 +5716,7 @@ path[data-delivery="ПОИСК СОДЕРЖИМОГО"] {
     background-image: url(../images/we-produce/bg.png);
     background-repeat: no-repeat;
     background-size: cover;
-    background-position: center center;
+    background-position: top center;
 }
 
 .our-production-text {
@@ -7600,6 +7674,7 @@ section {
 .our-work .line { background: #e9e9e9; }
 .company .line { background: #2e2e2e; }
 .principles .line { background: #e9e9e9; }
+.strong-sides .line { background: #2e2e2e; }
 
 .line1 { left: 3.6%; }
 .line2 { left: 27%; }
@@ -7643,7 +7718,8 @@ section {
     .mdk-we-produce .line,
     .our-work .line,
     .company .line,
-    .principles .line {
+    .principles .line,
+    .strong-sides .line {
         display: none;
     }
 
