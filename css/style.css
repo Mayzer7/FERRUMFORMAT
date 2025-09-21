@@ -5713,10 +5713,11 @@ path[data-delivery="ПОИСК СОДЕРЖИМОГО"] {
     color: var(--black);
     background-color: #fff;
     padding: 80px;
-    background-image: url(../images/we-produce/bg.png);
-    background-repeat: no-repeat;
-    background-size: cover;
-    background-position: top center;
+}
+
+.our-production-content {
+    position: relative;
+    z-index: 2;
 }
 
 .our-production-text {
@@ -5767,6 +5768,15 @@ path[data-delivery="ПОИСК СОДЕРЖИМОГО"] {
     grid-template-columns: repeat(3, 1fr);
     gap: 10px;
     margin-top: 16px;
+}
+
+.our-production-info-card-images img {
+  max-width: 353px;
+  max-height: 200px;
+  width: 100%;              
+  height: auto;          
+  display: block;           
+  object-fit: cover;              
 }
 
 .our-production-info-card-text {
@@ -5855,6 +5865,18 @@ path[data-delivery="ПОИСК СОДЕРЖИМОГО"] {
 
 /* Адаптив секции "Наше производство" */
 
+@media (max-width: 1700px) {
+    .our-production {
+        padding: 80px 60px;
+    }
+}
+
+@media (max-width: 1500px) {
+    .our-production {
+        padding: 60px 40px;
+    }
+}
+
 @media (max-width: 1350px) {
     .card-open-delivery-left-last {
         gap: 20px;
@@ -5889,6 +5911,33 @@ path[data-delivery="ПОИСК СОДЕРЖИМОГО"] {
     .card-open-delivery-info-card {
         padding: 12px;
     }
+
+    .our-production-text {
+        font-size: 18px;
+    }
+
+    .our-production-content .we-produce-title {
+        margin: 12px 0px;
+    }
+
+    .our-production-text {
+        max-width: 580px;
+    }
+
+    .our-production-info-card-images {
+        max-width: 869px;
+        margin-top: 12px;
+    }
+
+    .our-production-info-card-images img {
+        max-width: 283px;
+        max-height: 160px;
+    }
+
+    .our-production-info-card-text {
+        font-size: 14px;
+        margin-top: 8px;
+    }
 }
 
 @media (max-width: 1100px) {
@@ -5900,6 +5949,17 @@ path[data-delivery="ПОИСК СОДЕРЖИМОГО"] {
     .card-open-delivery-left-last {
         grid-template-columns: 1fr;
         gap: 12px;
+    }
+}
+
+@media (max-width: 900px) {
+    .our-production-info-card-images {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .our-production-info-card-images img {
+        max-width: 390px;
+        max-height: 220px;
     }
 }
 
@@ -5928,6 +5988,24 @@ path[data-delivery="ПОИСК СОДЕРЖИМОГО"] {
 
     .card-open-delivery-info-card-text {
         font-size: 14px;
+    }
+
+    .our-production {
+        padding: 60px 16px;
+    }
+
+    .our-production-info-card-images {
+        grid-template-columns: 1fr;
+    }
+
+    .our-production-info-card-images img {
+        max-width: 100%;
+        max-height: 100%;
+    }
+
+    .our-production-text {
+        font-size: 16px;
+        max-width: 100%;
     }
 }
 
@@ -7675,6 +7753,7 @@ section {
 .company .line { background: #2e2e2e; }
 .principles .line { background: #e9e9e9; }
 .strong-sides .line { background: #2e2e2e; }
+.our-production .line { background: #e9e9e9; }
 
 .line1 { left: 3.6%; }
 .line2 { left: 27%; }
@@ -7719,7 +7798,8 @@ section {
     .our-work .line,
     .company .line,
     .principles .line,
-    .strong-sides .line {
+    .strong-sides .line,
+    .our-production .line {
         display: none;
     }
 
