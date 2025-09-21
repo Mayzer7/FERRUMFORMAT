@@ -1180,8 +1180,73 @@ if (deliveryMap) {
       showLog('Interactive SVG ready, regions found:', targets.length);
       showLog(targets.slice(0,20).map(el => ({ tag: el.tagName, id: el.id || null, class: el.getAttribute('class'), data_delivery: el.dataset ? el.dataset.delivery : null })));
 
-      let activeTouchTarget = null;
+      // Логика показа даты доставки при наведении с одной областью
+
+      // let activeTouchTarget = null;
+      // let lastPointerType = null;
+
+      // targets.forEach(el => {
+      //   if (!el.classList.contains('region')) el.classList.add('region');
+      //   el.style.pointerEvents = 'auto';
+
+      //   el.addEventListener('mouseenter', (ev) => {
+      //     lastPointerType = ev.pointerType || 'mouse';
+      //     normalizeDeliveryFromAttrs(el);
+      //     el.classList.add('hovered');
+      //     const text = getDeliveryText(el);
+      //     const clientX = ev.clientX || (ev.touches && ev.touches[0] && ev.touches[0].clientX) || 0;
+      //     const clientY = ev.clientY || (ev.touches && ev.touches[0] && ev.touches[0].clientY) || 0;
+      //     showTooltip(text, clientX, clientY);
+      //   });
+
+      //   el.addEventListener('mousemove', (ev) => {
+      //     const clientX = ev.clientX || 0;
+      //     const clientY = ev.clientY || 0;
+      //     if (tooltip.classList.contains('show')) showTooltip(getDeliveryText(el), clientX, clientY);
+      //   });
+
+      //   el.addEventListener('mouseleave', (ev) => {
+      //     el.classList.remove('hovered');
+      //     if (lastPointerType !== 'touch') hideTooltip();
+      //   });
+
+      //   el.addEventListener('click', (ev) => {
+      //     ev.preventDefault();
+      //     ev.stopPropagation();
+      //     const isSame = activeTouchTarget === el;
+      //     if (isSame) {
+      //       el.classList.remove('hovered');
+      //       hideTooltip();
+      //       activeTouchTarget = null;
+      //     } else {
+      //       if (activeTouchTarget) activeTouchTarget.classList.remove('hovered');
+      //       activeTouchTarget = el;
+      //       el.classList.add('hovered');
+      //       const clientX = (ev.clientX || 0);
+      //       const clientY = (ev.clientY || 0);
+      //       showTooltip(getDeliveryText(el), clientX, clientY);
+      //     }
+      //   }, { passive: false });
+      // });
+
+      // Логика показа даты доставки при наведении всех областей
+
+      let activeTouchKey = null;
       let lastPointerType = null;
+
+      function getNormalizedDeliveryKey(el) {
+        const txt = getDeliveryText(el) || '';
+        return String(txt).trim().toLowerCase();
+      }
+
+      function getMatchingRegionsByKey(key) {
+        if (!key) return [];
+        return Array.from(svgEl.querySelectorAll('.region')).filter(r => {
+          try {
+            return getNormalizedDeliveryKey(r) === key;
+          } catch (e) { return false; }
+        });
+      }
 
       targets.forEach(el => {
         if (!el.classList.contains('region')) el.classList.add('region');
@@ -1190,7 +1255,11 @@ if (deliveryMap) {
         el.addEventListener('mouseenter', (ev) => {
           lastPointerType = ev.pointerType || 'mouse';
           normalizeDeliveryFromAttrs(el);
-          el.classList.add('hovered');
+
+          const key = getNormalizedDeliveryKey(el);
+          const matches = getMatchingRegionsByKey(key);
+          matches.forEach(m => m.classList.add('hovered'));
+
           const text = getDeliveryText(el);
           const clientX = ev.clientX || (ev.touches && ev.touches[0] && ev.touches[0].clientX) || 0;
           const clientY = ev.clientY || (ev.touches && ev.touches[0] && ev.touches[0].clientY) || 0;
@@ -1204,22 +1273,32 @@ if (deliveryMap) {
         });
 
         el.addEventListener('mouseleave', (ev) => {
-          el.classList.remove('hovered');
-          if (lastPointerType !== 'touch') hideTooltip();
+          const key = getNormalizedDeliveryKey(el);
+          if (lastPointerType !== 'touch') {
+            const matches = getMatchingRegionsByKey(key);
+            matches.forEach(m => m.classList.remove('hovered'));
+            hideTooltip();
+          }
         });
 
         el.addEventListener('click', (ev) => {
           ev.preventDefault();
           ev.stopPropagation();
-          const isSame = activeTouchTarget === el;
+
+          const key = getNormalizedDeliveryKey(el);
+          const isSame = activeTouchKey === key;
+
           if (isSame) {
-            el.classList.remove('hovered');
+            getMatchingRegionsByKey(key).forEach(m => m.classList.remove('hovered'));
             hideTooltip();
-            activeTouchTarget = null;
+            activeTouchKey = null;
           } else {
-            if (activeTouchTarget) activeTouchTarget.classList.remove('hovered');
-            activeTouchTarget = el;
-            el.classList.add('hovered');
+            if (activeTouchKey) {
+              getMatchingRegionsByKey(activeTouchKey).forEach(m => m.classList.remove('hovered'));
+            }
+            activeTouchKey = key;
+            getMatchingRegionsByKey(key).forEach(m => m.classList.add('hovered'));
+
             const clientX = (ev.clientX || 0);
             const clientY = (ev.clientY || 0);
             showTooltip(getDeliveryText(el), clientX, clientY);

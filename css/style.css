@@ -2312,7 +2312,7 @@ input[type=number] {
 
 .svg-wrap { 
     width: 100%; 
-    max-width: 1400px; 
+    max-width: 1450px; 
     margin: 0 auto; 
     position: relative; 
     touch-action: manipulation; 
@@ -2325,13 +2325,13 @@ input[type=number] {
 }
   
 .region { 
-    transition: fill 160ms ease, opacity 160ms ease, transform 160ms ease; 
+    transition: fill 300ms ease, opacity 300ms ease, transform 300ms ease; 
     cursor: pointer; 
     vector-effect: non-scaling-stroke; 
 }
 
 .region.hovered, .region:active { 
-    fill: #cfcfcf !important; 
+    fill: #A3A3A3 !important; 
     opacity: 0.95; 
     transform-origin: center; 
 }
@@ -6494,8 +6494,6 @@ path[data-delivery="ПОИСК СОДЕРЖИМОГО"] {
         max-height: 274px;
     }
 }
-
-
 
 
 /* Страница отзывы */
