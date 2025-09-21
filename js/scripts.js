@@ -349,15 +349,15 @@ document.addEventListener('DOMContentLoaded', function () {
       grabCursor: false,
       breakpoints: {
         0: {
-          slidesPerView: 1,
+          slidesPerView: 1.5,
           spaceBetween: 10
         },
-        640: {
-          slidesPerView: 2,
+        701: {
+          slidesPerView: 2.3,
           spaceBetween: 10
         },
         1100: {
-          slidesPerView: 3,
+          slidesPerView: 2.5,
           spaceBetween: 10
         }
       },
