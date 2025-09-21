@@ -6499,13 +6499,8 @@ path[data-delivery="ПОИСК СОДЕРЖИМОГО"] {
 /* Страница отзывы */
 
 .mdk-main-reviews {
-    background-image: url(../images/reviews-page-bg.png);
-    background-repeat: no-repeat;
-    background-size: cover;
-    background-position: center center;
-    padding: 90px 80px;
-    padding-top: 145px;
-    padding-bottom: 0px;
+    background-color: #fff;
+    padding: 142px 80px 40px 80px;
 }
 
 .reviews-cards-page .reviews-card {
@@ -6576,6 +6571,82 @@ path[data-delivery="ПОИСК СОДЕРЖИМОГО"] {
     color: var(--black);
 }
 
+/* Адаптив страницы "Отзывы" */
+
+@media (max-width: 1700px) {
+    .mdk-main-reviews {
+        padding: 142px 60px 40px 60px;
+    }
+}
+
+@media (max-width: 1500px) {
+    .mdk-main-reviews {
+        padding: 124px 40px 20px 40px;
+    }
+}
+
+@media (max-width: 1350px) {
+    .reviews-pagination-item {
+        width: 48px;
+        height: 48px;
+    }
+
+    .pagination-left-btn, .pagination-right-btn {
+        width: 48px;
+        height: 48px;
+    }
+
+    .pagination-left-btn svg, .pagination-right-btn svg {
+        flex-shrink: 0;
+        width: 28px;
+        height: 28px;
+    }
+
+    .reviews-pagination-item {
+        font-size: 16px;
+    }
+
+    .reviews-pagination {
+        margin-top: 24px;
+    }
+}
+
+@media (max-width: 1270px) {
+    .mdk-main-reviews {
+        padding: 95px 40px 20px 40px;
+    }
+}
+
+@media (max-width: 700px) {
+    .mdk-main-reviews {
+        padding: 95px 16px 20px 16px;
+    }
+
+    .reviews-pagination-item {
+        width: 42px;
+        height: 42px;
+    }
+
+    .pagination-left-btn, .pagination-right-btn {
+        width: 42px;
+        height: 42px;
+    }
+
+    .pagination-left-btn svg, .pagination-right-btn svg {
+        width: 24px;
+        height: 24px;
+    }
+}
+
+@media (max-width: 500px) {
+    .mobile-hidden {
+        display: none;
+    }
+
+    .pagination-right-btn {
+        margin-left: 26px;
+    }
+}
 
 /* Модальное окно для просмотра отзыва */
 
@@ -8090,4 +8161,6 @@ section {
     .mdk-main .line4 {
         display: none;
     }
+
+
 }
