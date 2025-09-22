@@ -1696,3 +1696,131 @@ if (mdkWeProduceBanners) {
     if (wrapper) wrapper.addEventListener('mouseleave', hideImage);
   });
 }
+
+
+
+
+// Попап "Скопировано" на странице "Контакты"
+
+document.addEventListener('DOMContentLoaded', () => {
+  const buttons = document.querySelectorAll('.copy-button');
+  if (!buttons.length) return;
+
+  // создаём popup
+  const popup = document.createElement('div');
+  popup.className = 'copy-popup';
+  popup.setAttribute('role', 'status');
+  popup.setAttribute('aria-live', 'polite');
+  popup.style.position = 'fixed'; // фиксированное позиционирование по умолчанию
+  popup.style.zIndex = 99999;
+  popup.style.pointerEvents = 'none';
+  document.body.appendChild(popup);
+
+  let popupTimer = null;
+  let lastPointer = null; // хранит последние координаты pointerdown
+
+  // ловим pointerdown — работает и для мыши, и для тача
+  window.addEventListener('pointerdown', (ev) => {
+    if (ev && typeof ev.clientX === 'number' && typeof ev.clientY === 'number') {
+      lastPointer = { x: ev.clientX, y: ev.clientY };
+    }
+  }, { passive: true });
+
+  buttons.forEach(btn => {
+    btn.addEventListener('click', async (e) => {
+      e.preventDefault();
+
+      const container = btn.parentElement; // .requisites-card-text-inner
+      if (!container) return;
+
+      // получаем текст (без кнопки)
+      const clone = container.cloneNode(true);
+      const btnInClone = clone.querySelector('.copy-button');
+      if (btnInClone) btnInClone.remove();
+      let text = (clone.innerText || clone.textContent || '').replace(/\u00A0/g, ' ').trim();
+      if (!text) return;
+
+      // копируем
+      try {
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          await navigator.clipboard.writeText(text);
+        } else {
+          const ta = document.createElement('textarea');
+          ta.value = text;
+          ta.style.position = 'fixed';
+          ta.style.left = '-9999px';
+          document.body.appendChild(ta);
+          ta.focus();
+          ta.select();
+          document.execCommand('copy');
+          document.body.removeChild(ta);
+        }
+      } catch (err) {
+        console.error('Copy failed', err);
+      }
+
+      // определяем координаты для popupa
+      // приоритет: координаты pointerdown (lastPointer) -> event.clientX/Y -> центровка по кнопке
+      let coordX = (e && typeof e.clientX === 'number' && e.clientX !== 0) ? e.clientX : null;
+      let coordY = (e && typeof e.clientY === 'number' && e.clientY !== 0) ? e.clientY : null;
+
+      if ((coordX === null || coordY === null) && lastPointer) {
+        coordX = lastPointer.x;
+        coordY = lastPointer.y;
+      }
+
+      const rect = btn.getBoundingClientRect();
+      if (coordX === null || coordY === null) {
+        coordX = rect.left + rect.width / 2;
+        coordY = rect.top + rect.height / 2;
+      }
+
+      // подготовка popup
+      popup.innerHTML = `
+        <span class="popup-icon" aria-hidden="true">
+          <svg width="20" height="21" viewBox="0 0 20 21" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M7.18 16.4347C6.91546 16.4352 6.65342 16.3835 6.40893 16.2825C6.16444 16.1815 5.94232 16.0331 5.75533 15.846L2 12.0907L2.94933 11.1407L6.70467 14.896C6.83068 15.0219 7.00153 15.0926 7.17967 15.0926C7.35781 15.0926 7.52866 15.0219 7.65467 14.896L17.0507 5.5L18 6.45L8.604 15.846C8.41714 16.0331 8.19513 16.1814 7.95076 16.2825C7.70638 16.3835 7.44444 16.4352 7.18 16.4347Z" fill="white"/>
+          </svg>
+        </span>
+
+        <span class="popup-text">Скопировано</span>
+      `;
+      popup.classList.remove('show');
+
+      // даём браузеру обновить DOM, затем измеряем и позиционируем
+      requestAnimationFrame(() => {
+        // чуть позже — чтобы размеры учли шрифты/рендер
+        requestAnimationFrame(() => {
+          const popupRect = popup.getBoundingClientRect();
+          const vw = document.documentElement.clientWidth;
+          const vh = document.documentElement.clientHeight;
+          const pad = 8;
+
+          // позиция по центру по X
+          let left = coordX - popupRect.width / 2;
+          // по Y: по умолчанию над курсором/кнопкой
+          let top = coordY - popupRect.height - 12;
+
+          // если не помещается сверху — показываем снизу
+          if (top < pad) {
+            top = coordY + 12;
+          }
+
+          // поправляем, чтобы не выходило за края
+          left = Math.min(Math.max(pad, left), vw - popupRect.width - pad);
+          top = Math.min(Math.max(pad, top), vh - popupRect.height - pad);
+
+          popup.style.left = `${Math.round(left)}px`;
+          popup.style.top  = `${Math.round(top)}px`;
+
+          // показываем
+          requestAnimationFrame(() => popup.classList.add('show'));
+        });
+      });
+
+      if (popupTimer) clearTimeout(popupTimer);
+      popupTimer = setTimeout(() => popup.classList.remove('show'), 1000);
+    }, { passive: false });
+  });
+
+});
