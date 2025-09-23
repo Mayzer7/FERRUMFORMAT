@@ -7267,6 +7267,12 @@ path[data-delivery="ПОИСК СОДЕРЖИМОГО"] {
     }
 }
 
+@media (max-width: 1350px) {
+    .certificates-cards .documents-card {
+        padding: 16px;
+    }
+}
+
 @media (max-width: 1270px) {
     .mdk-main-certificates {
         padding: 93px 40px 60px 40px;
@@ -7794,8 +7800,13 @@ path[data-delivery="ПОИСК СОДЕРЖИМОГО"] {
 
 /* Страница "Доставка и оплата" */
 
+
+.mdk-main-payment {
+    padding: 142px 80px 100px 80px;
+}
+
 .payment {
-    padding-top: 26px;
+    padding-top: 16px;
 }
 
 .payment-info-container {
@@ -7804,10 +7815,20 @@ path[data-delivery="ПОИСК СОДЕРЖИМОГО"] {
 }
 
 .payment-info-cards {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 24px;
+  display: grid;
+  grid-template-columns: 1fr 1fr; 
+  gap: 24px;
+  overflow: visible; 
+  position: relative;
 }
+
+.payment-info-cards > :nth-child(2) {
+  transform: translateX(0px); 
+  width: calc(100% + 70px);    
+  z-index: 2;                   
+  will-change: transform;
+}
+
 
 .payment-info-card {
     display: flex;
@@ -7827,10 +7848,81 @@ path[data-delivery="ПОИСК СОДЕРЖИМОГО"] {
     letter-spacing: -0.02em;
 }
 
-.mdk-main-payment {
-    padding-bottom: 20px;
+/* Адаптив страницы "Оплата и доставка" */
+
+@media (max-width: 1700px) {
+    .mdk-main-payment {
+        padding: 142px 60px 100px 60px;
+    }
+
+    .delivery-payment {
+        padding-bottom: 40px;
+    }
 }
 
+@media (max-width: 1550px) {
+    .payment-info-cards > :nth-child(2) {
+        width: calc(100% + 110px);
+    }
+}
+
+@media (max-width: 1500px) {
+    .mdk-main-payment {
+        padding: 124px 40px 60px 40px;
+    }
+
+    .delivery-payment {
+        padding-bottom: 60px;
+    }
+}
+
+@media (max-width: 1350px) {
+    .payment-info-card-text {
+        font-size: 18px;
+    }
+
+    .payment-info-cards {
+        gap: 20px;
+    }
+}
+
+@media (max-width: 1270px) {
+    .mdk-main-payment {
+        padding: 95px 40px 60px 40px;
+    }
+
+    .payment-info-container {
+        grid-template-columns: 1fr;
+    }
+
+    .payment-info-cards {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+
+    .payment-info-cards > :nth-child(2) {
+        width: 100%;
+    }
+}
+
+@media (max-width: 700px) {
+    .mdk-main-payment {
+        padding: 95px 16px 40px 16px;
+    }
+
+    .payment-info-card svg {
+        width: 40px;
+        height: 40px;
+    }
+
+    .payment-info-card-text {
+        font-size: 16px;
+    }
+
+    .delivery-payment {
+        padding-bottom: 20px;
+    }
+}
 
 
 /* Страница "news-info.html" */
@@ -8447,13 +8539,17 @@ section {
     .quality-control .line,
     .reviews .line,
     .team .line,
-    .requisites .line,
     .statutory-documents .line {
         display: none;
     }
 
     .mdk-main .line2,
     .mdk-main .line4 {
+        display: none;
+    }
+
+    .requisites .line2,
+    .requisites .line4 {
         display: none;
     }
 
