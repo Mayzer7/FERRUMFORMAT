@@ -3601,13 +3601,13 @@ path[data-delivery="ПОИСК СОДЕРЖИМОГО"] {
 
 @media (max-width: 1700px) {
     .get-contact {
-        padding: 80px 60px;
+        padding: 90px 60px;
     }
 }
 
 @media (max-width: 1500px) {
     .get-contact {
-        padding: 60px 40px;
+        padding: 70px 40px;
     }
 
     .get-contact-right-side {
@@ -3655,7 +3655,7 @@ path[data-delivery="ПОИСК СОДЕРЖИМОГО"] {
 
 @media (max-width: 700px) {
     .get-contact {
-        padding: 60px 16px 22px 16px;
+        padding: 60px 16px;
     }
 
     .get-contact-attach-file-text {
@@ -7507,6 +7507,7 @@ path[data-delivery="ПОИСК СОДЕРЖИМОГО"] {
 /* Страница "Реквизиты" */
 
 .mdk-main-requisites {
+    background-color: transparent;
     padding: 0px;
     background-image: none;
 }
