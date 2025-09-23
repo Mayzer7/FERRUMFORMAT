@@ -7730,6 +7730,10 @@ path[data-delivery="ПОИСК СОДЕРЖИМОГО"] {
 
 /* Страница "Статьи и новости" */
 
+.blog-cards-news {
+    margin-top: 20px;
+}
+
 .news-tags-container {
   display: flex;
   width: 100%; 
