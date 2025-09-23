@@ -2835,9 +2835,9 @@ path[data-delivery="ПОИСК СОДЕРЖИМОГО"] {
 
 .documents-card-right-side {
     margin-right: 20px;
-    padding-top: 28px;
-    padding-bottom: 28px;
-    max-width: 150px;
+    padding-top: 12px;
+    padding-bottom: 12px;
+    max-width: 112px;
     width: 100%;
     height: 100%;
 }
@@ -2861,7 +2861,6 @@ path[data-delivery="ПОИСК СОДЕРЖИМОГО"] {
 @media (max-width: 1700px) {
     .documents-card-right-side {
         max-width: 113px;
-        margin-right: 40px;
     }
 
     .documents {
@@ -7242,12 +7241,8 @@ path[data-delivery="ПОИСК СОДЕРЖИМОГО"] {
 /* Страница "Сертификаты" */
 
 .mdk-main-certificates {
-    background-image: url(../images/reviews-page-bg.png);
-    background-repeat: no-repeat;
-    background-size: cover;
-    background-position: center center;
-    padding: 90px 80px;
-    padding-top: 145px;
+    background-color: #fff;
+    padding: 142px 80px 80px 80px;
 
 }
 
@@ -7258,21 +7253,45 @@ path[data-delivery="ПОИСК СОДЕРЖИМОГО"] {
     gap: 10px;
 }
 
-.certificates-cards .documents-card .documents-card-right-side {
-    padding: 0px;
-    padding: 12px 48px;
+/* Адаптив страницы "Сертификаты" */
+
+@media (max-width: 1700px) {
+    .mdk-main-certificates {
+        padding: 142px 60px 80px 60px;
+    }
+}
+
+@media (max-width: 1500px) {
+    .mdk-main-certificates {
+        padding: 124px 40px 60px 40px;
+    }
+}
+
+@media (max-width: 1270px) {
+    .mdk-main-certificates {
+        padding: 93px 40px 60px 40px;
+    }
+}
+
+@media (max-width: 700px) {
+    .mdk-main-certificates {
+        padding: 93px 16px 60px 16px;
+    }
 }
 
 /* Секция "Уставные документы" */
 
 .statutory-documents {
-    background-image: url(../images/statutory-documents-bg.png);
-    background-repeat: no-repeat;
-    background-position: center center;
+    background-color: var(--black);
     background-size: cover;
 
     color: #fff;
-    padding: 80px 60px 40px 75px;
+    padding: 90px 80px;
+}
+
+.statutory-documents-content {
+    position: relative;
+    z-index: 2;
 }
 
 .statutory-documents-lists {
@@ -7293,12 +7312,22 @@ path[data-delivery="ПОИСК СОДЕРЖИМОГО"] {
 }
 
 .statutory-documents-file {
-    display: grid;
-    grid-template-columns: minmax(0px, 1310px) 1fr;
+    display: flex;
     align-items: center;
+    justify-content: space-between;
+    gap: 20px;
     border-top: 1px solid #535353;
     padding: 17px 12px;
     transition: all 0.3s ease;
+}
+
+.statutory-documents-file-left {
+    display: flex;
+    justify-content: space-between;
+    flex: 1 1 auto; 
+    min-width: 0;
+    gap: 16px; 
+    padding-right: 16%;
 }
 
 .statutory-documents-file:last-child {
@@ -7331,6 +7360,142 @@ path[data-delivery="ПОИСК СОДЕРЖИМОГО"] {
     color: var(--gray);
 }
 
+/* Адаптив секции "Уставные документы" */
+
+@media (max-width: 1900px) {
+    .statutory-documents-file-left {
+        padding-right: 14.5%;
+    }
+}
+
+@media (max-width: 1750px) {
+    .statutory-documents-file-left {
+        padding-right: 14%;
+    }
+}
+
+@media (max-width: 1700px) {
+    .statutory-documents {
+        padding: 90px 60px;
+    }
+}
+
+@media (max-width: 1650px) {
+    .statutory-documents-file-left {
+        padding-right: 14%;
+    }
+}
+
+@media (max-width: 1530px) {
+    .statutory-documents-file-left {
+        padding-right: 13%;
+    }
+}
+
+@media (max-width: 1500px) {
+    .statutory-documents {
+        padding: 70px 40px;
+    }
+}
+
+@media (max-width: 1420px) {
+    .statutory-documents-file-left {
+        padding-right: 12%;
+    }
+}
+
+@media (max-width: 1350px) {
+    .statutory-documents-title {
+        font-size: 32px;
+        max-width: 980px;
+        margin-bottom: 20px;
+    }
+
+    .statutory-documents-file-name {
+        font-size: 24px;
+    }
+
+    .statutory-documents-file-size {
+        font-size: 16px;
+    }
+
+    .statutory-documents-file-right svg {
+        flex-shrink: 0;
+        width: 20px;
+        height: 20px;
+    }
+
+    .statutory-documents-file {
+        padding: 12px;
+    }
+
+    .statutory-documents-lists {
+        gap: 40px;
+    }
+
+    .statutory-documents-file-left {
+        padding-right: 14%;
+    }
+}
+
+@media (max-width: 1275px) {
+    .statutory-documents-file-left {
+        padding-right: 13%;
+    }
+}
+
+@media (max-width: 1200px) {
+    .statutory-documents-file-left {
+        padding-right: 12%;
+    }
+}
+
+@media (max-width: 1130px) {
+    .statutory-documents-file-left {
+        padding-right: 11.5%;
+    }
+}
+
+@media (max-width: 1100px) {
+    .statutory-documents-file-left {
+        flex-direction: column;
+        gap: 4px;
+        padding-right: 0%;
+    }
+}
+
+@media (max-width: 900px) {
+    .statutory-documents-title {
+        font-size: 28px;
+    }
+
+    .statutory-documents-file-name {
+        font-size: 22px;
+    }
+}
+
+@media (max-width: 700px) {
+    .statutory-documents {
+        padding: 60px 16px;
+    }
+
+    .statutory-documents-title {
+        font-size: 24px;
+        margin-bottom: 16px;
+    }
+
+    .statutory-documents-file-name {
+        font-size: 20px;
+    }
+
+    .statutory-documents-file-size {
+        font-size: 14px;
+    }
+
+    .statutory-documents-file {
+        padding: 12px 8px;
+    }
+}
 
 
 /* Страница "Реквизиты" */
@@ -8232,6 +8397,7 @@ section {
 .reviews .line { background: #2e2e2e; }
 .team .line { background: #e9e9e9; }
 .requisites .line { background: #e9e9e9; }
+.statutory-documents .line { background: #2e2e2e; }
 
 .line1 { left: 3.6%; }
 .line2 { left: 27%; }
@@ -8281,7 +8447,8 @@ section {
     .quality-control .line,
     .reviews .line,
     .team .line,
-    .requisites .line {
+    .requisites .line,
+    .statutory-documents .line {
         display: none;
     }
 
