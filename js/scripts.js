@@ -956,7 +956,7 @@ document.addEventListener('DOMContentLoaded', () => {
       freeMode: true,
       loop: false,
       watchOverflow: false, 
-      grabCursor: true,
+      grabCursor: false,
       breakpoints: SWIPER_BREAKPOINTS
     });
 
@@ -986,7 +986,7 @@ document.addEventListener('DOMContentLoaded', () => {
       freeMode: true,
       loop: false,
       watchOverflow: true,
-      grabCursor: true,
+      grabCursor: false,
       breakpoints: SWIPER_BREAKPOINTS
     });
     hideExtraSlides();
@@ -1048,7 +1048,7 @@ document.addEventListener('DOMContentLoaded', () => {
           freeMode: true,
           loop: false,
           watchOverflow: true,
-          grabCursor: true,
+          grabCursor: false,
           breakpoints: SWIPER_BREAKPOINTS
         });
         hideExtraSlides();
@@ -1332,7 +1332,7 @@ if (newsInfoCardsSwiper) {
   const swiper = new Swiper('.news-info-cards.swiper', {
       slidesPerView: 'auto',
       spaceBetween: 10,
-      grabCursor: true,
+      grabCursor: false,
       loop: false,
       navigation: {
         nextEl: '.navigation-right-btn',
@@ -1342,6 +1342,16 @@ if (newsInfoCardsSwiper) {
         el: '.swiper-pagination',
         clickable: true,
       },
+      breakpoints: {
+        0: {
+          slidesPerView: 2.05, 
+          spaceBetween: 10,
+        },
+        701: {
+          slidesPerView: 'auto', 
+          spaceBetween: 10,
+        }
+      }
     });
 
     document.querySelectorAll('model-viewer, [data-interactive="true"]').forEach(el => {
@@ -1383,7 +1393,82 @@ if (newsInfoCardsSwiper) {
 }
 
 
+// Модальное окно для просмотра 3D модели
+const modelModal = document.querySelector('.model-modal');
 
+if (modelModal) {
+  (function() {
+    const modal = document.getElementById('modelModal');
+    const modalViewer = document.getElementById('modalModelViewer');
+    const modalTitle = document.querySelector('.model-modal-title');
+    const closeBtn = document.querySelector('.model-modal-close');
+    const backdrop = document.querySelector('.model-modal-backdrop');
+
+    const openModal = ({ src, name }) => {
+      if (!src) return;
+      modalViewer.removeAttribute('src');
+      modalViewer.setAttribute('src', src);
+      modalViewer.setAttribute('alt', name || '3D модель');
+      modalTitle.textContent = name || '';
+
+      document.body.classList.add('modal-open');
+      modal.classList.add('open');
+
+      if (window.newsSwiper && typeof window.newsSwiper.allowTouchMove === 'boolean') {
+        window.newsSwiper.allowTouchMove = false;
+      }
+    };
+
+    const closeModal = () => {
+      modal.classList.remove('open');
+      document.body.classList.remove('modal-open');
+
+      modalViewer.removeAttribute('src');
+
+      if (window.newsSwiper && typeof window.newsSwiper.allowTouchMove === 'boolean') {
+        window.newsSwiper.allowTouchMove = true;
+      }
+    };
+
+    closeBtn.addEventListener('click', closeModal);
+    backdrop.addEventListener('click', closeModal);
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && modal.classList.contains('open')) closeModal();
+    });
+
+    let dragging = false;
+
+    let touchMoved = false;
+    document.addEventListener('touchmove', () => { touchMoved = true; }, {passive: true});
+    document.addEventListener('touchend', () => { setTimeout(()=> touchMoved = false, 50); });
+
+    document.querySelectorAll('.our-work-card').forEach(card => {
+      card.addEventListener('click', (e) => {
+        if (dragging || touchMoved) return;
+
+        const inCardModel = card.querySelector('model-viewer');
+        let src = null;
+        let name = null;
+
+        if (inCardModel && inCardModel.getAttribute('src')) {
+          src = inCardModel.getAttribute('src');
+          name = card.querySelector('.news-card-info-title')?.textContent?.trim() || inCardModel.getAttribute('alt') || '';
+        } else {
+          src = card.dataset.modelSrc || null;
+          name = card.dataset.modelName || card.querySelector('.news-card-info-title')?.textContent?.trim() || '';
+        }
+
+        if (src) {
+          openModal({ src, name });
+        }
+      });
+
+      card.addEventListener('pointerdown', () => dragging = false);
+      card.addEventListener('pointermove', () => dragging = true);
+      card.addEventListener('pointerup', () => setTimeout(()=> dragging = false, 50));
+    });
+  })();
+}
 
 
 // Меню бургера
@@ -1824,3 +1909,30 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
 });
+
+
+// Выравнивание карточек "Товары из статьи" по одной высоте с разными заголовками
+
+const newsInfoCards = document.querySelector('.news-info-cards');
+
+if (newsInfoCards) {
+  function debounce(fn, ms) {
+    let t;
+    return (...args) => {
+      clearTimeout(t);
+      t = setTimeout(() => fn(...args), ms);
+    };
+  }
+
+  function equalizeCardTitles() {
+    const titles = Array.from(document.querySelectorAll('.news-card-info-title'));
+    if (!titles.length) return;
+    titles.forEach(t => t.style.minHeight = '');
+    const max = titles.reduce((m, t) => Math.max(m, t.getBoundingClientRect().height), 0);
+    titles.forEach(t => t.style.minHeight = Math.ceil(max) + 'px');
+  }
+
+  window.addEventListener('load', equalizeCardTitles);
+  window.addEventListener('DOMContentLoaded', equalizeCardTitles);
+  window.addEventListener('resize', debounce(equalizeCardTitles, 120));
+}

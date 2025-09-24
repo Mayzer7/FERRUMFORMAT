@@ -4829,9 +4829,14 @@ path[data-delivery="ПОИСК СОДЕРЖИМОГО"] {
 
 .our-work-head {
     display: flex;
-    align-items: center;
+    align-items: flex-end;
     justify-content: space-between;
+    gap: 20px;
     padding: 80px 80px 32px 80px;
+}
+
+.our-work-news .documents-title{
+    padding-bottom: 0px;
 }
 
 
@@ -4855,6 +4860,7 @@ path[data-delivery="ПОИСК СОДЕРЖИМОГО"] {
 }
 
 .our-work .our-work-card {
+  cursor: pointer;
   position: relative;
   width: 100%;
   display: block;
@@ -4864,8 +4870,14 @@ path[data-delivery="ПОИСК СОДЕРЖИМОГО"] {
   transition: all 0.3s ease;
 }
 
+.our-work .our-work-card {
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  transform: none;
+}
+
 .our-work .our-work-card:hover {
-  transform: scale(1.02);
+  transform: translateY(-3px);               
+  box-shadow: 0 14px 30px rgba(0,0,0,0.08);  
 }
 
 .our-work .our-work-card-image img {
@@ -4954,6 +4966,89 @@ path[data-delivery="ПОИСК СОДЕРЖИМОГО"] {
     padding: 17.5px;
 }
 
+/* Модальное окно для просмотра 3D модели */
+
+.model-modal {
+  position: fixed;
+  inset: 0;
+  display: none;              
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  min-width: 320px;
+}
+
+.model-modal.open {
+  display: flex;
+}
+
+.model-modal-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+}
+
+.model-modal-content {
+  position: relative;
+  width: 100%;
+  max-width: 100%;
+  height: 100%;
+  background: #fff;
+  overflow: hidden;
+  display: flex;
+  box-shadow: 0 20px 40px rgba(0,0,0,.25);
+}
+
+.model-modal-left {
+  position: absolute;
+  left: 100px;
+  top: 60px;
+  z-index: 20;
+  pointer-events: none; 
+}
+
+.model-modal-title {
+  margin: 0;
+  font-size: 22px;
+  font-family: 'Helvetica Neue Regular', sans-serif;
+  font-weight: 300;
+  color: var(--gray);
+  max-width: 600px;
+}
+
+.model-modal-close {
+  position: absolute;
+  right: 60px;
+  top: 60px;
+  z-index: 30;
+  background: transparent;
+  border: none;
+  font-size: 30px;
+  line-height: 1;
+  cursor: pointer;
+  padding: 4px 8px;
+}
+
+.model-modal-viewer {
+  position: relative;
+  z-index: 25;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+body.modal-open {
+  overflow: hidden;
+}
+
+body.modal-open .news-info-cards.swiper {
+  pointer-events: none;
+}
+
+model-viewer::part(default-progress-bar) {
+  display: none;
+}
+
 
 /* Адаптив секции "Произвели (наши работы)"  */
 
@@ -5017,6 +5112,25 @@ path[data-delivery="ПОИСК СОДЕРЖИМОГО"] {
         width: 16px;
         height: 16px;
     }
+
+    .model-modal-title {
+        font-size: 20px;
+    }
+
+    .model-modal-close svg {
+        width: 32px;
+        height: 32px;
+    }
+
+    .model-modal-left {
+        top: 60px;
+        left: 40px;
+    }
+
+    .model-modal-close {
+        top: 32px;
+        right: 40px;
+    }
 }
 
 @media (max-width: 700px) {
@@ -5049,6 +5163,30 @@ path[data-delivery="ПОИСК СОДЕРЖИМОГО"] {
 
     .our-work .our-work-card-info-title {
         font-size: 16px;
+    }
+
+    .model-modal-title {
+        font-size: 18px;
+        padding-right: 16px;
+    }
+
+    .model-modal-close {
+        top: 24px;
+        right: 16px;
+    }
+
+    .model-modal-left {
+        top: 65px;
+        left: 16px;
+    }
+
+    .model-modal-viewer {
+        padding: 0px 16px;
+    }
+
+    model-viewer {
+        padding-top: 110px !important;
+        height: 90% !important;
     }
 }
 
@@ -8011,6 +8149,16 @@ path[data-delivery="ПОИСК СОДЕРЖИМОГО"] {
 
 /* Страница "news-info.html" */
 
+.mdk-main-news-info {
+    padding: 142px 80px 40px 80px;
+}
+
+.mdk-main-news-info .mdk-main-title {
+    margin-bottom: 16px;
+    max-width: 750px;
+    width: 100%;
+}
+
 .news-info {
     font-family: 'Helvetica Neue Regular', sans-serif;
     font-weight: 300;
@@ -8064,13 +8212,31 @@ path[data-delivery="ПОИСК СОДЕРЖИМОГО"] {
     padding-bottom: 40px;
 }
 
+.news-info-text:last-child {
+    padding-bottom: 0px;
+}
+
 .news-info p {
     font-size: 16px;
     line-height: 130%;
 }
 
+.news-info-text-desc {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+}
+
+.news-info-text-desc p {
+    font-size: 20px !important;
+}
+
 .news-info-tags {
     padding-top: 40px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
 }
 
 .news-info-tags a {
@@ -8089,7 +8255,7 @@ path[data-delivery="ПОИСК СОДЕРЖИМОГО"] {
 }
 
 .news-card-info {
-    margin-top: 12px;
+    padding: 12px;
 }
 
 .news-card-info-title {
@@ -8097,7 +8263,13 @@ path[data-delivery="ПОИСК СОДЕРЖИМОГО"] {
     font-size: 20px;
     letter-spacing: -0.02em;
     font-weight: 300;
-    padding-bottom: 8px;
+    padding-bottom: 3px;
+
+    display: -webkit-box;
+    -webkit-line-clamp: 3; 
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .news-card-info-desc {
@@ -8133,14 +8305,14 @@ path[data-delivery="ПОИСК СОДЕРЖИМОГО"] {
 }
 
 .our-work .news-info-cards.swiper {
-  padding: 0px 75px 32px 80px;
+  padding: 0px 80px 40px 80px;
   box-sizing: border-box;
   position: relative;
 }
 
 .our-work .news-info-cards .swiper-wrapper {
   display: flex;           
-  gap: 10px;              
+  gap: 0px;              
   align-items: stretch;
 }
 
@@ -8153,13 +8325,12 @@ path[data-delivery="ПОИСК СОДЕРЖИМОГО"] {
 
 .news-info-card-image {
   width: 100%;
-  width: 360px;
-  height: 317px;      
-  overflow: hidden;   
+  max-width: 360px; 
+  aspect-ratio: 360 / 317; 
+  overflow: hidden;
   position: relative;
-  background: #F5F5F5;  
+  background: #F5F5F5;
 }
-
 .news-info-card-image model-viewer {
   width: 100%;
   height: 100%;
@@ -8175,9 +8346,303 @@ path[data-delivery="ПОИСК СОДЕРЖИМОГО"] {
     pointer-events: none;
 }
 
+.our-work .news-info-cards.swiper,
+.our-work .news-info-cards .swiper-wrapper,
+.our-work .news-info-cards .swiper-slide,
+.our-work .news-info-cards .our-work-card {
+  overflow: visible;
+}
 
+.news-card-info-settings {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 16px;
+}
 
+.news-card-info-setting {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
 
+.news-card-info-setting-title {
+     order: 1; 
+     margin: 0; 
+}
+
+.news-card-info-setting::before {
+  content: "";
+  order: 2;
+  flex: 1;
+  height: 1px;          
+  display: block;
+  align-self: flex-end;            
+  background-image: linear-gradient(to right, var(--gray), var(--gray));
+  background-size: 100% 1px;
+  background-repeat: no-repeat;
+
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  -webkit-transform: translateZ(0);
+  -webkit-backface-visibility: hidden;
+  will-change: transform, opacity;
+  pointer-events: none;
+}
+
+.news-card-info-setting-value { order: 3; 
+    margin: 0; 
+    white-space: nowrap; 
+}
+
+.news-card-info-setting-title {
+    font-family: 'Helvetica Neue Regular', sans-serif;
+    font-size: 14px;
+    color: var(--gray);
+}
+
+.news-card-info-setting-value {
+    font-family: 'Helvetica Neue Regular', sans-serif;
+    font-size: 14px;
+    line-height: 120%;
+}
+
+/* Адаптив страницы "news-info.html" */
+
+@media (max-width: 1700px) {
+    .our-work .news-info-cards.swiper {
+        padding: 0px 60px 40px 60px;
+    }
+
+    .mdk-main-news-info {
+        padding: 142px 60px 40px 60px;
+    }
+}
+
+@media (max-width: 1500px) {
+    .our-work .news-info-cards.swiper {
+        padding: 0px 40px 20px 40px;
+    }
+
+    .mdk-main-news-info {
+        padding: 124px 40px 40px 40px;
+    }
+}
+
+@media (max-width: 1350px) {
+    .our-work .news-info-cards .swiper-slide {
+        max-width: 290px;
+    }
+
+    .news-card-info-title {
+        font-size: 18px;
+    }
+
+    .news-card-info-setting-title,
+    .news-card-info-setting-value {
+        font-size: 13px;
+    }
+
+    .news-card-info-price {
+        font-size: 24px;
+    }
+
+    .get-kp-btn {
+        font-size: 14px;
+        padding: 15.5px;
+    }
+
+    .news-info-card-image-3d-icon svg{
+        flex-shrink: 0;
+        width: 48px;
+        height: 48px;
+    }
+
+    .mdk-main-news-info .mdk-main-title {
+        margin-bottom: 12px;
+    }
+
+    .news-info p {
+        font-size: 14px;
+    }
+
+    .news-info h2 {
+        font-size: 18px;
+        padding-bottom: 12px;
+    }
+
+    .news-info h3 {
+        font-size: 16px;
+        padding-bottom: 8px;    
+    }
+
+    .news-info ul li {
+        font-size: 14px;
+    }
+
+    .news-info ul {
+        padding-left: 5px;
+    }
+
+    .news-info ol {
+        padding-left: 24px;
+        padding-bottom: 0px;
+    }
+
+    .news-info ol li {
+        font-size: 14px;
+    }
+
+    .news-info-text {
+        padding-bottom: 32px;
+    }
+    
+    .news-info-tags {
+        padding-top: 32px;
+    }
+
+    .news-info-tags a {
+        font-size: 14px;
+    }
+
+    .news-info-text-desc img {
+        width: 30px;
+        height: 30px;
+    }
+
+    .news-info-text-desc {
+        gap: 20px;
+    }
+
+    .news-info-text-desc p {
+        font-size: 18px !important;
+    }
+}
+
+@media (max-width: 1270px) {
+    .mdk-main-news-info {
+        padding: 95px 40px 40px 40px;
+    }
+}
+
+@media (max-width: 700px) {
+    .our-work .news-info-cards.swiper {
+        padding: 0px 16px 20px 16px;
+    }
+
+    .our-work .news-info-cards .swiper-slide {
+        max-width: 100%;
+    }
+
+    .news-card-info-title {
+        font-size: 16px;
+        padding-bottom: 0px;
+        margin-bottom: 6px;
+    }
+
+    .news-card-info-price {
+        font-size: 20px;
+    }
+
+    .news-card-info-settings {
+        margin-bottom: 8px;
+    }
+
+    .news-card-info-price {
+        padding-bottom: 8px;
+    }
+
+    .news-card-info {
+        padding: 0px;
+        padding-top: 10px;
+    }
+
+    .news-info-card-image-3d-icon {
+        bottom: 10px;
+        right: 10px;
+    }
+
+    .news-info-card-image-3d-icon svg{
+        width: 40px;
+        height: 40px;
+    }
+
+    .mdk-main-news-info {
+        padding: 95px 16px 20px 16px;
+    }
+
+    .news-info h2 {
+        font-size: 16px;
+    }
+
+    .news-info h3 {
+        font-size: 14px;
+    }
+
+    .news-info-text {
+        padding-bottom: 24px;
+    }
+
+    .news-info-text-desc p {
+        font-size: 16px !important;
+    }
+
+    .news-info-tags {
+        padding-top: 24px;
+    }
+
+    .news-info-text-desc {
+        align-items: flex-start;
+    }
+
+    .news-info-text-desc img {
+        margin-top: 20px;
+    }
+}
+
+@media (max-width: 700px) {
+  .news-card-info-setting-title {
+    font-size: 0;
+    line-height: 0;
+    display: inline-block; 
+  }
+
+  .news-card-info-setting-title::after {
+    content: attr(data-short);
+    font-size: 13px;          
+    line-height: 1.2;
+    color: var(--gray);
+    display: inline-block;
+    white-space: nowrap;
+  }
+
+  .news-card-info-setting-value {
+    font-size: 0;
+    line-height: 0;
+    display: inline-block; 
+  }
+
+  .news-card-info-setting-value::after {
+    content: attr(data-short);
+    font-size: 13px;          
+    line-height: 1.2;
+    display: inline-block;
+    white-space: nowrap;
+  }
+}
+
+@media (max-width: 500px) {
+    .our-work-navigation {
+        display: block;
+    }
+}
+
+@media (max-width: 350px) {
+    .news-info-card-image-3d-icon svg{
+        width: 35px;
+        height: 35px;
+    }
+}
 
 /* Страница "Портфолио" */
 
