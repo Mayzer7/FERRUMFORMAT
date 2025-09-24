@@ -802,6 +802,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 // Яндекс карта
+
 const maps = document.querySelectorAll(".maps");
 
 let center = [55.01313106967953, 60.096861499999896];
@@ -832,6 +833,8 @@ function createMap(mapId) {
     window.open(url, "_blank");
   });
 
+  
+
   mapInstance.geoObjects.add(placemark);
   mapInstance.container.fitToViewport();
 
@@ -854,6 +857,365 @@ ymaps.ready(() => {
     });
   });
 });
+
+
+
+
+
+
+// Яндекс карта поставок
+
+const supplyMaps = document.querySelector('.supply-maps')
+
+if (supplyMaps) {
+  (function () {
+    const DEFAULT_CENTER = [62.0, 90.0];
+
+    function getZoom() {
+      return window.innerWidth <= 400 ? 4 : 4;
+    }
+
+    function getCenterForWidth(w) {
+      if (w <= 500) return [62.0, 50.0];
+      if (w <= 600) return [62.0, 55.0];
+      if (w <= 780) return [62.0, 60.0];
+      if (w <= 900) return [62.0, 65.0];
+      if (w <= 1100) return [62.0, 70.0];  
+      if (w <= 1350) return [62.0, 80.0];
+      return DEFAULT_CENTER; 
+    }
+
+    function fontSizeFromCount(count) {
+      if (count >= 1000) return 11;
+      if (count >= 100) return 12;
+      if (count >= 10) return 13;
+      return 14;
+    }
+
+    function colorFromCount(count) {
+      return '#D51A1A';
+    }
+
+    function svgDataUri(count, color, fontSize) {
+      const padding = 6;
+      const approxCharWidth = fontSize * 0.6;
+      const textWidth = String(count).length * approxCharWidth;
+      const size = Math.max(32, Math.ceil(textWidth + padding * 2));
+      const r = size / 2;
+
+      const fontFamily = 'Arial, Helvetica, sans-serif';
+      const canvasFont = `${fontSize}px Arial`;
+      const svgFontSize = `${fontSize}px`;
+
+      let ascent = null;
+      let descent = null;
+      try {
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        ctx.font = canvasFont;
+        const metrics = ctx.measureText(String(count));
+        if (metrics && typeof metrics.actualBoundingBoxAscent === 'number' && typeof metrics.actualBoundingBoxDescent === 'number') {
+          ascent = metrics.actualBoundingBoxAscent;
+          descent = metrics.actualBoundingBoxDescent;
+        }
+      } catch (e) {
+      }
+
+      let svg;
+
+      if (ascent != null && descent != null) {
+        const baseline = (r + (ascent - descent) / 2);
+        const baselineFixed = Math.round(baseline * 10) / 10;
+
+        svg = `
+          <svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}" viewBox="0 0 ${size} ${size}">
+            <circle cx="${r}" cy="${r}" r="${r}" fill="${color}" />
+            <text x="${r}" y="${baselineFixed}"
+                  font-family="${fontFamily}"
+                  font-size="${svgFontSize}"
+                  font-weight="400"
+                  text-anchor="middle"
+                  dominant-baseline="alphabetic"
+                  fill="#ffffff">${count}</text>
+          </svg>`.trim();
+
+      } else {
+        svg = `
+          <svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}" viewBox="0 0 ${size} ${size}">
+            <circle cx="${r}" cy="${r}" r="${r}" fill="${color}" />
+            <text x="50%" y="50%"
+                  font-family="${fontFamily}"
+                  font-size="${svgFontSize}"
+                  font-weight="400"
+                  text-anchor="middle"
+                  dominant-baseline="middle"
+                  dy=".33em"
+                  fill="#ffffff">${count}</text>
+          </svg>`.trim();
+      }
+
+      return { uri: 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg), size };
+    }
+
+    const isTouchDevice = (function() {
+      try {
+        return (('ontouchstart' in window) ||
+                (navigator.maxTouchPoints && navigator.maxTouchPoints > 0) ||
+                (navigator.msMaxTouchPoints && navigator.msMaxTouchPoints > 0) ||
+                (window.matchMedia && window.matchMedia('(pointer: coarse)').matches));
+      } catch (e) {
+        return false;
+      }
+    })();
+
+    const HOVER_OPEN_DELAY = 120;
+    const HOVER_CLOSE_DELAY = 220; 
+
+    function createMap(mapId) {
+      const initialCenter = getCenterForWidth(window.innerWidth) || DEFAULT_CENTER;
+      const initialZoom = getZoom();
+
+      const mapInstance = new ymaps.Map(mapId, {
+        center: initialCenter,
+        zoom: initialZoom,
+        controls: [], 
+        type: "yandex#map",
+      });
+
+       mapInstance.options.set('balloonPanelMaxMapArea', 0);
+      mapInstance.options.set('preset', 'islands#dark');
+
+      const points = [
+        { coords: [69.3498, 88.2026], count: 50, name: 'Норильск' },
+        { coords: [67.4971, 64.0419], count: 9,  name: 'Воркута' },
+        { coords: [55.7558, 37.6173], count: 12143, name: 'Москва' },
+        { coords: [55.7903, 49.1347], count: 111, name: 'Казань' },
+        { coords: [55.1644, 61.4368], count: 50583, name: 'Челябинск' },
+        { coords: [54.9885, 73.3242], count: 345, name: 'Омск' },
+        { coords: [56.0106, 92.8526], count: 345, name: 'Красноярск' },
+        { coords: [62.0355,129.6755], count: 17, name: 'Якутск' },
+      ];
+
+      const balloonHtml = `
+        <div class="custom-hint">
+          <div class="custom-hint__projects">Количество проектов в регионе</div>
+        </div>`;
+
+      const CustomBalloonLayout = ymaps.templateLayoutFactory.createClass(balloonHtml, {
+        build: function () {
+          CustomBalloonLayout.superclass.build.call(this);
+
+          const parentEl = this.getParentElement && this.getParentElement();
+          if (!parentEl) return;
+          const el = parentEl.querySelector('.custom-hint');
+          if (!el) return;
+
+          el.classList.remove('is-open');
+
+          setTimeout(function () {
+            el.classList.add('is-open');
+          }, 10);
+        },
+
+        clear: function () {
+          const parentEl = this.getParentElement && this.getParentElement();
+          const el = parentEl && parentEl.querySelector('.custom-hint');
+
+          if (el) {
+            el.classList.remove('is-open');
+            const self = this;
+            setTimeout(function () {
+              CustomBalloonLayout.superclass.clear.call(self);
+            }, HOVER_CLOSE_DELAY);
+          } else {
+            CustomBalloonLayout.superclass.clear.call(this);
+          }
+        }
+      });
+
+      // создаём метки
+      points.forEach(p => {
+        const fontSize = fontSizeFromCount(p.count);
+        const { uri, size } = svgDataUri(p.count, colorFromCount(p.count), fontSize);
+
+        const offsetY = 5; 
+        const balloonOffset = [0, -offsetY]; 
+
+        const placemark = new ymaps.Placemark(p.coords, {
+          name: p.name,
+          count: p.count
+        }, {
+          iconLayout: "default#image",
+          iconImageHref: uri,
+          iconImageSize: [size, size],
+          iconImageOffset: [-(size / 2), -(size / 2)],
+          balloonOffset: balloonOffset,
+          balloonContentLayout: CustomBalloonLayout,
+          hideIconOnBalloonOpen: false,
+          hasHint: true
+        });
+
+        mapInstance.geoObjects.add(placemark);
+
+        if (isTouchDevice) {
+          placemark.events.add('click', function () {
+            if (placemark.balloon.isOpen()) {
+              placemark.balloon.close();
+            } else {
+              placemark.balloon.open();
+            }
+          });
+        } else {
+          let openTimer = null;
+          let closeTimer = null;
+
+          placemark.events.add('mouseenter', function () {
+            if (closeTimer) {
+              clearTimeout(closeTimer);
+              closeTimer = null;
+            }
+            if (placemark.balloon.isOpen()) return;
+
+            openTimer = setTimeout(() => {
+              placemark.balloon.open();
+              openTimer = null;
+            }, HOVER_OPEN_DELAY);
+          });
+
+          placemark.events.add('mouseleave', function () {
+            if (openTimer) {
+              clearTimeout(openTimer);
+              openTimer = null;
+            }
+            if (placemark.balloon.isOpen()) {
+              closeTimer = setTimeout(() => {
+                placemark.balloon.close();
+                closeTimer = null;
+              }, HOVER_CLOSE_DELAY);
+            }
+          });
+
+          mapInstance.events.add('click', function () {
+            if (placemark.balloon.isOpen()) {
+              placemark.balloon.close();
+            }
+          });
+        }
+      });
+
+      mapInstance.container.fitToViewport();
+      return mapInstance;
+    }
+
+    ymaps.ready(function () {
+      const el = document.getElementById("supply-maps");
+      if (!el) return;
+
+      const supplyMap = createMap(el.id);
+
+      const zoomInBtn = document.getElementById('zoom-in');
+      const zoomOutBtn = document.getElementById('zoom-out');
+
+      if (zoomInBtn) zoomInBtn.addEventListener('click', () => {
+        supplyMap.setZoom(supplyMap.getZoom() + 1);
+      });
+
+      if (zoomOutBtn) zoomOutBtn.addEventListener('click', () => {
+        supplyMap.setZoom(supplyMap.getZoom() - 1);
+      });
+
+      const locateBtn = document.getElementById('locate-btn');
+      let userPlacemark = null;
+
+      const MIN_LOC_ZOOM = 10;
+      const MIN_ZOOM = 2;
+      const MAX_ZOOM = 18;
+
+      function clampZoom(z) {
+        return Math.max(MIN_ZOOM, Math.min(MAX_ZOOM, Math.round(z)));
+      }
+
+      function goToCoords(coords, preferZoom) {
+        const targetZoom = clampZoom(Math.max(supplyMap.getZoom(), preferZoom || MIN_LOC_ZOOM));
+        supplyMap.setCenter(coords, targetZoom, { duration: 300 });
+
+        if (!userPlacemark) {
+          userPlacemark = new ymaps.Placemark(coords, {
+            hintContent: 'Вы здесь',
+            balloonContent: 'Ваше местоположение'
+          }, {
+            preset: 'islands#circleIcon',
+            iconColor: '#1E90FF',
+            hasHint: true
+          });
+          supplyMap.geoObjects.add(userPlacemark);
+        } else {
+          userPlacemark.geometry.setCoordinates(coords);
+        }
+      }
+
+      function setLocateBtnLoading(on) {
+        if (!locateBtn) return;
+        if (on) {
+          locateBtn.classList.add('loading');
+          locateBtn.setAttribute('aria-busy', 'true');
+          locateBtn.disabled = true;
+        } else {
+          locateBtn.classList.remove('loading');
+          locateBtn.removeAttribute('aria-busy');
+          locateBtn.disabled = false;
+        }
+      }
+
+      if (locateBtn) {
+        locateBtn.addEventListener('click', function () {
+          if (!navigator.geolocation) {
+            return;
+          }
+          setLocateBtnLoading(true);
+          navigator.geolocation.getCurrentPosition(function (pos) {
+            setLocateBtnLoading(false);
+            const coords = [pos.coords.latitude, pos.coords.longitude];
+            goToCoords(coords, MIN_LOC_ZOOM);
+          }, function (err) {
+            setLocateBtnLoading(false);
+            console.warn('Geolocation error:', err);
+          }, {
+            enableHighAccuracy: true,
+            timeout: 10000
+          });
+        });
+      }
+
+      let resizeTimer = null;
+      function handleResize() {
+        if (!supplyMap || !supplyMap.container) return;
+
+        supplyMap.container.fitToViewport();
+
+        const w = window.innerWidth;
+        const newCenter = getCenterForWidth(w) || DEFAULT_CENTER;
+        const newZoom = getZoom();
+
+        supplyMap.setCenter(newCenter, newZoom);
+      }
+
+      window.addEventListener("resize", function () {
+        if (resizeTimer) clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(handleResize, 120);
+      });
+
+      setTimeout(function () {
+        if (supplyMap) {
+          supplyMap.container.fitToViewport();
+          supplyMap.setCenter(getCenterForWidth(window.innerWidth) || DEFAULT_CENTER, getZoom());
+        }
+      }, 50);
+    });
+  })();
+}
+
+
 
 
 // Страница "Гарантия"

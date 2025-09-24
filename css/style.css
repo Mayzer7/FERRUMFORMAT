@@ -7126,6 +7126,32 @@ model-viewer::part(default-progress-bar) {
     box-shadow: none !important;
 }
 
+.custom-zoom {
+  position: absolute;
+  bottom: 50px;
+  right: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  z-index: 1000;
+}
+
+.custom-zoom button {
+  width: 36px;
+  height: 36px;
+  background: #D51A1A;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-size: 20px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.custom-zoom button:hover {
+  background: #b01717;
+}
+
 /* Секция "Реквизиты" */
 
 .requisites {
@@ -8650,8 +8676,20 @@ model-viewer::part(default-progress-bar) {
     padding-bottom: 40px;
 }
 
+.delivery-content-portfolio .delivery-content-top-left{
+    position: static; 
+    top: auto;
+    z-index: 3;
+    pointer-events: auto; 
+    
+}
+
+.mdk-main-portfolio .blog-cards {
+    margin-top: 20px;
+}
+
 .delivery-portfolio {
-    padding-bottom: 0px;
+    padding: 80px 80px 40px 80px;
 }
 
 .portfolio-card-title {
@@ -8678,7 +8716,205 @@ model-viewer::part(default-progress-bar) {
     margin-top: 4px;
 }
 
+.supply-maps {
+    width: 100%;
+    height: 570px;      
+    max-width: 100%;
+    overflow: hidden;
+    box-sizing: border-box;
+}
 
+
+/* Отключаем стили Яндекс Карты */
+
+.supply-maps [class*="ground-pane"] {
+    filter: grayscale(90%) brightness(85%) contrast(120%);
+}
+
+/* Отключаем ненужные надписи */
+[class*="copyrights-pane"] {
+    display: none !important;
+}
+
+
+.ymaps-hint .ymaps-hint__content {
+  background: rgba(0,0,0,0.85) !important;
+  color: #fff !important;
+  padding: 8px 10px !important;
+  border-radius: 8px !important;
+  font-size: 13px !important;
+  line-height: 1.2 !important;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.45) !important;
+  transition: opacity .18s ease, transform .18s ease !important;
+  opacity: 0;
+  transform: translateY(-6px);
+}
+
+.ymaps-hint_open .ymaps-hint__content {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.ymaps-hint .ymaps-hint__tail {
+  display: none !important; 
+}
+
+.supply-map { position: relative; }
+
+.custom-hint {
+  background: var(--red);
+  color: #fff;
+  font-family: "Helvetica Neue", Arial, sans-serif;
+  padding: 8px 16px;
+  min-width: 213px;
+  transform: translateY(8px) scale(0.98);
+  opacity: 0;
+  transition: opacity 220ms cubic-bezier(.2,.9,.2,1), transform 220ms cubic-bezier(.2,.9,.2,1);
+  font-size: 13px;
+  line-height: 1.2;
+  font-weight: 400;
+  will-change: opacity, transform;
+  pointer-events: auto; 
+}
+
+.custom-hint.is-open {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+
+.ymaps-hint .ymaps-hint__content {
+  background: rgba(0,0,0,0.85) !important;
+  color: #fff !important;
+  padding: 8px 10px !important;
+  border-radius: 8px !important;
+  font-size: 13px !important;
+  line-height: 1.2 !important;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.45) !important;
+  transition: opacity .18s ease, transform .18s ease !important;
+  opacity: 0;
+  transform: translateY(-6px);
+}
+
+.ymaps-hint_open .ymaps-hint__content {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.custom-hint__projects {
+    font-family: 'Helvetica Neue Regular', sans-serif;
+    font-weight: 300;
+    font-size: 14px;
+    line-height: 130%;
+}
+
+.custom-zoom {
+  position: absolute;
+  top: 40%;
+  right: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  z-index: 1000;
+}
+
+.custom-zoom button {
+  width: 36px;
+  height: 36px;
+  background: #D51A1A;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-size: 20px;
+  cursor: pointer;
+  transition: background 0.15s, transform 0.12s;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.custom-zoom button:hover { background: #b01717; outline: none; transform: translateY(-1px); }
+.custom-zoom button:focus { box-shadow: 0 0 0 3px rgba(213,26,26,0.18); }
+
+
+/* Отключаем системный балун карты */
+
+.ymaps-2-1-79-balloon__close,
+.ymaps-2-1-79-balloon__tail {
+    display: none !important;
+}
+
+.ymaps-2-1-79-balloon__close+.ymaps-2-1-79-balloon__content {
+    margin-right: 0px;
+}
+
+.ymaps-2-1-79-balloon__content,
+.ymaps-2-1-79-balloon__layout {
+    background: none !important;
+}
+
+.ymaps-2-1-79-balloon {
+    box-shadow: none !important;
+}
+
+
+/* Адаптив страницы "Портфолио" */
+
+@media (max-width: 1700px) {
+    .delivery-portfolio {
+        padding: 80px 60px 40px 60px;
+    }
+}
+
+
+@media (max-width: 1500px) {
+    .delivery-portfolio {
+        padding: 60px 40px 40px 40px;
+    }
+}
+
+
+@media (max-width: 1350px) {
+    .blog-card-image-banner {
+        width: 90px;
+        height: 25px;
+        padding: 0px;
+    }
+
+    .blog-card-image-banner img {
+        object-fit: contain;
+    }
+
+    .portfolio-card-title {
+        font-size: 16px;
+    }
+
+    .portfolio-card-info ul li {    
+        font-size: 14px;
+    }
+
+    .portfolio-card-desc {
+        font-size: 14px;
+    }
+
+    .supply-maps {
+        height: 500px;
+    }
+}
+
+@media (max-width: 700px) {
+    .portfolio-card-title {
+        font-size: 14px;
+    }
+
+    .delivery-portfolio {
+        padding: 60px 16px 20px 16px;
+    }
+
+    .supply-maps {
+        height: 400px;
+    }
+}
 
 
 
@@ -8987,6 +9223,7 @@ model-viewer::part(default-progress-bar) {
 
 /* Grid сетка на страницах */
 
+/* 
 section {
   position: relative; 
 }
@@ -9015,9 +9252,9 @@ section {
 
 .main-content-about .lines {
     height: 1049px;
-}
+} */
 
-.main-content .line { background: #2e2e2e; }
+/* .main-content .line { background: #2e2e2e; }
 .we-produce .line { background: #e9e9e9; }
 .about-us .line { background: #2e2e2e; }
 .delivery .line { background: #e9e9e9; }
@@ -9044,8 +9281,8 @@ section {
 .line2 { left: 27%; }
 .line3 { left: 50%; }
 .line4 { left: 73%; }
-.line5 { right: 3.8%; }
-
+.line5 { right: 3.8%; } */
+/* 
 @media (max-width: 1500px) {
     .main-content .lines {
         height: 832px;
@@ -9101,6 +9338,7 @@ section {
     .requisites .line4 {
         display: none;
     }
-
-
 }
+
+
+ */
