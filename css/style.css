@@ -3426,6 +3426,10 @@ path[data-delivery="ПОИСК СОДЕРЖИМОГО"] {
     .contacts-content {
         gap: 20px;
     }
+
+    .contacts-card {
+        padding: 12px;
+    }
 }
 
 @media (max-width: 1270px) {
@@ -3451,6 +3455,16 @@ path[data-delivery="ПОИСК СОДЕРЖИМОГО"] {
 
     .contacts-card-right {
         gap: 20px;
+    }
+
+    .contacts-card {
+        padding: 8px;
+    }
+
+    .download-link svg {
+        flex-shrink: 0;
+        width: 14px;
+        height: 14px;
     }
 }
 
@@ -7726,9 +7740,9 @@ model-viewer::part(default-progress-bar) {
 .guarantee-content-left-image .swiper-slide img {
   max-width: 100%;
   max-height: 100%;
-  width: auto;    
+  width: 100%;    
   height: 100%;    
-  object-fit: contain;
+  object-fit: cover;
   display: block;
 }
 
@@ -8935,8 +8949,13 @@ model-viewer::part(default-progress-bar) {
 .portfolio-info-desc {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    border-bottom: 1px solid #C1C1C1;
+    align-items: center;
+    border-top: 1px solid #C1C1C1;
     padding: 16px 12px;
+}
+
+.portfolio-info-desc:last-child {
+    border-bottom: 1px solid #C1C1C1;
 }
 
 .portfolio-info-desc-title {
@@ -8989,9 +9008,15 @@ model-viewer::part(default-progress-bar) {
 
 .key-feature {
     display: flex;
-    align-items: center;
-    text-align: center;
+    align-items: flex-start;
     gap: 10px;
+}
+
+.key-feature svg {
+    margin-top: 5px;
+    flex-shrink: 0;
+    width: 8px;
+    height: 8px;
 }
 
 .key-feature-text {
@@ -9007,12 +9032,117 @@ model-viewer::part(default-progress-bar) {
 }
 
 .mdk-portfolio-info {
-    padding-bottom: 40px;
+    padding: 142px 80px 20px 80px;
 }
 
+/* Адаптив страницы "Портфолио детальная" */
 
+@media (max-width: 1700px) {
+    .mdk-portfolio-info {
+        padding: 142px 60px 20px 60px;
+    }
+}
 
+@media (max-width: 1500px) {
+    .mdk-portfolio-info {
+        padding: 124px 40px 20px 40px;
+    }
+}
 
+@media (max-width: 1350px) {
+    .portfolio-info-desc-title {
+        font-size: 14px;
+    }
+
+    .portfolio-info-desc-text {
+        font-size: 16px;
+    }
+
+    .portfolio-info-desc {
+        padding: 12px;
+    }
+
+    .portfolio-info-descs {
+        margin-bottom: 24px;
+    }
+
+    .portfolio-info-right-title {
+        font-size: 24px;
+        margin-bottom: 12px;
+    }
+
+    .portfolio-info-right-desc {
+        font-size: 14px;
+    }
+
+    .portfolio-info-right-subtitle {
+        font-size: 20px;
+    }
+
+    .key-feature-text {
+        font-size: 14px;
+    }
+
+    .request-payment-btn {
+        font-size: 14px !important;
+    }
+
+    .request-payment-btn svg {
+        flex-shrink: 0;
+        width: 16px;
+        height: 16px;
+    }
+}
+
+@media (max-width: 1270px) {
+    .mdk-portfolio-info {
+        padding: 95px 40px 20px 40px;
+    }
+}
+
+@media (max-width: 1200px) {
+    .guarantee-content {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+}
+
+@media (max-width: 700px) {
+    .mdk-portfolio-info {
+        padding: 95px 16px 20px 16px;
+    }
+
+    .portfolio-info-desc-text {
+        font-size: 14px;
+    }
+
+    .portfolio-info-descs {
+        margin-bottom: 20px;
+    }
+
+    .portfolio-info-right-title {
+        font-size: 20px;
+    }
+
+    .portfolio-info-right-subtitle {
+        font-size: 18px;
+    }
+
+    .request-payment-btn {
+        margin-top: 24px;
+    }
+
+    .portfolio-info-desc {
+        padding: 8px;
+    }
+}
+
+@media (max-width: 500px) {
+    .portfolio-info-desc {
+        grid-template-columns: 1fr;
+        gap: 4px;
+    }
+}
 
 
 /* Страница "Дилерам и оптовикам" */
