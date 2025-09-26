@@ -2301,3 +2301,71 @@ if (newsInfoCards) {
 
 
 
+
+// Модальное окно для видео
+
+const modalVideo = document.querySelector('.modal-video');
+
+if (modalVideo) {
+  const header = document.querySelector('.header');
+  const playButtons = document.querySelectorAll('.video-play');
+  const modal = document.querySelector('.modal-video-about');
+  const closeBtn = modal.querySelector('.close-video');
+  const video = document.getElementById('modalVideo');
+  let lastFocused = null;
+
+  function openModal(event) {
+    lastFocused = event?.currentTarget || document.activeElement;
+
+    modal.style.display = 'flex';
+    requestAnimationFrame(() => modal.classList.add('show'));
+
+    document.documentElement.classList.add('no-scroll-modal');
+    document.body.classList.add('no-scroll-modal');
+    header.classList.remove('header--visible');
+    header.classList.add('header--hidden');
+
+    try {
+      const p = video.play();
+      if (p && typeof p.then === 'function') p.catch(() => {});
+    } catch (err) {}
+
+    if (closeBtn) closeBtn.focus();
+      modal.setAttribute('aria-hidden', 'false');
+  }
+
+  function closeModal() {
+    modal.classList.remove('show');
+    modal.setAttribute('aria-hidden', 'true');
+
+    function onTransitionEnd(e) {
+      if (e.target === modal && e.propertyName === 'opacity') {
+        modal.style.display = 'none';
+        modal.removeEventListener('transitionend', onTransitionEnd);
+      }
+    }
+    modal.addEventListener('transitionend', onTransitionEnd);
+
+    document.documentElement.classList.remove('no-scroll-modal');
+    document.body.classList.remove('no-scroll-modal');
+    
+
+    try { video.pause(); video.currentTime = 0; } catch (err) {}
+
+    if (lastFocused && typeof lastFocused.focus === 'function') lastFocused.focus();
+  }
+
+  playButtons.forEach(btn => btn.addEventListener('click', openModal));
+
+  if (closeBtn) closeBtn.addEventListener('click', closeModal);
+
+  modal.addEventListener('click', (e) => {
+    if (e.target === modal) closeModal();
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && modal.style.display === 'flex') closeModal();
+  });
+}
+
+         
