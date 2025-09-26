@@ -2298,3 +2298,6 @@ if (newsInfoCards) {
   window.addEventListener('DOMContentLoaded', equalizeCardTitles);
   window.addEventListener('resize', debounce(equalizeCardTitles, 120));
 }
+
+
+
