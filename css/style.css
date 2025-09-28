@@ -3569,7 +3569,7 @@ path[data-delivery="ПОИСК СОДЕРЖИМОГО"] {
 }
 
 .accept-politics {
-    margin-top: 32px;
+    margin-top: 22px;
     margin-bottom: 20px;
     display: flex;
     align-items: center;
@@ -3605,7 +3605,7 @@ path[data-delivery="ПОИСК СОДЕРЖИМОГО"] {
 }
 
 .custom-checkbox input:checked + .checkbox-img {
-  background-color: #666; 
+  background-color: #F5F5F5; 
   position: relative;
 }
 
@@ -3616,7 +3616,7 @@ path[data-delivery="ПОИСК СОДЕРЖИМОГО"] {
   left: 50%;
   width: 6px;
   height: 12px;
-  border: solid #fff;
+  border: solid var(--black);
   border-width: 0 2px 2px 0;
   transform: translate(-50%, -50%) rotate(45deg);
 }
@@ -3629,6 +3629,114 @@ path[data-delivery="ПОИСК СОДЕРЖИМОГО"] {
     margin-top: 70px;
     margin-left: 60px;
 }
+
+.attach-ui { 
+    margin-top: 12px; 
+}
+
+.attached-file-title {
+    font-family: 'Helvetica Neue Regular', sans-serif;
+    font-size: 14px; 
+    letter-spacing: -0.02em;
+    color: var(--black);
+    opacity: 0;
+    transition: opacity 220ms ease;
+}
+
+.attached-file-title.visible {
+  opacity: 1;
+}
+
+.attached-files { 
+    margin-top: 12px; 
+    display:flex; 
+    flex-direction:column; 
+    gap: 8px; 
+}
+
+.attached-file {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+
+  opacity: 0;
+  transition: opacity 220ms ease;
+}
+
+.attached-file.visible {
+  opacity: 1;
+}
+
+.attached-file.removing {
+  opacity: 0;
+}
+
+.upload-file-content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.file-size {
+    font-family: 'Helvetica Neue Regular', sans-serif;
+    font-size: 16px;
+    color: var(--black);
+}
+.upload-file-right {
+  display: flex;
+  align-items: center;
+  gap: 16px;       
+  flex-shrink: 0;  
+}
+
+.attached-file .file-name {
+  font-family: 'Helvetica Neue Regular', sans-serif;
+  font-size: 16px;
+  line-height: 130%;
+  color: var(--black);
+}
+
+.attached-file .remove-file {
+  border: none;
+  cursor: pointer;
+  background-color: transparent;
+  padding: 0;
+  color: var(--black); 
+  transition: color 0.3s ease;
+}
+
+.attached-file .remove-file:hover {
+  color: var(--red)
+}
+
+.attached-file .remove-file svg {
+  vertical-align: middle;   
+}
+
+.get-contact-attach-file {
+     cursor: pointer; 
+}
+
+input::placeholder {
+    color: #8A8A8A !important;
+    transition: color 0.4s ease;
+}
+
+input.error::placeholder {
+    color: var(--red) !important;
+}
+
+.custom-checkbox input + .checkbox-img {
+  box-shadow: 0 0 0 0px var(--red);
+  transition: box-shadow 0.3s ease;
+}
+
+.custom-checkbox input.error + .checkbox-img {
+  box-shadow: 0 0 0 1px var(--red);
+}
+
 
 /* Адаптив секции "Оставить заявку" */
 
@@ -8472,7 +8580,7 @@ model-viewer::part(default-progress-bar) {
 
 .mdk-main-news-info .mdk-main-title {
     margin-bottom: 16px;
-    max-width: 750px;
+    max-width: 1050px;
     width: 100%;
 }
 
@@ -10203,4 +10311,28 @@ section {
 .modal-video-about.show {
   display: flex;         /* показываем и центрируем */
   opacity: 1;            /* плавно меняется */
+}
+
+
+/* Попап "Запросить коммерческое предложение" */
+
+.kp-popup {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease
+}
+
+.kp-popup.show {
+    opacity: 1;
+    pointer-events: auto;
 }
