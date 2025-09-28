@@ -743,17 +743,27 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+
+  const captionEl = document.getElementById('image-modal-caption');
+
+  function updateCaption(index) {
+    if (!captionEl) return;
+    const imgs = swiperWrapper.querySelectorAll('img');
+    const img = imgs[index];
+    captionEl.textContent = img?.alt || '';
+  }
+
+  // при открытии модалки
   function openImageModal(index = 0) {
     lastFocused = document.activeElement;
     initSwiper(index);
-
     if (swiper) {
       setTimeout(() => {
         const idx = Math.max(0, Math.min(index, thumbs.length - 1));
         swiper.slideTo(idx, 0);
-
         const targetImg = swiperWrapper.querySelectorAll('img')[idx];
         if (targetImg && targetImg.complete) applyScaleToImg(targetImg);
+        updateCaption(idx); // ✅ подпись при открытии
       }, 0);
     }
     modal.setAttribute('aria-hidden', 'false');
@@ -762,6 +772,11 @@ document.addEventListener('DOMContentLoaded', () => {
     if (closeBtn) closeBtn.focus();
     document.addEventListener('keydown', onKey);
   }
+
+  // обновление при смене слайда
+  swiper?.on('slideChange', () => {
+    updateCaption(swiper.activeIndex);
+  });
 
   function closeImageModal() {
     modal.classList.remove('open');
