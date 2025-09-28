@@ -766,7 +766,7 @@ input[type=number] {
 }
 
 .burger-menu-open-socials {
-    display: flex;
+    display: inline-flex;
     flex-direction: column;
     gap: 20px;
 }
@@ -3684,6 +3684,7 @@ path[data-delivery="ПОИСК СОДЕРЖИМОГО"] {
     font-size: 16px;
     color: var(--black);
 }
+
 .upload-file-right {
   display: flex;
   align-items: center;
@@ -3784,6 +3785,15 @@ input.error::placeholder {
 
     .get-contact-right-side {
         margin-top: 48px;
+    }
+
+    .upload-file-right {
+        gap: 8px;
+    }
+
+    .attached-file .file-name,
+    .file-size {
+        font-size: 14px;
     }
 }
 
@@ -10249,10 +10259,6 @@ section {
 
 
 
-
-
-
-
  .close-video {
   position: absolute;
   top: 5px;
@@ -10303,14 +10309,14 @@ section {
 }
 
 .modal-video-about {
-  display: none;         /* как сейчас — скрыта по умолчанию */
+  display: none;         
   opacity: 0;
   transition: opacity 300ms ease;
 }
 
 .modal-video-about.show {
-  display: flex;         /* показываем и центрируем */
-  opacity: 1;            /* плавно меняется */
+  display: flex;         
+  opacity: 1;            
 }
 
 
@@ -10329,10 +10335,173 @@ section {
     z-index: 1000;
     opacity: 0;
     pointer-events: none;
-    transition: opacity 0.3s ease
+    transition: opacity 0.3s ease;
+    padding: 0 70px;
+    overflow-y: auto; 
 }
 
 .kp-popup.show {
     opacity: 1;
     pointer-events: auto;
 }
+
+.kp-popup.closing {
+    opacity: 0;
+    pointer-events: auto;
+}
+
+.kp-popup-content {
+    position: relative;
+    background-color: #fff;
+    color: var(--black);
+    padding: 60px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: flex-end;
+    gap: 40px;
+    max-width: 1320px;
+    width: 100%;
+    overflow: visible;
+
+    transform: translateY(18px) scale(0.98);
+    opacity: 0;
+    transition: transform 0.36s cubic-bezier(.2,.9,.2,1), opacity 0.28s ease;
+}
+
+.kp-popup.show .kp-popup-content {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+}
+
+.kp-popup-title {
+    font-family: 'Helvetica Neue Light', sans-serif;
+    font-size: 40px;
+    font-weight: 300;
+    margin-bottom: 24px;
+    text-transform: uppercase;
+}
+
+.kp-popup-content .get-contact-form .get-contact-form-second-line {
+    flex-direction: column;
+    gap: 0px;
+}
+
+.kp-popup-content .get-contact-info-card svg {
+    flex-shrink: 0;
+    width: 48px;
+    height: 48px;
+}
+
+.kp-popup-content .get-contact-info-card-text {
+    font-size: 16px;
+}
+
+.kp-popup-close {
+    position: absolute;
+    top: -40px;
+    right: -40px;
+    border: none;
+    background-color: transparent;
+    padding: 0;
+    margin: 0;
+    color: #fff;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.kp-popup-close:hover {
+    color: var(--red);
+}
+
+
+.kp-popup-left,
+.kp-popup-right {
+  max-height: 100vh;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  touch-action: pan-y;
+  box-sizing: border-box;
+  scrollbar-width: none; 
+  -ms-overflow-style: none; 
+}
+
+.kp-popup-left::-webkit-scrollbar,
+.kp-popup-right::-webkit-scrollbar {
+  display: none; 
+}
+
+
+@media (max-width: 1350px) {
+    .kp-popup-content {
+        padding: 40px;
+    }
+
+    .kp-popup-title {
+        font-size: 32px;
+    }
+
+    .kp-popup-content .get-contact-info-card-text {
+        font-size: 14px;
+    }
+
+    .kp-popup-content .get-contact-info-card svg {
+        width: 40px;
+        height: 40px;
+    }
+
+    .kp-popup-title {
+        margin-bottom: 16px;
+    }
+
+    .kp-popup-close {
+        top: -30px;
+        right: -30px;
+    }
+
+    .kp-popup-close svg {
+        flex-shrink: 0;
+        width: 18px;
+        height: 18px;
+    }
+}
+
+@media (max-width: 1100px) {
+    .kp-popup-content {
+        padding: 25px;
+    }
+
+    .kp-popup-content {
+        gap: 20px;
+    }
+}
+
+@media (max-width: 1000px) {
+    .kp-popup {
+        align-items: flex-end;
+        justify-content: center; 
+        padding: 0; 
+    }
+
+    .kp-popup-close {
+        right: 10px;
+    }
+}
+
+@media (max-width: 700px) {
+    .kp-popup-content {
+        grid-template-columns: 1fr;
+    }
+
+    .kp-popup-right {
+        display: none;
+    }
+
+    .kp-popup-title {
+        font-size: 24px;
+    }
+
+    .kp-popup-content {
+        padding: 24px 16px;
+    }
+}
+

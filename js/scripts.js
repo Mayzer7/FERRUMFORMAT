@@ -1,19 +1,18 @@
 // Появление шапки
 
+const buttons = document.querySelectorAll('.header-navigation[data-open]');
+const menus = document.querySelectorAll('.header-menu-open[data-open]');
+const header = document.querySelector('.header');
+const headerFirstLine = document.querySelector('.header-first-line');
+const headerMobileLine = document.querySelector('.header-mobile-line');
+const headerMobileLineP = document.querySelector('.header-mobile-line p');
+const headerMobileEmail = document.querySelector('.header-mobile-email');
+const headerMobilePhone = document.querySelector('.header-mobile-phone');
+const headerLastLine = document.querySelector('.header-last-line');
+const burgerBtn = document.querySelector('.burger-btn');
+const burgerMenu = document.querySelector('.header-menu-open-burger');
+
 document.addEventListener('DOMContentLoaded', function () {
-  const buttons = document.querySelectorAll('.header-navigation[data-open]');
-  const menus = document.querySelectorAll('.header-menu-open[data-open]');
-  const header = document.querySelector('.header');
-  const headerFirstLine = document.querySelector('.header-first-line');
-  const headerMobileLine = document.querySelector('.header-mobile-line');
-  const headerMobileLineP = document.querySelector('.header-mobile-line p');
-  const headerMobileEmail = document.querySelector('.header-mobile-email');
-  const headerMobilePhone = document.querySelector('.header-mobile-phone');
-  const headerLastLine = document.querySelector('.header-last-line');
-
-  const burgerBtn = document.querySelector('.burger-btn');
-  const burgerMenu = document.querySelector('.header-menu-open-burger');
-
   let _scrollPosition = null; 
 
   function lockBodyScroll() {
@@ -2348,6 +2347,8 @@ if (modalVideo) {
 
     document.documentElement.classList.remove('no-scroll-modal');
     document.body.classList.remove('no-scroll-modal');
+    header.classList.add('header--visible');
+    header.classList.remove('header--hidden');
     
 
     try { video.pause(); video.currentTime = 0; } catch (err) {}
@@ -2373,55 +2374,58 @@ if (modalVideo) {
 
 // Валидация номера телефона в форме
 
-const phoneInput = document.getElementById('phone');
+const phoneInputs = document.querySelectorAll('.phone');
 
-if (phoneInput) {
-  const sendButton = document.getElementById('send');
-
-  phoneInput.addEventListener('input', (e) => {
-  let value = phoneInput.value.replace(/\D/g, '');
-
-  if (e.inputType === 'deleteContentBackward' && value.length <= 1) {
-    phoneInput.value = '';
-    return;
-  }
-
-  let prefix = '';
-  if (value.startsWith('8')) {
-    prefix = '8 ';
-    value = value.slice(1);
-  } else if (value.startsWith('7')) {
-    prefix = '+7 ';
-    value = value.slice(1);
-  }
-
-  value = value.slice(0, 10);
-
-  let formatted = '';
-  if (value.length > 0) formatted += `(${value.slice(0, 3)}`;
-  if (value.length >= 4) formatted += `) ${value.slice(3, 6)}`;
-  if (value.length >= 7) formatted += `-${value.slice(6, 8)}`;
-  if (value.length >= 9) formatted += `-${value.slice(8, 10)}`;
-
-  const cursorPos = phoneInput.selectionStart;
-  const oldLen = phoneInput.value.length;
-
-  phoneInput.value = prefix + formatted;
-
-  const newLen = phoneInput.value.length;
-    phoneInput.setSelectionRange(cursorPos + (newLen - oldLen), cursorPos + (newLen - oldLen));
+if (phoneInputs) {
+  phoneInputs.forEach(input => {
+    input.addEventListener('input', handlePhoneInput);
   });
 
-  sendButton.addEventListener('click', () => {
-    const phone = phoneInput.value.replace(/\D/g, '');
-    const isValid = (phone.startsWith('7') || phone.startsWith('8')) ? phone.length >= 11 : phone.length >= 10;
-  });
+  function handlePhoneInput(e) {
+    const input = e.target;
+    const prevValue = input.value;
+    let value = prevValue.replace(/\D/g, '');
+
+    if (e.inputType === 'deleteContentBackward' && value.length <= 1) {
+      input.value = '';
+      return;
+    }
+
+    let prefix = '';
+    if (value.startsWith('8')) {
+      prefix = '8 ';
+      value = value.slice(1);
+    } else if (value.startsWith('7')) {
+      prefix = '+7 ';
+      value = value.slice(1);
+    }
+
+    value = value.slice(0, 10);
+
+    let formatted = '';
+    if (value.length > 0) formatted += `(${value.slice(0, 3)}`;
+    if (value.length >= 4) formatted += `) ${value.slice(3, 6)}`;
+    if (value.length >= 7) formatted += `-${value.slice(6, 8)}`;
+    if (value.length >= 9) formatted += `-${value.slice(8, 10)}`;
+
+    const cursorPos = input.selectionStart || 0;
+    const oldLen = prevValue.length;
+
+    input.value = prefix + formatted;
+
+    const newLen = input.value.length;
+    const shift = newLen - oldLen;
+    const newPos = Math.max(0, Math.min(input.value.length, cursorPos + shift));
+    input.setSelectionRange(newPos, newPos);
+  }
 }
 
 
-// Очистка формы
-function resetForm() {
-  const form = document.querySelector('.get-contact-form');
+
+
+
+// Сброс формы (теперь принимает form)
+function resetForm(form) {
   if (!form) return;
 
   try { form.reset(); } catch (e) { }
@@ -2436,8 +2440,8 @@ function resetForm() {
     cb.classList.remove('error');
   });
 
-  const fileInput = document.getElementById('fileInput');
-  const attachedFiles = document.getElementById('attachedFiles');
+  const fileInput = form.querySelector('.file-input');
+  const attachedFiles = form.querySelector('.attached-files');
 
   if (attachedFiles) {
     attachedFiles.querySelectorAll('.remove-file').forEach(btn => {
@@ -2457,187 +2461,188 @@ function resetForm() {
     }
   }
 
-  document.querySelectorAll('.attached-file').forEach(el => {
+  form.querySelectorAll('.attached-file').forEach(el => {
     el.classList.remove('visible', 'removing');
   });
 }
 
+function formatFileSize(bytes) {
+  if (bytes === 0) return '0 B';
+  const k = 1024;
+  const sizes = ['B', 'KB', 'MB', 'GB', 'TB'];
+  const i = Math.floor(Math.log(bytes) / Math.log(k));
+  const value = bytes / Math.pow(k, i);
+  const str = (Math.round(value * 100) / 100).toString();
+  return str.replace('.', ',') + ' ' + sizes[i];
+}
 
+function escapeHtml(s = '') {
+  return s.replace(/[&<>"']/g, (m) => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+}
 
-// Сбор файлов для отправки в форме
+function formatDisplayName(filename) {
+  if (!filename) return '';
 
-const fileInput = document.getElementById('fileInput');
-
-if (fileInput) {
-  (() => {
-  const MAX_FILES = 3;
-  const MAX_BYTES = 5 * 1024 * 1024; // 5 MB
-
-  const attachArea = document.getElementById('attachArea');
-  
-  const attachedFiles = document.getElementById('attachedFiles');
-
-  // выбранные файлов
-  let selectedFiles = [];
-
-  attachArea.addEventListener('click', () => fileInput.click());
-  attachArea.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); fileInput.click(); }
-  });
-
-  // выбор файлов (может выбрать несколько)
-  fileInput.addEventListener('change', (e) => {
-    const files = e.target.files ? Array.from(e.target.files) : [];
-    if (!files.length) return;
-
-    fileInput.value = '';
-
-    addFiles(files); 
-  });
-
-  function addFiles(files) {
-    for (const file of files) {
-      if (selectedFiles.length >= MAX_FILES) {
-        showTempError(`Максимум ${MAX_FILES} файла(ов).`);
-        break;
-      }
-      if (file.size > MAX_BYTES) {
-        showTempError(`Файл "${file.name}" слишком большой (макс 5 MB).`);
-        continue;
-      }
-
-      selectedFiles.push(file);
-    }
-    renderAttachedFiles();
-    updateInputFiles();
+  const parts = filename.split('.');
+  if (parts.length === 1) {
+    // нет расширения
+    const base = parts[0];
+    const short = Array.from(base).slice(0, 5).join('');
+    return short;
   }
-
-  function renderAttachedFiles() {
-    attachedFiles.innerHTML = '';
-
-    if (selectedFiles.length === 0) return;
-
-    const title = document.createElement('p');
-    title.className = 'attached-file-title';
-    title.textContent = 'Загруженные файлы:';
-    attachedFiles.appendChild(title);
-
-    requestAnimationFrame(() => title.classList.add('visible'));
-
-    selectedFiles.forEach((file, idx) => {
-      const item = document.createElement('div');
-      item.className = 'attached-file';
-      item.setAttribute('data-idx', idx);
-
-      item.innerHTML = `
-        <div class="upload-file-content">
-          <div class="upload-file-left">
-            <div class="file-name" title="${escapeHtml(file.name)}">${escapeHtml(file.name)}</div>
-          </div>
-          <div class="upload-file-right">
-            <div class="file-size" aria-label="Размер файла">${formatFileSize(file.size)}</div>
-            <button type="button" class="remove-file" data-idx="${idx}" aria-label="Удалить файл" title="Удалить файл">
-              <!-- svg -->
-              <svg width="20" height="21" viewBox="0 0 20 21" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M15.5885 6.08849L14.4102 4.91016L9.99932 9.32099L5.58849 4.91016L4.41016 6.08849L8.82099 10.4993L4.41016 14.9102L5.58849 16.0885L9.99932 11.6777L14.4102 16.0885L15.5885 14.9102L11.1777 10.4993L15.5885 6.08849Z" fill="currentColor"/>
-              </svg>
-            </button>
-          </div>
-        </div>
-      `;
-
-      attachedFiles.appendChild(item);
-
-      requestAnimationFrame(() => item.classList.add('visible'));
-    });
-
-    attachedFiles.querySelectorAll('.remove-file').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const idx = Number(btn.getAttribute('data-idx'));
-        fadeOutAndRemove(idx);
-      });
-    });
-  }
-
-  function fadeOutAndRemove(index) {
-    const el = attachedFiles.querySelector(`.attached-file[data-idx="${index}"]`);
-    if (!el) {
-      removeFileImmediate(index);
-      return;
-    }
-
-    el.classList.remove('visible');
-    el.classList.add('removing');
-
-    const onTransitionEnd = (ev) => {
-      if (ev.propertyName === 'opacity') {
-        el.removeEventListener('transitionend', onTransitionEnd);
-        removeFileImmediate(index);
-      }
-    };
-    el.addEventListener('transitionend', onTransitionEnd);
-
-    setTimeout(() => {
-      if (attachedFiles.contains(el)) {
-        el.removeEventListener('transitionend', onTransitionEnd);
-        removeFileImmediate(index);
-      }
-    }, 350);
-  }
-
-  function removeFileImmediate(index) {
-    if (index < 0 || index >= selectedFiles.length) return;
-    selectedFiles.splice(index, 1);
-    renderAttachedFiles();
-    updateInputFiles();
-  }
-
-    function removeFile(index) {
-      if (index < 0 || index >= selectedFiles.length) return;
-      selectedFiles.splice(index, 1);
-      renderAttachedFiles();
-      updateInputFiles();
-    }
-
-    function updateInputFiles() {
-      try {
-        const dt = new DataTransfer();
-        selectedFiles.forEach(f => dt.items.add(f));
-        fileInput.files = dt.files;
-      } catch (e) {
-        console.warn('DataTransfer не поддерживается в этом браузере, поле fileInput не обновлено.');
-      }
-    }
-
-    function showTempError(msg) {
-      const el = document.createElement('div');
-      el.className = 'attached-file error';
-      el.style.padding = '8px';
-      el.textContent = msg;
-      attachedFiles.prepend(el);
-      setTimeout(() => el.remove(), 4000);
-    }
-
-    function formatFileSize(bytes) {
-      if (bytes === 0) return '0 B';
-      const k = 1024;
-      const sizes = ['B', 'KB', 'MB', 'GB', 'TB'];
-      const i = Math.floor(Math.log(bytes) / Math.log(k));
-      const value = bytes / Math.pow(k, i);
-      const str = (Math.round(value * 100) / 100).toString();
-      return str.replace('.', ',') + ' ' + sizes[i];
-    }
-
-    function escapeHtml(s = '') {
-      return s.replace(/[&<>"']/g, (m) => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
-    }
-  })();
+  const ext = parts.pop(); 
+  const base = parts.join('.');
+  const shortBase = Array.from(base).slice(0, 5).join('');
+  return `${shortBase}.${ext.toLowerCase()}`;
 }
 
 
-const form = document.querySelector('.get-contact-form');
+// Валидация форм 
+document.querySelectorAll('.get-contact-form').forEach((form) => {
+  const fileInput = form.querySelector('.file-input');
+  const attachArea = form.querySelector('.get-contact-attach-file');
+  const attachedFiles = form.querySelector('.attached-files');
 
-if (form) {
+  if (fileInput && attachArea && attachedFiles) {
+    (function () {
+      const MAX_FILES = 3;
+      const MAX_BYTES = 5 * 1024 * 1024; // 5 MB
+
+      let selectedFiles = [];
+
+      attachArea.addEventListener('click', () => fileInput.click());
+      attachArea.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); fileInput.click(); }
+      });
+
+      fileInput.addEventListener('change', (e) => {
+        const files = e.target.files ? Array.from(e.target.files) : [];
+        if (!files.length) return;
+
+        fileInput.value = '';
+
+        addFiles(files);
+      });
+
+      function addFiles(files) {
+        for (const file of files) {
+          if (selectedFiles.length >= MAX_FILES) {
+            showTempError(`Максимум ${MAX_FILES} файла(ов).`);
+            break;
+          }
+          if (file.size > MAX_BYTES) {
+            showTempError(`Файл "${file.name}" слишком большой (макс 5 MB).`);
+            continue;
+          }
+
+          selectedFiles.push(file);
+        }
+        renderAttachedFiles();
+        updateInputFiles();
+      }
+
+      function renderAttachedFiles() {
+        attachedFiles.innerHTML = '';
+
+        if (selectedFiles.length === 0) return;
+
+        const title = document.createElement('p');
+        title.className = 'attached-file-title';
+        title.textContent = 'Загруженные файлы:';
+        attachedFiles.appendChild(title);
+
+        requestAnimationFrame(() => title.classList.add('visible'));
+
+        selectedFiles.forEach((file, idx) => {
+          const item = document.createElement('div');
+          item.className = 'attached-file';
+          item.setAttribute('data-idx', idx);
+
+          const visibleName = formatDisplayName(file.name);
+
+          item.innerHTML = `
+            <div class="upload-file-content">
+              <div class="upload-file-left">
+                <div class="file-name" title="${escapeHtml(file.name)}">${escapeHtml(visibleName)}</div>
+              </div>
+              <div class="upload-file-right">
+                <div class="file-size" aria-label="Размер файла">${formatFileSize(file.size)}</div>
+                <button type="button" class="remove-file" data-idx="${idx}" aria-label="Удалить файл" title="Удалить файл">
+                  <svg width="20" height="21" viewBox="0 0 20 21" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M15.5885 6.08849L14.4102 4.91016L9.99932 9.32099L5.58849 4.91016L4.41016 6.08849L8.82099 10.4993L4.41016 14.9102L5.58849 16.0885L9.99932 11.6777L14.4102 16.0885L15.5885 14.9102L11.1777 10.4993L15.5885 6.08849Z" fill="currentColor"/>
+                  </svg>
+                </button>
+              </div>
+            </div>
+          `;
+
+          attachedFiles.appendChild(item);
+
+          requestAnimationFrame(() => item.classList.add('visible'));
+        });
+
+        attachedFiles.querySelectorAll('.remove-file').forEach(btn => {
+          btn.addEventListener('click', () => {
+            const idx = Number(btn.getAttribute('data-idx'));
+            fadeOutAndRemove(idx);
+          });
+        });
+      }
+
+      function fadeOutAndRemove(index) {
+        const el = attachedFiles.querySelector(`.attached-file[data-idx="${index}"]`);
+        if (!el) {
+          removeFileImmediate(index);
+          return;
+        }
+
+        el.classList.remove('visible');
+        el.classList.add('removing');
+
+        const onTransitionEnd = (ev) => {
+          if (ev.propertyName === 'opacity') {
+            el.removeEventListener('transitionend', onTransitionEnd);
+            removeFileImmediate(index);
+          }
+        };
+        el.addEventListener('transitionend', onTransitionEnd);
+
+        setTimeout(() => {
+          if (attachedFiles.contains(el)) {
+            el.removeEventListener('transitionend', onTransitionEnd);
+            removeFileImmediate(index);
+          }
+        }, 350);
+      }
+
+      function removeFileImmediate(index) {
+        if (index < 0 || index >= selectedFiles.length) return;
+        selectedFiles.splice(index, 1);
+        renderAttachedFiles();
+        updateInputFiles();
+      }
+
+      function updateInputFiles() {
+        try {
+          const dt = new DataTransfer();
+          selectedFiles.forEach(f => dt.items.add(f));
+          fileInput.files = dt.files;
+        } catch (e) {
+          console.warn('DataTransfer не поддерживается в этом браузере, поле fileInput не обновлено.');
+        }
+      }
+
+      function showTempError(msg) {
+        const el = document.createElement('div');
+        el.className = 'attached-file error';
+        el.style.padding = '8px';
+        el.textContent = msg;
+        attachedFiles.prepend(el);
+        setTimeout(() => el.remove(), 4000);
+      }
+    })();
+  } 
+
   form.addEventListener('submit', function (e) {
     e.preventDefault();
 
@@ -2645,40 +2650,42 @@ if (form) {
     const phoneInput = form.querySelector('input[name="phone"]');
     const acceptInput = form.querySelector('input[name="accept"]');
 
-    acceptInput.addEventListener('change', () => {
-      if (acceptInput.checked) {
-        acceptInput.classList.remove('error');
-      }
-    });
+    if (acceptInput) {
+      acceptInput.addEventListener('change', () => {
+        if (acceptInput.checked) {
+          acceptInput.classList.remove('error');
+        }
+      });
+    }
 
     let valid = true;
 
     // проверка имени
-    if (!nameInput.value.trim()) {
-      nameInput.classList.add('error');
+    if (!nameInput || !nameInput.value.trim()) {
+      if (nameInput) nameInput.classList.add('error');
       valid = false;
     } else {
       nameInput.classList.remove('error');
     }
 
     // проверка телефона
-    if (!phoneInput.value.trim()) {
-      phoneInput.classList.add('error');
+    if (!phoneInput || !phoneInput.value.trim()) {
+      if (phoneInput) phoneInput.classList.add('error');
       valid = false;
     } else {
       phoneInput.classList.remove('error');
     }
 
     // проверка чекбокса
-    if (!acceptInput.checked) {
-      acceptInput.classList.add('error');
+    if (!acceptInput || !acceptInput.checked) {
+      if (acceptInput) acceptInput.classList.add('error');
       valid = false;
     } else {
       acceptInput.classList.remove('error');
     }
 
     if (!valid) {
-      return; 
+      return;
     }
 
     // собираем все данные
@@ -2704,10 +2711,94 @@ if (form) {
     }
 
     console.log("Данные с формы:", data);
-    resetForm();
+    resetForm(form);
+  });
+});
+
+
+
+// Попап "Запросить коммерческое предложение"
+const menu = document.querySelector('.header-menu-open-burger');
+const kpPopup = document.querySelector('.kp-popup');
+const kpContent = document.querySelector('.kp-popup-content');
+const kpCloseBtn = document.querySelector('.kp-popup-close');
+
+const isMenuOpen = () => !!menu && menu.classList.contains('is-open');
+
+function openKpPopup() {
+  if (!kpPopup) return;
+
+  kpPopup.dataset.menuWasOpen = isMenuOpen() ? '1' : '0';
+
+  document.body.style.overflow = 'hidden';
+  kpPopup.classList.add('show');
+  document.documentElement.classList.add('no-scroll-modal');
+  document.body.classList.add('no-scroll-modal');
+
+  if (kpPopup.dataset.menuWasOpen === '0') {
+    header.classList.remove('header--visible');
+    header.classList.add('header--hidden');
+  }
+
+  kpPopup.classList.remove('closing');
+  kpPopup.setAttribute('aria-hidden', 'false');
+}
+
+function closeKpPopup() {
+  if (!kpPopup || !kpPopup.classList.contains('show')) return;
+
+  kpPopup.classList.add('closing');
+  kpPopup.classList.remove('show');
+  document.documentElement.classList.remove('no-scroll-modal');
+  document.body.classList.remove('no-scroll-modal');
+
+  if (kpPopup.dataset.menuWasOpen === '0') {
+    header.classList.add('header--visible');
+    header.classList.remove('header--hidden');
+  }
+
+  const onTransitionEnd = (e) => {
+    if (e.target !== kpPopup || e.propertyName !== 'opacity') return;
+    kpPopup.classList.remove('closing');
+    document.body.style.overflow = '';
+    kpPopup.setAttribute('aria-hidden', 'true');
+    kpPopup.removeEventListener('transitionend', onTransitionEnd);
+    delete kpPopup.dataset.menuWasOpen;
+  };
+  kpPopup.addEventListener('transitionend', onTransitionEnd);
+}
+
+// кнопка крестик
+if (kpCloseBtn) {
+  kpCloseBtn.addEventListener('click', (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    closeKpPopup();
   });
 }
 
+if (kpPopup) {
+  kpPopup.addEventListener('click', (e) => {
+    if (e.target === kpPopup) {
+      e.stopPropagation(); 
+      closeKpPopup();
+    }
+  });
+  if (kpContent) {
+    kpContent.addEventListener('click', (e) => {
+      e.stopPropagation();
+    });
+  }
+}
+
+// ESC
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape' || e.key === 'Esc') {
+    if (kpPopup && kpPopup.classList.contains('show')) {
+      closeKpPopup();
+    }
+  }
+});
 
 
 
@@ -2717,25 +2808,3 @@ if (form) {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// const kpPopup = document.querySelector('.kp-popup');
-
-// if (kpPopup) {
-//   kpPopup.classList.add('show');
-// }
