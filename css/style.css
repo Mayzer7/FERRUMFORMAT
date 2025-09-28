@@ -1709,12 +1709,24 @@ input[type=number] {
 .we-produce-additionally-card {
     border-top: 1px solid var(--stroke-gray);
     padding: 16px 12px;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.we-produce-additionally-card:hover {
+    background-color: var(--red);
+    color: #fff;
 }
 
 .we-produce-additionally-card:last-child {
     border-bottom: 1px solid var(--stroke-gray);
 }
 
+.we-produce-additionally-card a {
+    transition: unset;
+}
+
+.we-produce-additionally-card a,
 .we-produce-additionally-card p {
     font-family: 'Helvetica Neue Regular', sans-serif;
     font-size: 32px;
@@ -1854,6 +1866,7 @@ input[type=number] {
         padding: 12px;
     }
 
+    .we-produce-additionally-card a,
     .we-produce-additionally-card p {
         font-size: 24px;
     }
@@ -1992,6 +2005,7 @@ input[type=number] {
         padding: 12px 8px;
     }
 
+    .we-produce-additionally-card a,
     .we-produce-additionally-card p {
         font-size: 20px;
     }
@@ -2113,6 +2127,10 @@ input[type=number] {
     line-height: 130%;
 }
 
+.about-us-btn {
+    max-width: 370px;
+}
+
 /* Адаптив секции "О нас" */
 
 @media (max-width: 1700px) {
@@ -2229,6 +2247,10 @@ input[type=number] {
 @media (max-width: 700px) {
     .about-us {
         padding: 60px 16px;
+    }
+
+    .about-us-btn {
+        max-width: 100%;
     }
 }
 
@@ -2863,6 +2885,7 @@ path[data-delivery="ПОИСК СОДЕРЖИМОГО"] {
     align-items: center;
     gap: 10px;
     margin-top: 32px;
+    max-width: 369px;
 }
 
 /* Адаптив секции "Документы" */
@@ -2904,6 +2927,7 @@ path[data-delivery="ПОИСК СОДЕРЖИМОГО"] {
 
     .watch-more {
         font-size: 14px;
+        max-width: 300px;
     }
 
     .watch-more  svg {
@@ -2944,6 +2968,7 @@ path[data-delivery="ПОИСК СОДЕРЖИМОГО"] {
     }
 
     .watch-more {
+        max-width: 100%;
         width: 100%;
     }
 }
@@ -3731,11 +3756,11 @@ input.error::placeholder {
 
 .custom-checkbox input + .checkbox-img {
   box-shadow: 0 0 0 0px var(--red);
-  transition: box-shadow 0.3s ease;
+  transition: all 0.3s ease;
 }
 
 .custom-checkbox input.error + .checkbox-img {
-  box-shadow: 0 0 0 1px var(--red);
+  border: 1px solid var(--red);
 }
 
 

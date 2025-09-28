@@ -2373,6 +2373,14 @@ if (modalVideo) {
 
   playButtons.forEach(btn => btn.addEventListener('click', openModal));
 
+  const anotherBtn = document.querySelector('.video-about-production');
+
+  if (anotherBtn) {
+    anotherBtn.addEventListener('click', (e) => {
+      openModal(e); 
+    });
+  }
+
   if (closeBtn) closeBtn.addEventListener('click', closeModal);
 
   modal.addEventListener('click', (e) => {
