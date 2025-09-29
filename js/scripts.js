@@ -1820,6 +1820,10 @@ if (modelModal) {
 
     document.querySelectorAll('.our-work-card').forEach(card => {
       card.addEventListener('click', (e) => {
+        if (e.target.closest('.get-kp-btn, a, button, input, .no-modal')) {
+          return;
+        }
+
         if (dragging || touchMoved) return;
 
         const inCardModel = card.querySelector('model-viewer');
@@ -2336,8 +2340,7 @@ if (modalVideo) {
 
     document.documentElement.classList.add('no-scroll-modal');
     document.body.classList.add('no-scroll-modal');
-    header.classList.remove('header--visible');
-    header.classList.add('header--hidden');
+
 
     try {
       const p = video.play();
@@ -2830,4 +2833,122 @@ document.addEventListener('keydown', (e) => {
 
 
 
+// Плавный скролл к якорю
 
+(function(){
+  document.addEventListener('click', function(e){
+    const a = e.target.closest('a[href*="#"]');
+    
+    if (!a) return;
+
+    if (e.defaultPrevented) return;
+    if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+    if (a.target && a.target === '_blank') return;
+
+    let href = a.getAttribute('href');
+    if (!href) return;
+
+    try {
+      const url = new URL(href, location.href);
+      if (url.origin !== location.origin) return;
+
+      const pathname = url.pathname || location.pathname;
+      const explicitTarget = a.dataset && a.dataset.target ? a.dataset.target : (url.hash ? url.hash.slice(1) : null);
+
+      if (pathname === location.pathname || pathname === ('/' + location.pathname.replace(/^\//, ''))) {
+        if (!explicitTarget) return; 
+        const el = document.getElementById(explicitTarget);
+        if (el) {
+          e.preventDefault();
+
+          el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+          history.replaceState(null, '', '#' + explicitTarget);
+        }
+      return;
+    }
+
+    if (url.hash || explicitTarget) {
+      e.preventDefault();
+      const targetId = explicitTarget || (url.hash ? url.hash.slice(1) : null);
+      const payload = { path: url.pathname + (url.search || ''), id: targetId };
+      try { sessionStorage.setItem('siteSmoothScroll', JSON.stringify(payload)); } catch(e) {}
+      location.href = payload.path;
+    }
+
+    } catch (err) {
+    return;
+  }
+  }, { passive: false });
+})();
+
+
+// Анимация плавного скрола к якорю
+(function(){
+  const DURATION = 1400;    
+  const HEADER_OFFSET = 80; 
+
+  function easeInOutCubic(t){ return t < 0.5 ? 4*t*t*t : 1 - Math.pow(-2*t + 2, 3) / 2; }
+
+  function smoothScrollTo(targetY, duration){
+    const startY = window.scrollY || window.pageYOffset;
+    const diff = targetY - startY;
+    const startTime = performance.now();
+    return new Promise(resolve=>{
+      function step(now){
+        const elapsed = now - startTime;
+        const progress = Math.min(1, elapsed / duration);
+        const eased = easeInOutCubic(progress);
+        window.scrollTo(0, Math.round(startY + diff * eased));
+        if (progress < 1) requestAnimationFrame(step);
+        else resolve();
+      }
+      requestAnimationFrame(step);
+    });
+  }
+
+  async function run() {
+    let payload = null;
+    try {
+      const raw = sessionStorage.getItem('siteSmoothScroll');
+      if (raw) {
+        payload = JSON.parse(raw);
+        if (payload.path && payload.path.replace(/^\//,'') !== location.pathname.replace(/^\//,'')) {
+          payload = null;
+        }
+      }
+    } catch(e) { payload = null; }
+
+    if (!payload && location.hash) {
+      payload = { path: location.pathname, id: location.hash.slice(1) };
+    }
+
+    try { sessionStorage.removeItem('siteSmoothScroll'); } catch(e){}
+
+    if (!payload || !payload.id) {
+      document.documentElement.style.scrollBehavior = '';
+      return;
+    }
+
+    if (document.readyState !== 'complete') {
+      await new Promise(r => window.addEventListener('load', r, { once: true }));
+    }
+    await new Promise(r => setTimeout(r, 60));
+
+    const el = document.getElementById(payload.id);
+    if (!el) {
+      document.documentElement.style.scrollBehavior = '';
+      return;
+    }
+
+    const rect = el.getBoundingClientRect();
+    const targetY = (window.scrollY || window.pageYOffset) + rect.top - HEADER_OFFSET;
+    await smoothScrollTo(targetY, DURATION);
+
+    try { history.replaceState(null, '', '#' + payload.id); } catch(e){}
+
+    document.documentElement.style.scrollBehavior = '';
+  }
+
+  run();
+})();

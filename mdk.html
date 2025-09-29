@@ -7,6 +7,17 @@
     <link rel="stylesheet" href="css/libs/swiper-bundle.min.css">
     <link rel="stylesheet" href="css/style.css">
     <script type="module" src="js/libs/model-viewer.min.js"></script>
+    
+    <!-- Плавный скролл к якорю -->
+    <script>
+        if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+
+        if (location.hash) {
+            document.documentElement.style.scrollBehavior = 'auto';
+            window.scrollTo(0, 0);
+        }
+    </script>
+
     <title>FerrumFormat | МДК</title>
 </head>
 <body>
@@ -2870,7 +2881,7 @@
             </div>
         </section>
 
-        <section class="catalog">
+        <section class="catalog" id="catalog">
             <div class="lines">
                 <div class="line line1"></div>
                 <div class="line line2"></div>
@@ -2992,7 +3003,10 @@
                                     </div>
 
                                     <p class="news-card-info-price">от 4 523 ₽</p>
-                                    <button class="get-kp-btn transparent-btn">получить кп</button>
+
+                                    <button class="get-kp-btn transparent-btn" onclick="openKpPopup();">
+                                        получить кп
+                                    </button>
                                 </div>
                             </div>
                     </div>
@@ -3094,7 +3108,10 @@
                                     </div>
 
                                     <p class="news-card-info-price">от 4 523 ₽</p>
-                                    <button class="get-kp-btn transparent-btn">получить кп</button>
+
+                                    <button class="get-kp-btn transparent-btn" onclick="openKpPopup();">
+                                        получить кп
+                                    </button>
                                 </div>
                             </div>
                     </div>
@@ -3196,7 +3213,10 @@
                                     </div>
 
                                     <p class="news-card-info-price">от 4 523 ₽</p>
-                                    <button class="get-kp-btn transparent-btn">получить кп</button>
+
+                                    <button class="get-kp-btn transparent-btn" onclick="openKpPopup();">
+                                        получить кп
+                                    </button>
                                 </div>
                             </div>
                     </div>
@@ -3298,7 +3318,10 @@
                                     </div>
 
                                     <p class="news-card-info-price">от 4 523 ₽</p>
-                                    <button class="get-kp-btn transparent-btn">получить кп</button>
+
+                                    <button class="get-kp-btn transparent-btn" onclick="openKpPopup();">
+                                        получить кп
+                                    </button>
                                 </div>
                             </div>
                     </div>
@@ -3400,7 +3423,10 @@
                                     </div>
 
                                     <p class="news-card-info-price">от 4 523 ₽</p>
-                                    <button class="get-kp-btn transparent-btn">получить кп</button>
+                                    
+                                    <button class="get-kp-btn transparent-btn" onclick="openKpPopup();">
+                                        получить кп
+                                    </button>
                                 </div>
                             </div>
                     </div>
@@ -3502,7 +3528,10 @@
                                     </div>
 
                                     <p class="news-card-info-price">от 4 523 ₽</p>
-                                    <button class="get-kp-btn transparent-btn">получить кп</button>
+
+                                    <button class="get-kp-btn transparent-btn" onclick="openKpPopup();">
+                                        получить кп
+                                    </button>
                                 </div>
                             </div>
                     </div>
@@ -3604,7 +3633,10 @@
                                     </div>
 
                                     <p class="news-card-info-price">от 4 523 ₽</p>
-                                    <button class="get-kp-btn transparent-btn">получить кп</button>
+
+                                    <button class="get-kp-btn transparent-btn" onclick="openKpPopup();">
+                                        получить кп
+                                    </button>
                                 </div>
                             </div>
                     </div>
@@ -3706,7 +3738,10 @@
                                     </div>
 
                                     <p class="news-card-info-price">от 4 523 ₽</p>
-                                    <button class="get-kp-btn transparent-btn">получить кп</button>
+                                    
+                                    <button class="get-kp-btn transparent-btn" onclick="openKpPopup();">
+                                        получить кп
+                                    </button>
                                 </div>
                             </div>
                     </div>
@@ -3808,7 +3843,10 @@
                                     </div>
 
                                     <p class="news-card-info-price">от 4 523 ₽</p>
-                                    <button class="get-kp-btn transparent-btn">получить кп</button>
+
+                                    <button class="get-kp-btn transparent-btn" onclick="openKpPopup();">
+                                        получить кп
+                                    </button>
                                 </div>
                             </div>
                     </div>
@@ -3910,7 +3948,10 @@
                                     </div>
 
                                     <p class="news-card-info-price">от 4 523 ₽</p>
-                                    <button class="get-kp-btn transparent-btn">получить кп</button>
+
+                                    <button class="get-kp-btn transparent-btn" onclick="openKpPopup();">
+                                        получить кп
+                                    </button>
                                 </div>
                             </div>
                     </div>
@@ -4012,7 +4053,10 @@
                                     </div>
 
                                     <p class="news-card-info-price">от 4 523 ₽</p>
-                                    <button class="get-kp-btn transparent-btn">получить кп</button>
+
+                                    <button class="get-kp-btn transparent-btn" onclick="openKpPopup();">
+                                        получить кп
+                                    </button>
                                 </div>
                             </div>
                     </div>
@@ -4114,7 +4158,10 @@
                                     </div>
 
                                     <p class="news-card-info-price">от 4 523 ₽</p>
-                                    <button class="get-kp-btn transparent-btn">получить кп</button>
+
+                                    <button class="get-kp-btn transparent-btn" onclick="openKpPopup();">
+                                        получить кп
+                                    </button>
                                 </div>
                             </div>
                     </div>
