@@ -520,6 +520,10 @@ document.addEventListener('DOMContentLoaded', () => {
     modal.setAttribute('aria-hidden', 'false');
     modal.classList.add('open');
     document.body.style.overflow = 'hidden';
+    
+    document.documentElement.classList.add('no-scroll-modal');
+    document.body.classList.add('no-scroll-modal');
+
     updateFocusable();
     (firstFocusable || closeBtn).focus();
     document.addEventListener('keydown', onKeydown);
@@ -530,6 +534,10 @@ document.addEventListener('DOMContentLoaded', () => {
     modal.setAttribute('aria-hidden', 'true');
     document.body.style.overflow = '';
     document.removeEventListener('keydown', onKeydown);
+
+    document.documentElement.classList.remove('no-scroll-modal');
+    document.body.classList.remove('no-scroll-modal');
+
     if (lastFocusedElement && typeof lastFocusedElement.focus === 'function') lastFocusedElement.focus();
   }
 
@@ -639,8 +647,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // Модальное окно для просмотра фотографий отзыва
 
+// Замените вашу текущую секцию, начинающуюся с document.addEventListener('DOMContentLoaded', () => { ... });
 document.addEventListener('DOMContentLoaded', () => {
-  const THUMBS_SELECTOR = '.reviews-card-right-side img';
+  // Собираем все картинки, которые должны попадать в модалку
+  const THUMBS_SELECTOR = '.reviews-card-right-side img, .documents-card-right-side img, .documents-card img';
   const thumbs = Array.from(document.querySelectorAll(THUMBS_SELECTOR));
   if (!thumbs.length) return;
 
@@ -656,11 +666,10 @@ document.addEventListener('DOMContentLoaded', () => {
   let swiper = null;
   let createdSlides = false;
   let lastFocused = null;
-  let currentNatural = { w: 0, h: 0 };
 
   function buildSlides() {
     if (!swiperWrapper) return;
-    swiperWrapper.innerHTML = ''; 
+    swiperWrapper.innerHTML = '';
     thumbs.forEach((t, idx) => {
       const src = t.getAttribute('src');
       const alt = t.getAttribute('alt') || '';
@@ -688,42 +697,39 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!imgEl) return;
     imgEl.style.width = '100%';
     imgEl.style.height = '100%';
-    imgEl.style.objectFit = 'cover'; 
+    imgEl.style.objectFit = 'cover';
   }
 
   function initSwiper(startIndex = 0) {
     if (!swiperContainer) return;
     if (!createdSlides) buildSlides();
-
     if (swiper) {
       swiper.update();
       setTimeout(() => swiper.slideTo(startIndex, 0), 0);
       return;
     }
-
     swiper = new Swiper(swiperContainer, {
       slidesPerView: 1,
-      centeredSlides: true,   
+      centeredSlides: true,
       spaceBetween: 16,
       loop: false,
       speed: 360,
-      navigation: {
-        nextEl: nextBtn,
-        prevEl: prevBtn
-      },
+      navigation: { nextEl: nextBtn, prevEl: prevBtn },
       keyboard: { enabled: false },
       on: {
-        slideChange: function() {
+        slideChange: function () {
           const imgs = swiperWrapper.querySelectorAll('img');
           const currentImg = imgs[swiper.activeIndex];
           if (currentImg) setTimeout(() => applyScaleToImg(currentImg), 80);
+          updateCaption(swiper.activeIndex);
         },
-        init: function() {
+        init: function () {
           if (closeBtn) closeBtn.focus();
         }
       }
     });
 
+    // drag handlers (как в вашем коде)
     swiperWrapper.addEventListener('pointerdown', (e) => {
       const img = e.target.closest('img');
       if (!img) return;
@@ -731,9 +737,7 @@ document.addEventListener('DOMContentLoaded', () => {
       img.setPointerCapture(e.pointerId);
       img.addEventListener('pointermove', onPointerMove);
       img.addEventListener('pointerup', onPointerUp);
-      function onPointerMove() {
-        img.classList.add('dragging');
-      }
+      function onPointerMove() { img.classList.add('dragging'); }
       function onPointerUp(ev) {
         img.classList.remove('dragging');
         try { img.releasePointerCapture(ev.pointerId); } catch (err) {}
@@ -743,9 +747,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-
   const captionEl = document.getElementById('image-modal-caption');
-
   function updateCaption(index) {
     if (!captionEl) return;
     const imgs = swiperWrapper.querySelectorAll('img');
@@ -753,7 +755,7 @@ document.addEventListener('DOMContentLoaded', () => {
     captionEl.textContent = img?.alt || '';
   }
 
-  // при открытии модалки
+  // открыть модалку
   function openImageModal(index = 0) {
     lastFocused = document.activeElement;
     initSwiper(index);
@@ -763,25 +765,24 @@ document.addEventListener('DOMContentLoaded', () => {
         swiper.slideTo(idx, 0);
         const targetImg = swiperWrapper.querySelectorAll('img')[idx];
         if (targetImg && targetImg.complete) applyScaleToImg(targetImg);
-        updateCaption(idx); // ✅ подпись при открытии
+        updateCaption(idx);
       }, 0);
     }
     modal.setAttribute('aria-hidden', 'false');
     modal.classList.add('open');
     document.body.style.overflow = 'hidden';
+    document.documentElement.classList.add('no-scroll-modal');
+    document.body.classList.add('no-scroll-modal');
     if (closeBtn) closeBtn.focus();
     document.addEventListener('keydown', onKey);
   }
-
-  // обновление при смене слайда
-  swiper?.on('slideChange', () => {
-    updateCaption(swiper.activeIndex);
-  });
 
   function closeImageModal() {
     modal.classList.remove('open');
     modal.setAttribute('aria-hidden', 'true');
     document.body.style.overflow = '';
+    document.documentElement.classList.remove('no-scroll-modal');
+    document.body.classList.remove('no-scroll-modal');
     document.removeEventListener('keydown', onKey);
     if (lastFocused && typeof lastFocused.focus === 'function') lastFocused.focus();
   }
@@ -792,6 +793,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (e.key === 'ArrowRight') { e.preventDefault(); if (swiper) swiper.slideNext(); return; }
   }
 
+  // Навешиваем клики на сами изображения (thumbs)
   thumbs.forEach((node, idx) => {
     node.style.cursor = 'pointer';
     node.addEventListener('click', (ev) => {
@@ -801,9 +803,33 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
+  // Навешиваем клики на карточки documents (чтобы клик по карточке открывал модалку)
+  const docCards = Array.from(document.querySelectorAll('.documents-card'));
+  docCards.forEach((card) => {
+    card.style.cursor = 'pointer';
+    card.addEventListener('click', (e) => {
+      // если кликнули по кнопке внутри карточки — не открываем модалку
+      if (e.target.closest('button, a')) return;
+      const img = card.querySelector('img');
+      if (!img) return;
+      // найти индекс картинки в thumbs
+      const idx = thumbs.findIndex(t => t === img);
+      if (idx !== -1) {
+        openImageModal(idx);
+      } else {
+        // если по какой-то причине изображение не входит в thumbs — постараемся открыть модалку и добавить слайд временно
+        // добавим временный слайд в начало (небольшой fallback)
+        buildSlides();
+        const fallbackIndex = thumbs.findIndex(t => t === img);
+        openImageModal(fallbackIndex !== -1 ? fallbackIndex : 0);
+      }
+    });
+  });
+
   overlay?.addEventListener('click', closeImageModal);
   closeBtn?.addEventListener('click', closeImageModal);
 
+  // реакция при ресайзе — подстроить текущее изображение
   window.addEventListener('resize', () => {
     if (!modal.classList.contains('open')) return;
     if (!swiper) return;
@@ -812,6 +838,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (currentImg) applyScaleToImg(currentImg);
   });
 });
+
 
 
 
