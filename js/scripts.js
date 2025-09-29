@@ -2758,10 +2758,10 @@ function openKpPopup() {
   document.documentElement.classList.add('no-scroll-modal');
   document.body.classList.add('no-scroll-modal');
 
-  if (kpPopup.dataset.menuWasOpen === '0') {
-    header.classList.remove('header--visible');
-    header.classList.add('header--hidden');
-  }
+  // if (kpPopup.dataset.menuWasOpen === '0') {
+  //   header.classList.remove('header--visible');
+  //   header.classList.add('header--hidden');
+  // }
 
   kpPopup.classList.remove('closing');
   kpPopup.setAttribute('aria-hidden', 'false');
@@ -2775,10 +2775,10 @@ function closeKpPopup() {
   document.documentElement.classList.remove('no-scroll-modal');
   document.body.classList.remove('no-scroll-modal');
 
-  if (kpPopup.dataset.menuWasOpen === '0') {
-    header.classList.add('header--visible');
-    header.classList.remove('header--hidden');
-  }
+  // if (kpPopup.dataset.menuWasOpen === '0') {
+  //   header.classList.add('header--visible');
+  //   header.classList.remove('header--hidden');
+  // }
 
   const onTransitionEnd = (e) => {
     if (e.target !== kpPopup || e.propertyName !== 'opacity') return;
