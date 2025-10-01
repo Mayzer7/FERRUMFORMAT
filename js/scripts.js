@@ -647,9 +647,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // Модальное окно для просмотра фотографий отзыва
 
-// Замените вашу текущую секцию, начинающуюся с document.addEventListener('DOMContentLoaded', () => { ... });
 document.addEventListener('DOMContentLoaded', () => {
-  // Собираем все картинки, которые должны попадать в модалку
   const THUMBS_SELECTOR = '.reviews-card-right-side img, .documents-card-right-side img, .documents-card img';
   const thumbs = Array.from(document.querySelectorAll(THUMBS_SELECTOR));
   if (!thumbs.length) return;
@@ -793,7 +791,6 @@ document.addEventListener('DOMContentLoaded', () => {
     if (e.key === 'ArrowRight') { e.preventDefault(); if (swiper) swiper.slideNext(); return; }
   }
 
-  // Навешиваем клики на сами изображения (thumbs)
   thumbs.forEach((node, idx) => {
     node.style.cursor = 'pointer';
     node.addEventListener('click', (ev) => {
@@ -803,33 +800,38 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // Навешиваем клики на карточки documents (чтобы клик по карточке открывал модалку)
   const docCards = Array.from(document.querySelectorAll('.documents-card'));
-  docCards.forEach((card) => {
-    card.style.cursor = 'pointer';
-    card.addEventListener('click', (e) => {
-      // если кликнули по кнопке внутри карточки — не открываем модалку
-      if (e.target.closest('button, a')) return;
-      const img = card.querySelector('img');
-      if (!img) return;
-      // найти индекс картинки в thumbs
-      const idx = thumbs.findIndex(t => t === img);
-      if (idx !== -1) {
-        openImageModal(idx);
-      } else {
-        // если по какой-то причине изображение не входит в thumbs — постараемся открыть модалку и добавить слайд временно
-        // добавим временный слайд в начало (небольшой fallback)
-        buildSlides();
-        const fallbackIndex = thumbs.findIndex(t => t === img);
-        openImageModal(fallbackIndex !== -1 ? fallbackIndex : 0);
-      }
-    });
+    docCards.forEach((card) => {
+      card.style.cursor = 'pointer';
+      card.addEventListener('click', (e) => {
+        if (e.target.closest('button, a')) return; 
+        const img = card.querySelector('img');
+        if (!img) return;
+        const idx = thumbs.findIndex(t => t === img);
+        if (idx !== -1) {
+          openImageModal(idx);
+        }
+      });
+  });
+
+  const docBtns = Array.from(document.querySelectorAll('.documents-card-btn'));
+    docBtns.forEach((btn) => {
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation(); 
+        const card = btn.closest('.documents-card');
+        const img = card?.querySelector('img');
+        if (!img) return;
+        const idx = thumbs.findIndex(t => t === img);
+        if (idx !== -1) {
+          openImageModal(idx);
+        }
+      });
   });
 
   overlay?.addEventListener('click', closeImageModal);
   closeBtn?.addEventListener('click', closeImageModal);
 
-  // реакция при ресайзе — подстроить текущее изображение
   window.addEventListener('resize', () => {
     if (!modal.classList.contains('open')) return;
     if (!swiper) return;
