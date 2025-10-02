@@ -477,30 +477,68 @@ document.addEventListener('DOMContentLoaded', function () {
 // Отзывы
 
 let _lockedScrollPos = 0;
+let _scrollLockCount = 0;
 
-  function lockScroll() {
-    _lockedScrollPos = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop || 0;
-    document.documentElement.classList.add('no-scroll-modal');
-    document.body.classList.add('no-scroll-modal');
-    document.body.style.position = 'fixed';
-    document.body.style.top = `-${_lockedScrollPos}px`;
-    document.body.style.left = '0';
-    document.body.style.right = '0';
-    document.body.style.width = '100%';
-    document.body.style.overflow = 'hidden';
-  }
+function lockScroll() {
+  // если уже кто-то заблокировал — просто увеличим счётчик
+  if (_scrollLockCount++ > 0) return;
 
-  function unlockScroll() {
-    document.body.style.position = '';
-    document.body.style.top = '';
-    document.body.style.left = '';
-    document.body.style.right = '';
-    document.body.style.width = '';
-    document.body.style.overflow = '';
-    document.documentElement.classList.remove('no-scroll-modal');
-    document.body.classList.remove('no-scroll-modal');
-    window.scrollTo(0, _lockedScrollPos);
+  _lockedScrollPos = window.pageYOffset || document.documentElement.scrollTop || 0;
+
+  // предотвращаем "гладкую" прокрутку при восстановлении
+  document.documentElement.style.scrollBehavior = 'auto';
+
+  document.documentElement.classList.add('no-scroll-modal');
+  document.body.classList.add('no-scroll-modal');
+
+  // фиксируем body так, чтобы фон не скроллился (работает на iOS)
+  document.body.style.position = 'fixed';
+  document.body.style.top = `-${_lockedScrollPos}px`;
+  document.body.style.left = '0';
+  document.body.style.right = '0';
+  document.body.style.width = '100%';
+  document.body.style.overflow = 'hidden';
+}
+
+function unlockScroll() {
+  // уменьшаем счётчик и если ещё есть блокировки — ничего не делаем
+  if (--_scrollLockCount > 0) return;
+
+  // вернуть body в нормальное состояние
+  document.body.style.position = '';
+  document.body.style.top = '';
+  document.body.style.left = '';
+  document.body.style.right = '';
+  document.body.style.width = '';
+  document.body.style.overflow = '';
+
+  document.documentElement.classList.remove('no-scroll-modal');
+  document.body.classList.remove('no-scroll-modal');
+
+  // восстанавливаем позицию скролла (моментально)
+  window.scrollTo(0, _lockedScrollPos);
+
+  // позволим снова плавную прокрутку, но чуть позже (щоб не мешать восстановлению)
+  setTimeout(() => {
+    document.documentElement.style.scrollBehavior = '';
+  }, 0);
+}
+
+// ========== helper: безопасный фокус без прокрутки ==========
+function safeFocus(el) {
+  if (!el || typeof el.focus !== 'function') return;
+  try {
+    // современный, предпочтительный способ
+    el.focus({ preventScroll: true });
+  } catch (err) {
+    // fallback для старых браузеров:
+    // сначала фокусируем (может проскроллить), а затем немедленно восстанавливаем позицию
+    const cur = window.pageYOffset || document.documentElement.scrollTop || 0;
+    el.focus();
+    // небольшая задержка, чтобы браузер успел выполнить фокус + скролл
+    setTimeout(() => window.scrollTo(0, cur), 0);
   }
+}
 
 document.addEventListener('DOMContentLoaded', () => {
   const modal = document.getElementById('review-modal');
@@ -545,49 +583,19 @@ document.addEventListener('DOMContentLoaded', () => {
     lastFocusedElement = document.activeElement;
     modal.setAttribute('aria-hidden', 'false');
     modal.classList.add('open');
-    
-    // document.body.style.overflow = 'hidden';
-    // document.documentElement.classList.add('no-scroll-modal');
-    // document.body.classList.add('no-scroll-modal');
-
-    
-
-    lockScroll();
-
-    if (header.classList.contains('header--hidden')) {
-
-      setTimeout(() => {
-        header.classList.add('header--hidden');
-        header.classList.remove('header--visible');
-      }, 5);
-    }
-
+    lockScroll();               // вместо document.body.style.overflow = 'hidden'
     updateFocusable();
     (firstFocusable || closeBtn).focus();
     document.addEventListener('keydown', onKeydown);
   }
 
+
   function closeModal() {
     modal.classList.remove('open');
     modal.setAttribute('aria-hidden', 'true');
-    
-    // document.body.style.overflow = '';
-    // document.documentElement.classList.remove('no-scroll-modal');
-    // document.body.classList.remove('no-scroll-modal');
-  
-
-    unlockScroll();
-
-    if (header.classList.contains('header--visible')) {
-
-      setTimeout(() => {
-        header.classList.remove('header--hidden');
-        header.classList.add('header--visible');
-      }, 5);
-    }
-
+    unlockScroll();             // вместо document.body.style.overflow = ''
     document.removeEventListener('keydown', onKeydown);
-    if (lastFocusedElement && typeof lastFocusedElement.focus === 'function') lastFocusedElement.focus();
+    safeFocus(lastFocusedElement);
   }
 
   function onKeydown(e) {
@@ -874,7 +882,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     document.removeEventListener('keydown', onKey);
-    if (lastFocused && typeof lastFocused.focus === 'function') lastFocused.focus();
+    safeFocus(lastFocused);
   }
 
   function onKey(e) {

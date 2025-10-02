@@ -1280,7 +1280,7 @@ input {
     gap: 10px;
     border: none;
     background-color: var(--red);
-    padding: 17.5px 62px;
+    padding: 17.5px 57px;
     cursor: pointer;
     transition: all 0.3s ease;
     opacity: 1;
@@ -1302,7 +1302,7 @@ input {
     gap: 10px;
     border: 1px solid #FFFFFF;
     background-color: transparent;
-    padding: 23px 62px;
+    padding: 17.5px 68px;
     cursor: pointer;
     transition: all 0.3s ease;
 }
@@ -7312,7 +7312,7 @@ model-viewer::part(default-progress-bar) {
   position: relative;
   max-width: 820px;
   width: calc(100% - 80px);
-  overflow: visible;
+  max-height: calc(80vh); 
   background: #ffffff;
   box-shadow: 0 20px 50px rgba(0,0,0,0.6);
   transform: translateY(12px) scale(0.98);
@@ -7320,11 +7320,14 @@ model-viewer::part(default-progress-bar) {
   padding: 40px 60px;
   box-sizing: border-box;
   border: 1px solid #C1C1C1;
+  display: flex;
+  flex-direction: column; 
+  
 }
 
 .review-modal-body {
   max-height: calc(100vh - 120px);
-  overflow: auto;
+  overflow-y: auto;
   -webkit-overflow-scrolling: touch; 
   box-sizing: border-box;
   background: inherit;
@@ -7553,7 +7556,7 @@ model-viewer::part(default-progress-bar) {
   justify-content: center;
   cursor: pointer;
   z-index: 40; 
-  background: rgba(255,255,255,0.92);
+  background: transparent;
   padding: 0;
 }
 
