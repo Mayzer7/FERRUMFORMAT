@@ -1356,14 +1356,14 @@ input {
 .main-content-last-line-info-card {
     background-color: #282828;
     border: 1px solid #535353;
-    padding: 20px 10px 54px 20px;
+    padding: 20px 20px 36px 20px;
 }
 
 .main-content-last-line-info-card-top {
-    margin-bottom: 12px;
+    margin-bottom: 8px;
     display: flex;
     align-items: center;
-    gap: 16px;
+    gap: 12px;
 }
 
 .main-content-last-line-info-card-top svg {
@@ -1373,7 +1373,7 @@ input {
 }
 
 .info-card-number {
-    font-size: 70px;
+    font-size: 60px;
     text-transform: uppercase;
 }
 
@@ -1643,7 +1643,7 @@ input {
 
 .we-produce-title {
     font-family: 'Helvetica Neue Light', sans-serif;
-    font-size: 50px;
+    font-size: 45px;
     font-weight: 300;
     text-transform: uppercase;
     margin-top: 20px;
@@ -1706,7 +1706,7 @@ input {
 
 .we-produce-card-title {
     font-family: 'Helvetica Neue Regular', sans-serif;
-    font-size: 32px;
+    font-size: 28px;
     font-weight: 300;
     margin-bottom: 16px;
     max-width: 550px;
@@ -1736,7 +1736,7 @@ input {
 .we-produce-card-banner {
     display: flex;
     font-family: 'Helvetica Neue Regular', sans-serif;
-    font-size: 20px;
+    font-size: 18px;
     align-items: center;
     text-align: center;
     gap: 6px;
@@ -1753,10 +1753,10 @@ input {
 
 .we-produce-additionally-title {
     font-family: 'Helvetica Neue Light', sans-serif;
-    font-size: 45px;
+    font-size: 40px;
     font-weight: 300;
     text-transform: uppercase;
-    margin-top: 85px;
+    margin-top: 70px;
     margin-bottom: 24px;
 }
 
@@ -1783,7 +1783,7 @@ input {
 .we-produce-additionally-card a,
 .we-produce-additionally-card p {
     font-family: 'Helvetica Neue Regular', sans-serif;
-    font-size: 32px;
+    font-size: 28px;
 }
 
 .we-produce-card-info-head {
@@ -2096,7 +2096,7 @@ input {
 
 .about-us-advantages-card {
     background-color: var(--dark-gray);
-    padding: 20px;
+    padding: 12px 20px 20px 20px;
     border: 1px solid #535353;
 }
 
@@ -2162,13 +2162,13 @@ input {
 .about-us-advantages-card-number {
     font-family: 'Black Ops One', sans-serif;
     color: #434343;
-    font-size: 50px;
+    font-size: 40px;
     text-align: right;
     margin-bottom: 13px;
 }
 
 .about-us-advantages-card-title {
-    font-size: 24px;
+    font-size: 20px;
     font-family: 'Helvetica Neue Regular', sans-serif;
     margin-bottom: 12px;
 }
@@ -2237,6 +2237,7 @@ input {
 
     .about-us-advantages-card-number {
         font-size: 32px;
+        margin-bottom: 8px;
     }
 
     .about-us-advantages-card-title {
@@ -2250,6 +2251,10 @@ input {
 
     .about-us-advantages-cards {
         margin-top: 32px;
+    }
+
+    .about-us-advantages-card {
+        padding: 12px 16px 16px 16px;
     }
 }
 
@@ -2703,11 +2708,6 @@ path[data-delivery="ПОИСК СОДЕРЖИМОГО"] {
         max-width: 387px;
     }
 
-    .delivery-title {
-        font-size: 36px;
-        max-width: 670px;
-    }
-
     .delivery-content-top-left {
         top: 60px;
     }
@@ -2717,6 +2717,11 @@ path[data-delivery="ПОИСК СОДЕРЖИМОГО"] {
     .delivery {
         padding: 0px 40px;
         padding-bottom: 60px;
+    }
+
+    .delivery-title {
+        font-size: 36px;
+        max-width: 670px;
     }
 }
 

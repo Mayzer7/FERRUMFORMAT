@@ -480,18 +480,14 @@ let _lockedScrollPos = 0;
 let _scrollLockCount = 0;
 
 function lockScroll() {
-  // если уже кто-то заблокировал — просто увеличим счётчик
   if (_scrollLockCount++ > 0) return;
 
   _lockedScrollPos = window.pageYOffset || document.documentElement.scrollTop || 0;
 
-  // предотвращаем "гладкую" прокрутку при восстановлении
   document.documentElement.style.scrollBehavior = 'auto';
 
   document.documentElement.classList.add('no-scroll-modal');
   document.body.classList.add('no-scroll-modal');
-
-  // фиксируем body так, чтобы фон не скроллился (работает на iOS)
   document.body.style.position = 'fixed';
   document.body.style.top = `-${_lockedScrollPos}px`;
   document.body.style.left = '0';
@@ -501,10 +497,8 @@ function lockScroll() {
 }
 
 function unlockScroll() {
-  // уменьшаем счётчик и если ещё есть блокировки — ничего не делаем
   if (--_scrollLockCount > 0) return;
 
-  // вернуть body в нормальное состояние
   document.body.style.position = '';
   document.body.style.top = '';
   document.body.style.left = '';
@@ -515,27 +509,20 @@ function unlockScroll() {
   document.documentElement.classList.remove('no-scroll-modal');
   document.body.classList.remove('no-scroll-modal');
 
-  // восстанавливаем позицию скролла (моментально)
   window.scrollTo(0, _lockedScrollPos);
 
-  // позволим снова плавную прокрутку, но чуть позже (щоб не мешать восстановлению)
   setTimeout(() => {
     document.documentElement.style.scrollBehavior = '';
   }, 0);
 }
 
-// ========== helper: безопасный фокус без прокрутки ==========
 function safeFocus(el) {
   if (!el || typeof el.focus !== 'function') return;
   try {
-    // современный, предпочтительный способ
     el.focus({ preventScroll: true });
   } catch (err) {
-    // fallback для старых браузеров:
-    // сначала фокусируем (может проскроллить), а затем немедленно восстанавливаем позицию
     const cur = window.pageYOffset || document.documentElement.scrollTop || 0;
     el.focus();
-    // небольшая задержка, чтобы браузер успел выполнить фокус + скролл
     setTimeout(() => window.scrollTo(0, cur), 0);
   }
 }
@@ -583,8 +570,27 @@ document.addEventListener('DOMContentLoaded', () => {
     lastFocusedElement = document.activeElement;
     modal.setAttribute('aria-hidden', 'false');
     modal.classList.add('open');
-    lockScroll();               // вместо document.body.style.overflow = 'hidden'
+    lockScroll();               
     updateFocusable();
+
+    if (header.classList.contains('header--hidden')) {
+
+      setTimeout(() => {
+        header.classList.add('header--hidden');
+        header.classList.remove('header--visible');
+        header.style.backgroundColor = 'white';
+      }, 1);
+    }
+
+    if (header.classList.contains('header--visible')) {
+
+      setTimeout(() => {
+        header.classList.add('header--hidden');
+        header.classList.remove('header--visible');
+        header.style.backgroundColor = 'white';
+      }, 1);
+    }
+
     (firstFocusable || closeBtn).focus();
     document.addEventListener('keydown', onKeydown);
   }
@@ -593,7 +599,25 @@ document.addEventListener('DOMContentLoaded', () => {
   function closeModal() {
     modal.classList.remove('open');
     modal.setAttribute('aria-hidden', 'true');
-    unlockScroll();             // вместо document.body.style.overflow = ''
+    unlockScroll();        
+    
+    if (header.classList.contains('header--visible')) {
+
+      setTimeout(() => {
+        header.classList.remove('header--hidden');
+        header.classList.add('header--visible');
+      }, 1);
+    }
+
+    if (header.classList.contains('header--hidden')) {
+
+      setTimeout(() => {
+        header.classList.add('header--hidden');
+        header.classList.remove('header--visible');
+        header.style.backgroundColor = 'white';
+      }, 1);
+    }
+    
     document.removeEventListener('keydown', onKeydown);
     safeFocus(lastFocusedElement);
   }
