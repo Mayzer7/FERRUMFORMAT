@@ -2479,7 +2479,7 @@ if (phoneInputs) {
 
 
 
-// Сброс формы (теперь принимает form)
+// Сброс формы 
 function resetForm(form) {
   if (!form) return;
 
@@ -2524,7 +2524,7 @@ function resetForm(form) {
 function formatFileSize(bytes) {
   if (bytes === 0) return '0 B';
   const k = 1024;
-  const sizes = ['B', 'KB', 'MB', 'GB', 'TB'];
+  const sizes = ['B', 'Kb', 'Mb', 'Gb', 'Tb'];
   const i = Math.floor(Math.log(bytes) / Math.log(k));
   const value = bytes / Math.pow(k, i);
   const str = (Math.round(value * 100) / 100).toString();
@@ -2535,22 +2535,33 @@ function escapeHtml(s = '') {
   return s.replace(/[&<>"']/g, (m) => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
 }
 
+// function formatDisplayName(filename) {
+//   if (!filename) return '';
+
+//   const parts = filename.split('.');
+//   if (parts.length === 1) {
+//     // нет расширения
+//     const base = parts[0];
+//     const short = Array.from(base).slice(0, 5).join('');
+//     return short;
+//   }
+//   const ext = parts.pop(); 
+//   const base = parts.join('.');
+//   const shortBase = Array.from(base).slice(0, 5).join('');
+//   return `${shortBase}.${ext.toLowerCase()}`;
+// }
+
 function formatDisplayName(filename) {
   if (!filename) return '';
 
   const parts = filename.split('.');
   if (parts.length === 1) {
-    // нет расширения
-    const base = parts[0];
-    const short = Array.from(base).slice(0, 5).join('');
-    return short;
+    return parts[0];
   }
-  const ext = parts.pop(); 
+  const ext = parts.pop();
   const base = parts.join('.');
-  const shortBase = Array.from(base).slice(0, 5).join('');
-  return `${shortBase}.${ext.toLowerCase()}`;
+  return `${base}.${ext.toLowerCase()}`;
 }
-
 
 // Валидация форм 
 document.querySelectorAll('.get-contact-form').forEach((form) => {
@@ -2580,21 +2591,76 @@ document.querySelectorAll('.get-contact-form').forEach((form) => {
       });
 
       function addFiles(files) {
+        let hasValid = false;
+
         for (const file of files) {
           if (selectedFiles.length >= MAX_FILES) {
             showTempError(`Максимум ${MAX_FILES} файла(ов).`);
             break;
           }
+
           if (file.size > MAX_BYTES) {
-            showTempError(`Файл "${file.name}" слишком большой (макс 5 MB).`);
+            renderErrorFile(file.name); 
             continue;
           }
 
           selectedFiles.push(file);
+          hasValid = true;
         }
-        renderAttachedFiles();
-        updateInputFiles();
+
+        if (hasValid) {
+          renderAttachedFiles();   
+          updateInputFiles();
+        }
       }
+
+      function renderErrorFile(fileName) {
+        const item = document.createElement('div');
+        item.className = 'attached-file visible error-file';
+
+        item.innerHTML = `
+          <div class="upload-file-content">
+            <div class="upload-file-left">
+              <div class="file-name error-text">Выбранный файл превышает 5 МБ</div>
+            </div>
+          </div>
+        `;
+
+        attachedFiles.appendChild(item);
+      }
+
+        function showFileSizeError() {
+          const existing = attachedFiles.querySelector('.file-error');
+          if (existing) {
+            existing.classList.remove('flash');
+            void existing.offsetWidth;
+            existing.classList.add('flash');
+            if (existing._removeTimeout) clearTimeout(existing._removeTimeout);
+            existing._removeTimeout = setTimeout(() => existing.remove(), 5000);
+            return;
+          }
+
+          const el = document.createElement('div');
+          el.className = 'attached-file file-error';
+          el.setAttribute('role', 'alert');
+          el.textContent = 'Выбранный файл превышает 5 МБ';
+          attachedFiles.prepend(el);
+
+          requestAnimationFrame(() => el.classList.add('visible', 'flash'));
+
+          el._removeTimeout = setTimeout(() => {
+            try { el.remove(); } catch (e) {}
+          }, 5000);
+        }
+
+        function showTempError(msg) {
+          const el = document.createElement('div');
+          el.className = 'attached-file error';
+          el.style.padding = '8px';
+          el.textContent = msg;
+          attachedFiles.prepend(el);
+          setTimeout(() => el.remove(), 4000);
+        }
 
       function renderAttachedFiles() {
         attachedFiles.innerHTML = '';

@@ -239,6 +239,30 @@ input {
   margin: 0px auto;
 }
 
+.hero {
+  position: relative;
+  z-index: 10;
+  overflow: visible;
+}
+
+.hero::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: -100px;        
+  height: 210px;      
+  pointer-events: none;
+  z-index: 20;       
+  background: linear-gradient(
+    to bottom,
+    rgba(26,26,26,1)   0%,
+    rgba(26,26,26,0.6) 46%,
+    rgba(26,26,26,0.2) 100%
+  );
+  will-change: opacity, transform;
+}
+
 .header.header--top {
   background-color: transparent;
   color: #fff !important;
@@ -965,16 +989,12 @@ input {
         grid-template-columns: minmax(457px, 457px) minmax(250px, 250px) minmax(390px, 652px) minmax(281px, 1fr);
     }
 
-    .full-header-text {
-        display: none;
-    }
-
-    .short-header-text {
-        display: block;
-    }
-
     .header-menu-open {
         gap: 20px;
+    }
+
+    .hero::before {
+        height: 200px;
     }
 }
 
@@ -989,6 +1009,16 @@ input {
 @media (max-width: 1460px) {
     .header-first-line {
         grid-template-columns: minmax(350px, 457px) minmax(250px, 250px) minmax(390px, 652px) minmax(281px, 1fr);
+    }
+}
+
+@media (max-width: 1420px) {
+    .short-header-text {
+        display: block;
+    }
+
+    .full-header-text {
+        display: none;
     }
 }
 
@@ -1046,6 +1076,10 @@ input {
 
     .header-logo-image {
         padding-right: 0px;
+    }
+
+    .hero::before {
+        height: 174px;
     }
 } 
 
@@ -3761,7 +3795,7 @@ path[data-delivery="ПОИСК СОДЕРЖИМОГО"] {
 .file-size {
     font-family: 'Helvetica Neue Regular', sans-serif;
     font-size: 16px;
-    color: var(--black);
+    color: var(--gray);
 }
 
 .upload-file-right {
@@ -3771,11 +3805,29 @@ path[data-delivery="ПОИСК СОДЕРЖИМОГО"] {
   flex-shrink: 0;  
 }
 
+.upload-file-content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    gap: 20px; 
+}
+
+.upload-file-left {
+  flex: 1 1 auto;   
+  min-width: 0;     
+}
+
 .attached-file .file-name {
   font-family: 'Helvetica Neue Regular', sans-serif;
   font-size: 16px;
   line-height: 130%;
-  color: var(--black);
+  color: var(--gray);
+
+  display: block;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .attached-file .remove-file {
@@ -3911,7 +3963,31 @@ input.error::placeholder {
     }
 }
 
+.attached-files .file-error {
+  color: var(--red);
+  font-family: 'Helvetica Neue Regular', sans-serif;
+  font-size: 16px;
+  padding: 8px;
+  border-radius: 6px;
+  background: rgba(255, 0, 0, 0.04); /* едва заметный фон, можно убрать */
+  border: 1px solid rgba(255, 0, 0, 0.12);
+  box-sizing: border-box;
+}
 
+/* Чтобы при повторной попытке заметно "мигало" */
+.attached-files .file-error.flash {
+  animation: flashErr 420ms ease;
+}
+@keyframes flashErr {
+  0%   { transform: translateY(-2px); opacity: 0.95; }
+  50%  { transform: translateY(0); opacity: 1; }
+  100% { transform: translateY(-1px); opacity: 0.98; }
+}
+
+.file-name.error-text {
+  color: var(--red);
+  font-weight: 500;
+}
 
 /* Footer */
 
