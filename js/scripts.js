@@ -358,6 +358,10 @@ document.addEventListener('DOMContentLoaded', function () {
         1100: {
           slidesPerView: 2.5,
           spaceBetween: 10
+        },
+        1100: {
+          slidesPerView: 'auto',
+          spaceBetween: 10
         }
       },
       navigation: {
