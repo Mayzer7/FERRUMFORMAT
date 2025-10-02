@@ -3264,6 +3264,8 @@ path[data-delivery="ПОИСК СОДЕРЖИМОГО"] {
   border-bottom: 1px solid #A3A3A3;
   padding: 16px;
   background: #fff;
+  display: flex;
+  flex-direction: column;
 }
 
 .blog-card:nth-child(-n+4) {
@@ -3298,6 +3300,13 @@ path[data-delivery="ПОИСК СОДЕРЖИМОГО"] {
     height: 100%;
     object-fit: cover; 
     display: block;
+}
+
+.blog-card-info {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    flex: 1 1 auto;
 }
 
 .blog-card-image-banner {
