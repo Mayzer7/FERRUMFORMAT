@@ -476,6 +476,32 @@ document.addEventListener('DOMContentLoaded', function () {
 
 // Отзывы
 
+let _lockedScrollPos = 0;
+
+  function lockScroll() {
+    _lockedScrollPos = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop || 0;
+    document.documentElement.classList.add('no-scroll-modal');
+    document.body.classList.add('no-scroll-modal');
+    document.body.style.position = 'fixed';
+    document.body.style.top = `-${_lockedScrollPos}px`;
+    document.body.style.left = '0';
+    document.body.style.right = '0';
+    document.body.style.width = '100%';
+    document.body.style.overflow = 'hidden';
+  }
+
+  function unlockScroll() {
+    document.body.style.position = '';
+    document.body.style.top = '';
+    document.body.style.left = '';
+    document.body.style.right = '';
+    document.body.style.width = '';
+    document.body.style.overflow = '';
+    document.documentElement.classList.remove('no-scroll-modal');
+    document.body.classList.remove('no-scroll-modal');
+    window.scrollTo(0, _lockedScrollPos);
+  }
+
 document.addEventListener('DOMContentLoaded', () => {
   const modal = document.getElementById('review-modal');
   const overlay = modal?.querySelector('.review-modal-overlay');
@@ -519,10 +545,22 @@ document.addEventListener('DOMContentLoaded', () => {
     lastFocusedElement = document.activeElement;
     modal.setAttribute('aria-hidden', 'false');
     modal.classList.add('open');
-    document.body.style.overflow = 'hidden';
     
-    document.documentElement.classList.add('no-scroll-modal');
-    document.body.classList.add('no-scroll-modal');
+    // document.body.style.overflow = 'hidden';
+    // document.documentElement.classList.add('no-scroll-modal');
+    // document.body.classList.add('no-scroll-modal');
+
+    
+
+    lockScroll();
+
+    if (header.classList.contains('header--hidden')) {
+
+      setTimeout(() => {
+        header.classList.add('header--hidden');
+        header.classList.remove('header--visible');
+      }, 5);
+    }
 
     updateFocusable();
     (firstFocusable || closeBtn).focus();
@@ -532,12 +570,23 @@ document.addEventListener('DOMContentLoaded', () => {
   function closeModal() {
     modal.classList.remove('open');
     modal.setAttribute('aria-hidden', 'true');
-    document.body.style.overflow = '';
+    
+    // document.body.style.overflow = '';
+    // document.documentElement.classList.remove('no-scroll-modal');
+    // document.body.classList.remove('no-scroll-modal');
+  
+
+    unlockScroll();
+
+    if (header.classList.contains('header--visible')) {
+
+      setTimeout(() => {
+        header.classList.remove('header--hidden');
+        header.classList.add('header--visible');
+      }, 5);
+    }
+
     document.removeEventListener('keydown', onKeydown);
-
-    document.documentElement.classList.remove('no-scroll-modal');
-    document.body.classList.remove('no-scroll-modal');
-
     if (lastFocusedElement && typeof lastFocusedElement.focus === 'function') lastFocusedElement.focus();
   }
 
@@ -768,9 +817,31 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     modal.setAttribute('aria-hidden', 'false');
     modal.classList.add('open');
-    document.body.style.overflow = 'hidden';
-    document.documentElement.classList.add('no-scroll-modal');
-    document.body.classList.add('no-scroll-modal');
+
+    // document.body.style.overflow = 'hidden';
+    // document.documentElement.classList.add('no-scroll-modal');
+    // document.body.classList.add('no-scroll-modal');
+
+    lockScroll();
+
+    if (header.classList.contains('header--hidden')) {
+
+      setTimeout(() => {
+        header.classList.add('header--hidden');
+        header.classList.remove('header--visible');
+        header.style.backgroundColor = 'white';
+      }, 1);
+    }
+
+    if (header.classList.contains('header--visible')) {
+
+      setTimeout(() => {
+        header.classList.add('header--hidden');
+        header.classList.remove('header--visible');
+        header.style.backgroundColor = 'white';
+      }, 1);
+    }
+
     if (closeBtn) closeBtn.focus();
     document.addEventListener('keydown', onKey);
   }
@@ -778,9 +849,30 @@ document.addEventListener('DOMContentLoaded', () => {
   function closeImageModal() {
     modal.classList.remove('open');
     modal.setAttribute('aria-hidden', 'true');
-    document.body.style.overflow = '';
-    document.documentElement.classList.remove('no-scroll-modal');
-    document.body.classList.remove('no-scroll-modal');
+
+    // document.body.style.overflow = '';
+    // document.documentElement.classList.remove('no-scroll-modal');
+    // document.body.classList.remove('no-scroll-modal');
+
+    unlockScroll();
+
+    if (header.classList.contains('header--visible')) {
+
+      setTimeout(() => {
+        header.classList.remove('header--hidden');
+        header.classList.add('header--visible');
+      }, 1);
+    }
+
+    if (header.classList.contains('header--hidden')) {
+
+      setTimeout(() => {
+        header.classList.add('header--hidden');
+        header.classList.remove('header--visible');
+        header.style.backgroundColor = 'white';
+      }, 1);
+    }
+
     document.removeEventListener('keydown', onKey);
     if (lastFocused && typeof lastFocused.focus === 'function') lastFocused.focus();
   }

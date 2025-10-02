@@ -264,7 +264,7 @@ input {
 }
 
 .header.header--top {
-  background-color: transparent;
+  background-color: transparent !important;
   color: #fff !important;
   box-shadow: none;
 }
@@ -955,7 +955,7 @@ input {
     }
 }
 
-@media (max-width: 1600px) {
+@media (max-width: 1595px) {
     .header-navigation,
     .header-menu-open-link {
         font-size: 14px;
