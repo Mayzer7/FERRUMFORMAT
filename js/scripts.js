@@ -854,6 +854,12 @@ document.addEventListener('DOMContentLoaded', () => {
     modal.setAttribute('aria-hidden', 'false');
     modal.classList.add('open');
 
+    if (header) {
+      header.classList.add('modal-open');
+      header.classList.remove('header--hidden');
+      header.classList.add('header--visible');
+    }
+
     // document.body.style.overflow = 'hidden';
     // document.documentElement.classList.add('no-scroll-modal');
     // document.body.classList.add('no-scroll-modal');
@@ -889,6 +895,11 @@ document.addEventListener('DOMContentLoaded', () => {
     // document.body.style.overflow = '';
     // document.documentElement.classList.remove('no-scroll-modal');
     // document.body.classList.remove('no-scroll-modal');
+
+    if (header) {
+      header.classList.remove('modal-open');
+      window.requestAnimationFrame(() => window.dispatchEvent(new Event('scroll')));
+    }
 
     unlockScroll();
 

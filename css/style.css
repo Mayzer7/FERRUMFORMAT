@@ -552,6 +552,30 @@ input {
     height: 40px;
 }
 
+.header.modal-open {
+  background-color: #fff !important;
+  color: var(--black) !important;
+}
+
+.header.modal-open .header-logo p,
+.header.modal-open .header-navigation,
+.header.modal-open .header-address,
+.header.modal-open .header-email-and-phone {
+  color: inherit !important;
+}
+
+.header.modal-open .header-line {
+  background-color: #C1C1C1 !important;
+}
+
+.header.modal-open .header-logo-image-top {
+  display: none !important;
+}
+.header.modal-open .header-logo-image-bottom {
+  display: flex !important;
+}
+
+
 /* Адаптив шапки */
 
 .short-header-text {
