@@ -217,7 +217,7 @@ input {
 
 @-moz-document url-prefix() {
   * {
-    scrollbar-color: var(--red) var(--red); 
+    scrollbar-color: var(--red) transparent; 
     scrollbar-width: thin; 
   }
 }
