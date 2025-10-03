@@ -2586,10 +2586,7 @@ if (phoneInputs) {
     }
 
     let prefix = '+7 ';
-    if (value.startsWith('8')) {
-      prefix = '8 ';
-      value = value.slice(1);
-    } else if (value.startsWith('7')) {
+    if (value.startsWith('7')) {
       prefix = '+7 ';
       value = value.slice(1);
     }
