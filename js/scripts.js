@@ -171,8 +171,8 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function hideHeader() {
-      header.classList.add('header--hidden');
-      header.classList.remove('header--visible');
+      // header.classList.add('header--hidden');
+      // header.classList.remove('header--visible');
     }
 
     function updateOnScroll() {
@@ -577,23 +577,23 @@ document.addEventListener('DOMContentLoaded', () => {
     lockScroll();               
     updateFocusable();
 
-    if (header.classList.contains('header--hidden')) {
+    // if (header.classList.contains('header--hidden')) {
 
-      setTimeout(() => {
-        header.classList.add('header--hidden');
-        header.classList.remove('header--visible');
-        header.style.backgroundColor = 'white';
-      }, 1);
-    }
+    //   setTimeout(() => {
+    //     header.classList.add('header--hidden');
+    //     header.classList.remove('header--visible');
+    //     header.style.backgroundColor = 'white';
+    //   }, 1);
+    // }
 
-    if (header.classList.contains('header--visible')) {
+    // if (header.classList.contains('header--visible')) {
 
-      setTimeout(() => {
-        header.classList.add('header--hidden');
-        header.classList.remove('header--visible');
-        header.style.backgroundColor = 'white';
-      }, 1);
-    }
+    //   setTimeout(() => {
+    //     header.classList.add('header--hidden');
+    //     header.classList.remove('header--visible');
+    //     header.style.backgroundColor = 'white';
+    //   }, 1);
+    // }
 
     (firstFocusable || closeBtn).focus();
     document.addEventListener('keydown', onKeydown);
@@ -605,22 +605,22 @@ document.addEventListener('DOMContentLoaded', () => {
     modal.setAttribute('aria-hidden', 'true');
     unlockScroll();        
     
-    if (header.classList.contains('header--visible')) {
+    // if (header.classList.contains('header--visible')) {
 
-      setTimeout(() => {
-        header.classList.remove('header--hidden');
-        header.classList.add('header--visible');
-      }, 1);
-    }
+    //   setTimeout(() => {
+    //     header.classList.remove('header--hidden');
+    //     header.classList.add('header--visible');
+    //   }, 1);
+    // }
 
-    if (header.classList.contains('header--hidden')) {
+    // if (header.classList.contains('header--hidden')) {
 
-      setTimeout(() => {
-        header.classList.add('header--hidden');
-        header.classList.remove('header--visible');
-        header.style.backgroundColor = 'white';
-      }, 1);
-    }
+    //   setTimeout(() => {
+    //     header.classList.add('header--hidden');
+    //     header.classList.remove('header--visible');
+    //     header.style.backgroundColor = 'white';
+    //   }, 1);
+    // }
     
     document.removeEventListener('keydown', onKeydown);
     safeFocus(lastFocusedElement);
@@ -860,23 +860,23 @@ document.addEventListener('DOMContentLoaded', () => {
 
     lockScroll();
 
-    if (header.classList.contains('header--hidden')) {
+    // if (header.classList.contains('header--hidden')) {
 
-      setTimeout(() => {
-        header.classList.add('header--hidden');
-        header.classList.remove('header--visible');
-        header.style.backgroundColor = 'white';
-      }, 1);
-    }
+    //   setTimeout(() => {
+    //     header.classList.add('header--hidden');
+    //     header.classList.remove('header--visible');
+    //     header.style.backgroundColor = 'white';
+    //   }, 1);
+    // }
 
-    if (header.classList.contains('header--visible')) {
+    // if (header.classList.contains('header--visible')) {
 
-      setTimeout(() => {
-        header.classList.add('header--hidden');
-        header.classList.remove('header--visible');
-        header.style.backgroundColor = 'white';
-      }, 1);
-    }
+    //   setTimeout(() => {
+    //     header.classList.add('header--hidden');
+    //     header.classList.remove('header--visible');
+    //     header.style.backgroundColor = 'white';
+    //   }, 1);
+    // }
 
     if (closeBtn) closeBtn.focus();
     document.addEventListener('keydown', onKey);
@@ -892,22 +892,22 @@ document.addEventListener('DOMContentLoaded', () => {
 
     unlockScroll();
 
-    if (header.classList.contains('header--visible')) {
+    // if (header.classList.contains('header--visible')) {
 
-      setTimeout(() => {
-        header.classList.remove('header--hidden');
-        header.classList.add('header--visible');
-      }, 1);
-    }
+    //   setTimeout(() => {
+    //     header.classList.remove('header--hidden');
+    //     header.classList.add('header--visible');
+    //   }, 1);
+    // }
 
-    if (header.classList.contains('header--hidden')) {
+    // if (header.classList.contains('header--hidden')) {
 
-      setTimeout(() => {
-        header.classList.add('header--hidden');
-        header.classList.remove('header--visible');
-        header.style.backgroundColor = 'white';
-      }, 1);
-    }
+    //   setTimeout(() => {
+    //     header.classList.add('header--hidden');
+    //     header.classList.remove('header--visible');
+    //     header.style.backgroundColor = 'white';
+    //   }, 1);
+    // }
 
     document.removeEventListener('keydown', onKey);
     safeFocus(lastFocused);
