@@ -1929,8 +1929,8 @@ if (newsInfoCardsSwiper) {
     let dragging = false;
     swiper.on('touchStart', () => { dragging = false; });
     swiper.on('touchMove', () => { dragging = true; });
-    document.querySelectorAll('.our-work-card').forEach(card => {
-      card.addEventListener('click', (e) => {
+    document.querySelectorAll('.our-work-card-image, .news-info-card-image').forEach(img => {
+      img.addEventListener('click', (e) => {
         if (dragging) e.preventDefault(); 
       });
     });
@@ -1986,11 +1986,11 @@ if (modelModal) {
     document.addEventListener('touchmove', () => { touchMoved = true; }, {passive: true});
     document.addEventListener('touchend', () => { setTimeout(()=> touchMoved = false, 50); });
 
-    document.querySelectorAll('.our-work-card').forEach(card => {
-      card.addEventListener('click', (e) => {
-        if (e.target.closest('.get-kp-btn, a, button, input, .no-modal')) {
-          return;
-        }
+    document.querySelectorAll('.our-work-card-image, .news-info-card-image').forEach(imageEl => {
+      const card = imageEl.closest('.our-work-card');
+
+      imageEl.addEventListener('click', (e) => {
+        if (e.target.closest('.get-kp-btn, a, button, input, .no-modal')) return;
 
         if (dragging || touchMoved) return;
 
@@ -2011,9 +2011,9 @@ if (modelModal) {
         }
       });
 
-      card.addEventListener('pointerdown', () => dragging = false);
-      card.addEventListener('pointermove', () => dragging = true);
-      card.addEventListener('pointerup', () => setTimeout(()=> dragging = false, 50));
+      imageEl.addEventListener('pointerdown', () => dragging = false);
+      imageEl.addEventListener('pointermove', () => dragging = true);
+      imageEl.addEventListener('pointerup', () => setTimeout(()=> dragging = false, 50));
     });
   })();
 }
@@ -2585,7 +2585,7 @@ if (phoneInputs) {
       return;
     }
 
-    let prefix = '';
+    let prefix = '+7 ';
     if (value.startsWith('8')) {
       prefix = '8 ';
       value = value.slice(1);
