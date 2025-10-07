@@ -295,14 +295,12 @@ input {
 .header svg circle,
 .header svg rect {
   transition: fill 200ms ease, opacity 200ms ease;
-  fill: currentColor;
 }
 
 .header svg path,
 .header svg circle,
 .header svg rect {
   transition: fill 200ms ease, opacity 200ms ease;
-  fill: currentColor;
 }
 
 
@@ -1374,7 +1372,12 @@ input {
     border: 1px solid #C1C1C1;
     background-color: #F5F5F5;
     padding: 11px;
-    
+    transition: all 0.3s ease;
+}
+
+.navigation-left-btn:hover,
+.navigation-right-btn:hover {
+    border: 1px solid var(--black);
 }
 
 .navigation-left-btn.swiper-button-disabled,
@@ -3546,6 +3549,20 @@ path[data-delivery="ПОИСК СОДЕРЖИМОГО"] {
   gap: 8px;
 }
 
+.contacts-card-links a {
+    color: #000;
+}
+
+a svg .icon-bg {
+  transition: fill 300ms ease;
+  fill: #1A1A1A; 
+}
+
+
+a:hover svg .icon-bg {
+  fill: var(--red);
+}
+
 .contacts-card {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -3713,9 +3730,59 @@ path[data-delivery="ПОИСК СОДЕРЖИМОГО"] {
 }
 
 .get-contact-attach-file {
+    position: relative;
     margin-top: 16px;
-    display: flex;
-    gap: 6px;
+    display: inline-flex;
+    gap: 10px;
+    align-items: flex-start; 
+    color: inherit;
+    text-decoration: none;
+    transition: color 0.3s ease;
+    cursor: pointer;
+}
+
+.get-contact-attach-file svg {
+    flex: 0 0 auto;          
+    position: relative;     
+    z-index: 2;             
+}
+
+.get-contact-attach-file-text {
+    position: relative;
+    display: inline-block;    
+    vertical-align: top;
+    padding-bottom: 10px;      
+    color: var(--black);
+    font-family: 'Helvetica Neue Regular', sans-serif;
+    font-size: 18px;
+    line-height: 1.2;
+    z-index: 1;
+}
+
+.get-contact-attach-file-text::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    height: 1px;
+    width: 100%;
+    background-color: var(--black);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.28s ease;
+    z-index: 0;                
+}
+
+.get-contact-attach-file:hover {
+    color: var(--black);
+}
+.get-contact-attach-file:hover .get-contact-attach-file-text::after,
+.get-contact-attach-file:focus-visible .get-contact-attach-file-text::after {
+    transform: scaleX(1);
+}
+
+.get-contact-attach-file:focus-visible {
+    outline: none;
 }
 
 .get-contact-attach-file-text {
@@ -3734,7 +3801,7 @@ path[data-delivery="ПОИСК СОДЕРЖИМОГО"] {
 }
 
 .accept-politics {
-    margin-top: 22px;
+    margin-top: 10px;
     margin-bottom: 20px;
     display: flex;
     align-items: center;
@@ -3749,6 +3816,15 @@ path[data-delivery="ПОИСК СОДЕРЖИМОГО"] {
 
 .accept-politics p span {
     border-bottom: 1px solid var(--black);
+    transition: all 0.3s ease;
+}
+
+.accept-politics p span:hover {
+    border-bottom: 1px solid #D51A1A;
+}
+
+.accept-politics p span a:hover {
+    color: var(--red);
 }
 
 .custom-checkbox {
@@ -4123,7 +4199,12 @@ input.error::placeholder {
   width: 40px;                  
   height: 40px;
   border-radius: 50%;            
-  background-color: var(--black);       
+  background-color: var(--black);    
+  transition: all 0.3s ease;   
+}
+
+.footer-social-links a:hover {
+  background-color: var(--red);
 }
 
 .footer-social-links svg {
@@ -4503,7 +4584,6 @@ input.error::placeholder {
     width: 100%;
     height: 100%;
     overflow: hidden;
-    padding-right: 32px;
 }
 
 .mdk-main-first-line-left-side img {
@@ -4647,6 +4727,10 @@ input.error::placeholder {
     padding: 17.5px;
     width: 100%;
     white-space: nowrap;
+}
+
+.mdk-main-first-line-right-side {
+    padding-left: 32px;
 }
 
 /* Адаптив главного баннера на странице МДК */
@@ -6523,7 +6607,7 @@ model-viewer::part(default-progress-bar) {
   cursor: pointer;
 }
 
-.open-our-production-info-card-btn svg .icon-bg {
+.open-our-production-info-card-btn svg .icon-bg-fill {
   fill: #F5F5F5;
   transition: fill 220ms ease;
 }
@@ -6533,6 +6617,11 @@ model-viewer::part(default-progress-bar) {
   transition: transform 260ms cubic-bezier(.2,.8,.2,1), fill 220ms;
   transform-origin: 50% 50%;
   transform-box: fill-box; 
+}
+
+.our-production-info-card:hover .open-our-production-info-card-btn svg .icon-line {
+  fill: #000 !important;
+  transition: fill 300ms ease; 
 }
 
 .our-production-info-card.is-open .open-our-production-info-card-btn svg .vert {
@@ -6567,6 +6656,31 @@ model-viewer::part(default-progress-bar) {
 .our-production-info-card.is-open .open-our-production-info-card-btn svg .horiz {
   fill: #B2B2B2;
   opacity: 1;
+}
+
+.open-our-production-info-card-btn svg .icon-line {
+  fill: #B2B2B2;
+  transform-origin: 50% 50%;
+  transform-box: fill-box;
+  opacity: 1;
+  transition: transform 260ms cubic-bezier(.2,.8,.2,1),
+              opacity 200ms ease,
+              fill 300ms ease 0ms; 
+}
+
+.our-production-info-card:hover .open-our-production-info-card-btn svg .icon-line {
+  fill: #000;
+}
+
+.our-production-info-card.is-open .open-our-production-info-card-btn svg .vert {
+  transform: scaleY(0);
+  opacity: 0;
+  transition: transform 260ms cubic-bezier(.2,.8,.2,1), opacity 200ms ease;
+}
+
+.our-production-info-card.is-open .open-our-production-info-card-btn svg .horiz {
+  fill: #000;
+  transition: fill 300ms ease 80ms; 
 }
 
 /* Адаптив секции "Наше производство" */
@@ -7238,6 +7352,7 @@ model-viewer::part(default-progress-bar) {
     align-items: center;
     justify-content: center;
     gap: 8px;
+    
 }
 
 .pagination-left-btn,
