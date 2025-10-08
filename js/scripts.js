@@ -2900,59 +2900,100 @@ document.querySelectorAll('.get-contact-form').forEach((form) => {
     })();
   } 
 
+  const acceptInput = form.querySelector('input[name="accept"]');
+  const acceptError = form.querySelector('.accept-politics-error');
+  const visualCheckbox = form.querySelector('.custom-checkbox .checkbox-img');
+  const emailInput = form.querySelector('input[name="email"]');
+
+  if (acceptError) {
+    acceptError.setAttribute('aria-hidden', 'true');
+    acceptError.setAttribute('role', 'alert');
+  }
+
+  if (visualCheckbox && !visualCheckbox.hasAttribute('tabindex')) {
+    visualCheckbox.setAttribute('tabindex', '0');
+  }
+
+  if (acceptInput) {
+    acceptInput.addEventListener('change', () => {
+      if (acceptInput.checked) {
+        acceptInput.classList.remove('error');
+        acceptError && acceptError.classList.remove('visible');
+        acceptError && acceptError.setAttribute('aria-hidden', 'true');
+        visualCheckbox && visualCheckbox.classList.remove('animate');
+      }
+    });
+  }
+
   form.addEventListener('submit', function (e) {
     e.preventDefault();
 
     const nameInput = form.querySelector('input[name="name"]');
     const phoneInput = form.querySelector('input[name="phone"]');
-    const acceptInput = form.querySelector('input[name="accept"]');
-
-    if (acceptInput) {
-      acceptInput.addEventListener('change', () => {
-        if (acceptInput.checked) {
-          acceptInput.classList.remove('error');
-        }
-      });
-    }
 
     let valid = true;
 
-    // проверка имени
+    // имя
     if (!nameInput || !nameInput.value.trim()) {
-      if (nameInput) nameInput.classList.add('error');
+      nameInput && nameInput.classList.add('error');
       valid = false;
     } else {
-      nameInput.classList.remove('error');
+      nameInput && nameInput.classList.remove('error');
     }
 
-    // проверка телефона
+    // телефон
     if (!phoneInput || !phoneInput.value.trim()) {
-      if (phoneInput) phoneInput.classList.add('error');
+      phoneInput && phoneInput.classList.add('error');
       valid = false;
     } else {
-      phoneInput.classList.remove('error');
+      phoneInput && phoneInput.classList.remove('error');
     }
 
-    // проверка чекбокса
+    // email
+    if (!emailInput || !emailInput.value.trim()) {
+      if (emailInput) {
+        emailInput.classList.add('error');
+        emailInput.setAttribute('aria-invalid', 'true');
+        try { emailInput.focus({ preventScroll: true }); } catch (e) {}
+      }
+      valid = false;
+    } else {
+      emailInput.classList.remove('error');
+      emailInput.removeAttribute('aria-invalid');
+    }
+
+    // чекбокс
     if (!acceptInput || !acceptInput.checked) {
       if (acceptInput) acceptInput.classList.add('error');
+
+      if (acceptError) {
+        acceptError.classList.add('visible');
+        acceptError.setAttribute('aria-hidden', 'false');
+      }
+
+      if (visualCheckbox) {
+        visualCheckbox.classList.add('animate');
+        setTimeout(() => visualCheckbox && visualCheckbox.classList.remove('animate'), 350);
+        visualCheckbox.focus({ preventScroll: true });
+      }
+
       valid = false;
     } else {
       acceptInput.classList.remove('error');
+      acceptError && acceptError.classList.remove('visible');
+      acceptError && acceptError.setAttribute('aria-hidden', 'true');
     }
 
     if (!valid) {
       return;
     }
 
-    // собираем все данные
     const formData = new FormData(form);
     const data = {};
 
     for (const [key, value] of formData.entries()) {
       if (value instanceof File) {
         if (!value.name) continue;
-
         if (!data[key]) data[key] = [];
         data[key].push(value);
       } else {
