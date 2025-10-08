@@ -80,26 +80,88 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   }
 
+  const hoverQuery = window.matchMedia('(hover: hover) and (pointer: fine)');
+
+  // DESKTOP: поведение по наведению
   buttons.forEach(btn => {
     const key = btn.dataset.open;
     const menu = document.querySelector(`.header-menu-open[data-open="${key}"]`);
     if (!menu) return;
 
-    btn.addEventListener('click', function (e) {
-      e.stopPropagation();
-      const opened = menu.classList.contains('is-open');
+    const openMenu = () => {
       closeAllMenus();
-      if (!opened) {
-        menu.classList.add('is-open');
-        btn.classList.add('is-active');
-        btn.setAttribute('aria-expanded', 'true');
-        if (header) header.classList.add('header--menu-open');
-      }
-    });
+      menu.classList.add('is-open');
+      btn.classList.add('is-active');
+      btn.setAttribute('aria-expanded', 'true');
+      if (header) header.classList.add('header--menu-open');
+    };
 
-    menu.addEventListener('click', function (e) {
-      e.stopPropagation();
-    });
+    const closeThisMenu = () => {
+      menu.classList.remove('is-open');
+      btn.classList.remove('is-active');
+      btn.setAttribute('aria-expanded', 'false');
+      if (!document.querySelector('.header-menu-open.is-open')) {
+        if (header) header.classList.remove('header--menu-open');
+      }
+    };
+
+    if (hoverQuery.matches) {
+      let closeTimer = null;
+      const scheduleClose = (delay = 160) => {
+        clearTimeout(closeTimer);
+        closeTimer = setTimeout(() => {
+          closeThisMenu();
+        }, delay);
+      };
+      const cancelClose = () => {
+        if (closeTimer) {
+          clearTimeout(closeTimer);
+          closeTimer = null;
+        }
+      };
+
+      btn.addEventListener('mouseenter', () => {
+        cancelClose();
+        openMenu();
+      });
+
+      btn.addEventListener('mouseleave', () => {
+        scheduleClose(180);
+      });
+
+      menu.addEventListener('mouseenter', () => {
+        cancelClose();
+      });
+      menu.addEventListener('mouseleave', () => {
+        scheduleClose(160);
+      });
+
+      btn.addEventListener('focus', () => {
+        cancelClose();
+        openMenu();
+      });
+
+      btn.addEventListener('blur', () => {
+        scheduleClose(200);
+      });
+
+      menu.addEventListener('click', function (e) { e.stopPropagation(); });
+
+    } else {
+      btn.addEventListener('click', function (e) {
+        e.stopPropagation();
+        const opened = menu.classList.contains('is-open');
+        closeAllMenus();
+        if (!opened) {
+          menu.classList.add('is-open');
+          btn.classList.add('is-active');
+          btn.setAttribute('aria-expanded', 'true');
+          if (header) header.classList.add('header--menu-open');
+        }
+      });
+
+      menu.addEventListener('click', function (e) { e.stopPropagation(); });
+    }
   });
 
   document.addEventListener('click', function () {
@@ -2339,20 +2401,18 @@ document.addEventListener('DOMContentLoaded', () => {
   const buttons = document.querySelectorAll('.copy-button');
   if (!buttons.length) return;
 
-  // создаём popup
   const popup = document.createElement('div');
   popup.className = 'copy-popup';
   popup.setAttribute('role', 'status');
   popup.setAttribute('aria-live', 'polite');
-  popup.style.position = 'fixed'; // фиксированное позиционирование по умолчанию
+  popup.style.position = 'fixed'; 
   popup.style.zIndex = 99999;
   popup.style.pointerEvents = 'none';
   document.body.appendChild(popup);
 
   let popupTimer = null;
-  let lastPointer = null; // хранит последние координаты pointerdown
+  let lastPointer = null; 
 
-  // ловим pointerdown — работает и для мыши, и для тача
   window.addEventListener('pointerdown', (ev) => {
     if (ev && typeof ev.clientX === 'number' && typeof ev.clientY === 'number') {
       lastPointer = { x: ev.clientX, y: ev.clientY };
@@ -2363,17 +2423,15 @@ document.addEventListener('DOMContentLoaded', () => {
     btn.addEventListener('click', async (e) => {
       e.preventDefault();
 
-      const container = btn.parentElement; // .requisites-card-text-inner
+      const container = btn.parentElement;
       if (!container) return;
 
-      // получаем текст (без кнопки)
       const clone = container.cloneNode(true);
       const btnInClone = clone.querySelector('.copy-button');
       if (btnInClone) btnInClone.remove();
       let text = (clone.innerText || clone.textContent || '').replace(/\u00A0/g, ' ').trim();
       if (!text) return;
 
-      // копируем
       try {
         if (navigator.clipboard && navigator.clipboard.writeText) {
           await navigator.clipboard.writeText(text);
@@ -2392,8 +2450,6 @@ document.addEventListener('DOMContentLoaded', () => {
         console.error('Copy failed', err);
       }
 
-      // определяем координаты для popupa
-      // приоритет: координаты pointerdown (lastPointer) -> event.clientX/Y -> центровка по кнопке
       let coordX = (e && typeof e.clientX === 'number' && e.clientX !== 0) ? e.clientX : null;
       let coordY = (e && typeof e.clientY === 'number' && e.clientY !== 0) ? e.clientY : null;
 
@@ -2408,7 +2464,6 @@ document.addEventListener('DOMContentLoaded', () => {
         coordY = rect.top + rect.height / 2;
       }
 
-      // подготовка popup
       popup.innerHTML = `
         <span class="popup-icon" aria-hidden="true">
           <svg width="20" height="21" viewBox="0 0 20 21" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -2420,33 +2475,26 @@ document.addEventListener('DOMContentLoaded', () => {
       `;
       popup.classList.remove('show');
 
-      // даём браузеру обновить DOM, затем измеряем и позиционируем
       requestAnimationFrame(() => {
-        // чуть позже — чтобы размеры учли шрифты/рендер
         requestAnimationFrame(() => {
           const popupRect = popup.getBoundingClientRect();
           const vw = document.documentElement.clientWidth;
           const vh = document.documentElement.clientHeight;
           const pad = 8;
 
-          // позиция по центру по X
           let left = coordX - popupRect.width / 2;
-          // по Y: по умолчанию над курсором/кнопкой
           let top = coordY - popupRect.height - 12;
 
-          // если не помещается сверху — показываем снизу
           if (top < pad) {
             top = coordY + 12;
           }
 
-          // поправляем, чтобы не выходило за края
           left = Math.min(Math.max(pad, left), vw - popupRect.width - pad);
           top = Math.min(Math.max(pad, top), vh - popupRect.height - pad);
 
           popup.style.left = `${Math.round(left)}px`;
           popup.style.top  = `${Math.round(top)}px`;
 
-          // показываем
           requestAnimationFrame(() => popup.classList.add('show'));
         });
       });
