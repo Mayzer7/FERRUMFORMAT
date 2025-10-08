@@ -835,13 +835,13 @@ input {
 }
 
 .burger-menu-open-links {
-    margin-bottom: 32px;
+    margin-bottom: 10px;
 }
 
 .burger-menu-open-socials {
     display: inline-flex;
     flex-direction: column;
-    gap: 20px;
+    gap: 10px;
     width: 100%;
 }
 
