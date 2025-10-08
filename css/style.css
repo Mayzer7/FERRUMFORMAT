@@ -1220,6 +1220,7 @@ input {
   pointer-events: none;
   padding: 0 80px;
   padding-bottom: 62px;
+  width: 100%;
 }
 
 
@@ -1277,10 +1278,11 @@ input {
 }
 
 .main-content-second-line-title {
+    grid-column: 1 / -1;
     font-family: 'Helvetica Neue Thin', sans-serif;
-    font-size: 70px;
+    font-size: 60px;
     font-weight: 300;
-    max-width: 680px;
+    max-width: 1100px;
     width: 100%;
     margin-bottom: 20px;
     text-transform: uppercase;
@@ -1296,6 +1298,7 @@ input {
 }
 
 .main-content-second-line-buttons {
+    width: 100%;
     display: flex;
     gap: 12px;
 }
@@ -1463,7 +1466,7 @@ input {
     .main-content-second-line-title {
         font-size: 50px;
         margin-bottom: 12px;
-        max-width: 600px;
+        max-width: 900px;
     }
 
     .main-content-second-line-text {
@@ -1528,7 +1531,7 @@ input {
     }
 
     .main-content-first-line {
-        padding-top: 200px;
+        padding-top: 115px;
     }
 
     .bg-swiper {
@@ -1540,7 +1543,6 @@ input {
 @media (max-width: 700px) {
     .main-content-second-line-title {
         font-size: 38px;
-        max-width: 460px;
     }
 
     .main-content-second-line-text {
@@ -1623,15 +1625,15 @@ input {
     .current-page-info-banner {
         font-size: 18px;
     }
-
-    .main-content-first-line {
-        padding-top: 155px;
-    }
 }
 
-@media (max-width: 400px) {
+@media (max-width: 450px) {
     .main-content-first-line {
-        padding-top: 130px;
+        padding-top: 95px;
+    }
+
+    .current-page-info-banner {
+        margin-bottom: 20px;
     }
 }
 
@@ -1655,6 +1657,21 @@ input {
     }
 }
 
+@media (max-width: 350px) {
+  .main-content-second-line-buttons {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px;
+  }
+
+  .main-content-second-line-title {
+    font-size: 36px;
+  }
+
+  .main-content-second-line-text {
+    font-size: 16px;
+  }
+}
 
 
 /* Секция "Производим" */
@@ -5947,8 +5964,7 @@ model-viewer::part(default-progress-bar) {
 }
 
 .main-content-second-line-title-about {
-    margin-top: 200px;
-    max-width: 740px;
+    margin-top: 120px;
     margin-bottom: 32px;
 }
 
@@ -6018,14 +6034,6 @@ model-viewer::part(default-progress-bar) {
 }
 
 @media (max-width: 1500px) {
-    .main-content-second-line-title-about {
-        margin-top: 190px;
-    }
-
-    .main-content-second-line-title-about {
-        max-width: 680px;
-    }
-
     .main-content-about {
         padding-bottom: 80px;
     }
