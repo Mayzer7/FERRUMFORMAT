@@ -6705,25 +6705,19 @@ model-viewer::part(default-progress-bar) {
   transform-box: fill-box; 
 }
 
-.our-production-info-card:hover .open-our-production-info-card-btn svg .icon-line {
+.our-production-info-card-head:hover .open-our-production-info-card-btn svg .icon-line {
   fill: #000 !important;
   transition: fill 300ms ease; 
 }
 
-.our-production-info-card.is-open .open-our-production-info-card-btn svg .vert {
+.our-production-info-card-head.is-open .open-our-production-info-card-btn svg .vert {
   transform: scaleY(0);
 }
 
-.our-production-info-card.is-open .open-our-production-info-card-btn svg .icon-bg {
+.our-production-info-card-head.is-open .open-our-production-info-card-btn svg .icon-bg {
   fill: #ffffff;
 }
-.our-production-info-card.is-open .open-our-production-info-card-btn svg .icon-line {
-  fill: #4a4a4a;
-}
 
-.our-production-info-card.is-open .open-our-production-info-card-btn svg .icon-bg {
-  fill: #F5F5F5; 
-}
 
 .open-our-production-info-card-btn svg .icon-line {
   fill: #B2B2B2; 
@@ -6739,33 +6733,15 @@ model-viewer::part(default-progress-bar) {
   fill: #B2B2B2;    
 }
 
-.our-production-info-card.is-open .open-our-production-info-card-btn svg .horiz {
-  fill: #B2B2B2;
-  opacity: 1;
-}
 
-.open-our-production-info-card-btn svg .icon-line {
-  fill: #B2B2B2;
-  transform-origin: 50% 50%;
-  transform-box: fill-box;
-  opacity: 1;
-  transition: transform 260ms cubic-bezier(.2,.8,.2,1),
-              opacity 200ms ease,
-              fill 300ms ease 0ms; 
-}
-
-.our-production-info-card:hover .open-our-production-info-card-btn svg .icon-line {
-  fill: #000;
-}
-
-.our-production-info-card.is-open .open-our-production-info-card-btn svg .vert {
+.our-production-info-card-head.is-open .open-our-production-info-card-btn svg .vert {
   transform: scaleY(0);
   opacity: 0;
   transition: transform 260ms cubic-bezier(.2,.8,.2,1), opacity 200ms ease;
 }
 
-.our-production-info-card.is-open .open-our-production-info-card-btn svg .horiz {
-  fill: #000;
+.our-production-info-card-head.is-open .open-our-production-info-card-btn svg .horiz {
+  fill: #B2B2B2;
   transition: fill 300ms ease 80ms; 
 }
 
