@@ -379,14 +379,45 @@ if (swiperBgElement) {
     },
   });
 
-    const banner = document.querySelector('.current-page-info-banner');
-    function updateBanner() {
-      const real = bgSwiper.realIndex + 1;
-      const total = bgSwiper.slides.length - (bgSwiper.loop ? 0 : 0); 
-      if (banner) banner.textContent = `${real}-${bgSwiper.slides.length - bgSwiper.loop ? bgSwiper.slides.length : bgSwiper.slides.length}`;
-    }
-    bgSwiper.on('slideChange', updateBanner);
+  const banner = document.querySelector('.current-page-info-banner');
+  const titleEl = document.querySelector('.main-content-second-line-title');
+  const textEl  = document.querySelector('.main-content-second-line-text');
+
+  function getTotalSlides() {
+    return bgSwiper.params.loop
+      ? (bgSwiper.slides.length - (bgSwiper.loopedSlides ? bgSwiper.loopedSlides * 2 : 0))
+      : bgSwiper.slides.length;
+  }
+
+  function updateBanner() {
+    const real = bgSwiper.realIndex + 1;
+    const total = getTotalSlides();
+    if (banner) banner.textContent = `${real}-${total}`;
+  }
+
+  function updateContent() {
+    const activeDomSlide = bgSwiper.slides[bgSwiper.activeIndex];
+    const dataTitle = activeDomSlide?.dataset?.title ?? '';
+    const dataText  = activeDomSlide?.dataset?.text  ?? '';
+
+    titleEl.classList.add('fade-out');
+    textEl.classList.add('fade-out');
+
+    setTimeout(() => {
+      titleEl.textContent = dataTitle;
+      textEl.textContent  = dataText;
+      titleEl.classList.remove('fade-out');
+      textEl.classList.remove('fade-out');
+    }, 180); 
+  }
+
+  bgSwiper.on('slideChange', () => {
     updateBanner();
+    updateContent();
+  });
+
+  updateBanner();
+  updateContent();
 }
 
 // Переключение карточек в секции "Наши работы"
