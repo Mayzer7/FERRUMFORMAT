@@ -11244,6 +11244,17 @@ section {
     line-height: 130%;
 }
 
+.cookie-text a {
+    color: var(--black) !important;
+    border-bottom: 1px solid var(--black);
+    transition: all 0.3s ease;
+}
+
+.cookie-text a:hover {
+    color: var(--red) !important;
+    border-bottom: 1px solid var(--red);
+}
+
 .cookie-accept {
     font-family: 'Helvetica Neue Regular', sans-serif;
     text-transform: uppercase;
