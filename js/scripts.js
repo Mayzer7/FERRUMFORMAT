@@ -1,3 +1,27 @@
+// Cookie
+
+document.addEventListener("DOMContentLoaded", function() {
+    const cookieBanner = document.getElementById("cookieBanner");
+    const acceptBtn = document.getElementById("cookieAccept");
+
+    if (!localStorage.getItem("cookieAccepted")) {
+        setTimeout(() => {
+            cookieBanner.classList.add("visible");
+        }, 300);
+    }
+
+    acceptBtn.addEventListener("click", () => {
+        localStorage.setItem("cookieAccepted", "true");
+
+        cookieBanner.classList.remove("visible");
+        cookieBanner.classList.add("hidden");
+
+        setTimeout(() => {
+            cookieBanner.remove();
+        }, 300);
+    });
+});
+
 // Появление шапки
 
 const buttons = document.querySelectorAll('.header-navigation[data-open]');

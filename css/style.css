@@ -11195,3 +11195,119 @@ section {
     }
 }
 
+/* Cookie модалное окно */
+
+.cookie {
+    position: fixed;
+    bottom: 20px;
+    left: 80px;
+    z-index: 1000;
+    background-color: #fff;
+    padding: 32px 40px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    border: 1px solid #C1C1C1;
+    max-width: 614px;
+    width: 100%;
+    color: var(--black);
+}
+
+.cookie {
+    opacity: 0;
+    transform: translateY(20px);
+    pointer-events: none;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.cookie.visible {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+}
+
+.cookie.hidden {
+    opacity: 0;
+    transform: translateY(20px);
+    pointer-events: none;
+}
+
+.cookie-title {
+    font-family: 'Helvetica Neue Regular', sans-serif;
+    font-size: 22px;
+    line-height: 110%;
+    letter-spacing: -0.02em;
+    margin-bottom: 16px;
+}
+
+.cookie-text {
+    font-family: 'Helvetica Neue Regular', sans-serif;
+    font-size: 16px;
+    line-height: 130%;
+}
+
+.cookie-accept {
+    font-family: 'Helvetica Neue Regular', sans-serif;
+    text-transform: uppercase;
+    font-size: 16px;
+    color: var(--black);
+    margin-top: 24px;
+    cursor: pointer;
+    border: none;
+    background-color: transparent;
+    padding: 17.5px 32px;
+    border: 1px solid var(--black);
+    transition: all 0.3s ease;
+}
+
+.cookie-accept:hover {
+    background-color: var(--black);
+    color: #fff;
+}
+
+/* Адаптив cookie banner */
+
+@media (max-width: 1700px) {
+    .cookie {
+        left: 60px;
+    }
+}
+
+@media (max-width: 1500px) {
+    .cookie {
+        left: 40px;
+    }
+}
+
+@media (max-width: 1350px) {
+    .cookie {
+        padding: 24px 32px;
+    }
+
+    .cookie-title {
+        font-size: 20px;
+        margin-bottom: 12px;
+    }
+
+    .cookie-accept {
+        font-size: 14px;
+        padding: 15.5px 32px;
+        margin-top: 12px;
+    }
+}
+
+@media (max-width: 700px) {
+    .cookie {
+        max-width: 100%;
+        left: 0px;
+        bottom: 0px;
+        padding: 24px 16px;
+    }
+
+    .cookie-title {
+        font-size: 18px;
+        line-height: 110%;
+    }
+
+    .cookie-accept {
+        width: 100%;
+    }
+}
