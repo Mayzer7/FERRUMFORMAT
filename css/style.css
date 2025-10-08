@@ -3831,9 +3831,26 @@ a:hover svg .icon-bg {
 .get-contact-attach-file:hover {
     color: var(--black);
 }
+
 .get-contact-attach-file:hover .get-contact-attach-file-text::after,
 .get-contact-attach-file:focus-visible .get-contact-attach-file-text::after {
     transform: scaleX(1);
+}
+
+.get-contact-attach-file:hover .get-contact-attach-file-text,
+.get-contact-attach-file:focus-visible .get-contact-attach-file-text {
+    color: #D51A1A; 
+}
+
+.get-contact-attach-file:hover .get-contact-attach-file-text span,
+.get-contact-attach-file:focus-visible .get-contact-attach-file-text span {
+    color: var(--gray);
+}
+
+.get-contact-attach-file:hover svg,
+.get-contact-attach-file:focus-visible svg {
+    color: #D51A1A;
+    fill: currentColor; 
 }
 
 .get-contact-attach-file:focus-visible {
