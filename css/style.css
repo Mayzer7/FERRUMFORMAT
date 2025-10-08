@@ -11044,7 +11044,7 @@ section {
     padding: 60px;
     display: grid;
     grid-template-columns: 1fr 1fr;
-    align-items: flex-end;
+    align-items: center;
     gap: 40px;
     row-gap: 0px !important;
     max-width: 1320px;
