@@ -1547,6 +1547,7 @@ if (guaranteeSwiper) {
   window.addEventListener('resize', () => swiper.update());
 }
 
+
 // Страница "Новости" (теги)
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -1557,6 +1558,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const wrapper = swiperEl.querySelector('.swiper-wrapper');
   const btn = document.querySelector('.show-more-tags');
   if (!wrapper || !btn) return;
+
+  const isProductTags = swiperEl.classList.contains('news-tags-product');
 
   const originalBtnParent = btn.parentNode;
   const originalBtnNextSibling = btn.nextSibling;
@@ -1571,6 +1574,8 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function hideExtraSlides() {
+    if (isProductTags) return;
+    
     const tagSlides = getTagSlides();
     tagSlides.forEach((s, i) => {
       if (i >= VISIBLE_COUNT) s.classList.add('hidden-slide');
@@ -1578,8 +1583,15 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  function showAllSlides() {
+    const tagSlides = getTagSlides();
+    tagSlides.forEach(s => s.classList.remove('hidden-slide'));
+  }
+
   let btnSlide = wrapper.querySelector('.show-more-slide');
   function ensureBtnIsSlide() {
+    if (isProductTags) return;
+    
     if (!btnSlide) {
       btnSlide = document.createElement('div');
       btnSlide.className = 'news-tag swiper-slide show-more-slide';
@@ -1589,6 +1601,11 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function decideBtnVisibilityInitial() {
+    if (isProductTags) {
+      btn.style.display = 'none';
+      return false;
+    }
+    
     const tagSlides = getTagSlides();
     if (tagSlides.length <= VISIBLE_COUNT && !isOverflowing()) {
       btn.style.display = 'none';
@@ -1607,7 +1624,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
   let swiper = null;
   function initSwiper() {
-    ensureBtnIsSlide();
+    if (!isProductTags) {
+      ensureBtnIsSlide();
+    }
 
     if (swiper) swiper.destroy(true, true);
 
@@ -1616,26 +1635,32 @@ document.addEventListener('DOMContentLoaded', () => {
       spaceBetween: 60,
       freeMode: true,
       loop: false,
-      watchOverflow: false, 
+      watchOverflow: isProductTags, 
       grabCursor: false,
       breakpoints: SWIPER_BREAKPOINTS
     });
 
-    updateSlidesOffsetAfter();
+    if (!isProductTags) {
+      updateSlidesOffsetAfter();
+    }
   }
 
   function updateSlidesOffsetAfter() {
-    if (!swiper) return;
+    if (!swiper || isProductTags) return;
     const btnSlideEl = wrapper.querySelector('.show-more-slide');
     const btnWidth = btnSlideEl ? btnSlideEl.offsetWidth : 0;
     swiper.params.slidesOffsetAfter = btnWidth + 24;
     swiper.update();
   }
 
+  if (isProductTags) {
+    showAllSlides();
+    btn.style.display = 'none';
+  }
+
   const shouldShowBtn = decideBtnVisibilityInitial();
 
-
-  if (!shouldShowBtn) {
+  if (!shouldShowBtn && !isProductTags) {
     if (btn.parentNode !== originalBtnParent) {
       if (originalBtnNextSibling) originalBtnParent.insertBefore(btn, originalBtnNextSibling);
       else originalBtnParent.appendChild(btn);
@@ -1654,47 +1679,57 @@ document.addEventListener('DOMContentLoaded', () => {
     return;
   }
 
-  ensureBtnIsSlide();
-  hideExtraSlides();
+  if (!isProductTags) {
+    ensureBtnIsSlide();
+    hideExtraSlides();
+  }
+  
   initSwiper();
 
-  btn.addEventListener('click', (e) => {
-    e.preventDefault();
-    const expanded = btn.getAttribute('aria-expanded') === 'true';
-    const label = btn.querySelector('.label');
+  if (!isProductTags) {
+    btn.addEventListener('click', (e) => {
+      e.preventDefault();
+      const expanded = btn.getAttribute('aria-expanded') === 'true';
+      const label = btn.querySelector('.label');
 
-    if (!expanded) {
-      const tagSlides = getTagSlides();
-      tagSlides.forEach(s => s.classList.remove('hidden-slide'));
+      if (!expanded) {
+        const tagSlides = getTagSlides();
+        tagSlides.forEach(s => s.classList.remove('hidden-slide'));
 
-      if (label) label.textContent = 'Скрыть все теги';
-      btn.classList.add('rotated', 'inside-slide');
-      btn.setAttribute('aria-expanded', 'true');
+        if (label) label.textContent = 'Скрыть все теги';
+        btn.classList.add('rotated', 'inside-slide');
+        btn.setAttribute('aria-expanded', 'true');
 
-      const currentIndex = swiper ? swiper.activeIndex : 0;
-      updateSlidesOffsetAfter();
-      swiper.update();
-      setTimeout(() => {
-        const safeIndex = Math.min(currentIndex, swiper.slides.length - 1);
-        swiper.slideTo(safeIndex, 0);
-      }, 60);
+        const currentIndex = swiper ? swiper.activeIndex : 0;
+        updateSlidesOffsetAfter();
+        swiper.update();
+        setTimeout(() => {
+          const safeIndex = Math.min(currentIndex, swiper.slides.length - 1);
+          swiper.slideTo(safeIndex, 0);
+        }, 60);
 
-    } else {
-      hideExtraSlides();
-      if (label) label.textContent = 'Показать все теги';
-      btn.classList.remove('rotated', 'inside-slide');
-      btn.setAttribute('aria-expanded', 'false');
+      } else {
+        hideExtraSlides();
+        if (label) label.textContent = 'Показать все теги';
+        btn.classList.remove('rotated', 'inside-slide');
+        btn.setAttribute('aria-expanded', 'false');
 
-      updateSlidesOffsetAfter();
-      swiper.update();
-      setTimeout(() => { swiper.slideTo(0, 200); }, 60);
-    }
-  });
+        updateSlidesOffsetAfter();
+        swiper.update();
+        setTimeout(() => { swiper.slideTo(0, 200); }, 60);
+      }
+    });
+  }
 
   let resizeTimer = null;
   window.addEventListener('resize', () => {
     clearTimeout(resizeTimer);
     resizeTimer = setTimeout(() => {
+      if (isProductTags) {
+        if (swiper) swiper.update();
+        return;
+      }
+      
       const needBtn = decideBtnVisibilityInitial();
       if (!needBtn) {
         btn.style.display = 'none';
@@ -1723,7 +1758,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }, 120);
   });
 });
-
 
 
 // Загрузка карты
@@ -3119,6 +3153,7 @@ document.querySelectorAll('.get-contact-form').forEach((form) => {
 
 
 // Попап "Запросить коммерческое предложение"
+
 const menu = document.querySelector('.header-menu-open-burger');
 const kpPopup = document.querySelector('.kp-popup');
 const kpContent = document.querySelector('.kp-popup-content');
@@ -3126,20 +3161,20 @@ const kpCloseBtn = document.querySelector('.kp-popup-close');
 
 const isMenuOpen = () => !!menu && menu.classList.contains('is-open');
 
-function openKpPopup() {
+function openKpPopup(event) {
+  // Останавливаем всплытие и действие по умолчанию
+  if (event) {
+    event.stopPropagation();
+    event.preventDefault();
+  }
+
   if (!kpPopup) return;
 
   kpPopup.dataset.menuWasOpen = isMenuOpen() ? '1' : '0';
-
   document.body.style.overflow = 'hidden';
   kpPopup.classList.add('show');
   document.documentElement.classList.add('no-scroll-modal');
   document.body.classList.add('no-scroll-modal');
-
-  // if (kpPopup.dataset.menuWasOpen === '0') {
-  //   header.classList.remove('header--visible');
-  //   header.classList.add('header--hidden');
-  // }
 
   kpPopup.classList.remove('closing');
   kpPopup.setAttribute('aria-hidden', 'false');
