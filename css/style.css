@@ -8523,6 +8523,7 @@ model-viewer::part(default-progress-bar) {
 .statutory-documents-file-left {
     display: flex;
     justify-content: space-between;
+    align-items: center;
     flex: 1 1 auto; 
     min-width: 0;
     gap: 16px; 
@@ -8546,7 +8547,6 @@ model-viewer::part(default-progress-bar) {
 .statutory-documents-file-name {
     font-family: 'Helvetica Neue Regular', sans-serif;
     font-size: 28px;
-    line-height: 110%;
     letter-spacing: -0.02em;
     font-weight: 300;
     color: #fff;
@@ -8657,6 +8657,7 @@ model-viewer::part(default-progress-bar) {
 
 @media (max-width: 1100px) {
     .statutory-documents-file-left {
+        align-items: flex-start;
         flex-direction: column;
         gap: 4px;
         padding-right: 0%;
@@ -9744,14 +9745,20 @@ model-viewer::part(default-progress-bar) {
     }
 
     .news-card-info-setting-title {
-        font-size: 0;
-        line-height: 0;
-        display: inline-block; 
+        display: inline-block;
+        font-size: 13px;
+        line-height: 1.2;
+        color: var(--gray);
     }
 
-    .news-card-info-setting-title::after {
+    .news-card-info-setting-title[data-short] {
+        font-size: 0;
+        line-height: 0;
+    }
+
+    .news-card-info-setting-title[data-short]::after {
         content: attr(data-short);
-        font-size: 13px;          
+        font-size: 13px;
         line-height: 1.2;
         color: var(--gray);
         display: inline-block;
@@ -9759,14 +9766,19 @@ model-viewer::part(default-progress-bar) {
     }
 
     .news-card-info-setting-value {
-        font-size: 0;
-        line-height: 0;
-        display: inline-block; 
+        display: inline-block;
+        font-size: 13px;
+        line-height: 1.2;
     }
 
-    .news-card-info-setting-value::after {
+    .news-card-info-setting-value[data-short] {
+        font-size: 0;
+        line-height: 0;
+    }
+
+    .news-card-info-setting-value[data-short]::after {
         content: attr(data-short);
-        font-size: 13px;          
+        font-size: 13px;
         line-height: 1.2;
         display: inline-block;
         white-space: nowrap;
@@ -11364,14 +11376,29 @@ section {
     gap: 56px;
 }
 
-
 .product-card-links {
-    display: flex;
-    align-items: center;
+    white-space: nowrap;
+    display: flex !important;
+    align-items: center !important;
     gap: 40px;
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    flex-wrap: nowrap !important;
+    width: 100% !important;
+    min-width: 100% !important;
+    max-width: 50vw !important;
+    
+    scrollbar-width: none !important; 
+    -ms-overflow-style: none !important; 
+}
+
+.product-card-links::-webkit-scrollbar {
+    display: none !important;
 }
 
 .download-pdf {
+    font-family: 'Helvetica Neue Regular', sans-serif;
+    cursor: pointer;
     border: none;
     background-color: transparent;
     padding: 0;
@@ -11405,10 +11432,8 @@ section {
 }
 
 .product-miniature-images img {
-    max-width: 64px;
-    max-height: 64px;
-    width: 100%;
-    height: 100%;
+    width: 64px;
+    height: 64px;
     object-fit: cover;
     border-top: 1px solid var(--stroke-gray);
     border-left: 1px solid var(--stroke-gray);
@@ -11419,9 +11444,15 @@ section {
 }
 
 .product-main-image {
-    padding: 24px 36px;
+    padding: 21px 35px;
     background-color: #f5f5f5;
     border: 1px solid var(--stroke-gray);
+}
+
+.product-main-image img {
+    width: 408px;
+    height: 375px;
+    object-fit: cover;
 }
 
 .product-img-active {
@@ -11450,18 +11481,29 @@ section {
     gap: 8px;
 }
 
+.product-info-checkmark svg {
+    flex-shrink: 0;
+    width: 24px;
+    height: 24px;
+}
+
 .product-info-checkmark p {
     font-size: 18px;
 }
 
-.product-info-cards {
+.product-info-cards-desktop {
     margin-top: 20px;
     grid-template-columns: repeat(4, 1fr);
     gap: 40px;
     border-bottom: 1px solid var(--stroke-gray);
 }
 
-.product-info-cards .mdk-main-info-card {
+.product-info-cards-mobile {
+    margin-top: 40px;
+    display: none;
+}
+
+.product-info-cards-desktop .mdk-main-info-card {
     border-bottom: none;
 }
 
@@ -11506,6 +11548,7 @@ section {
     display: flex;
     align-items: flex-start;
     justify-content: space-between;
+    gap: 10px;
     border-bottom: 1px solid var(--stroke-gray);
 }
 
@@ -11513,6 +11556,14 @@ section {
     display: flex;
     flex-direction: column;
     gap: 12px;
+}
+
+.buy-card-middle-buttons .red-btn {
+    padding: 14.5px;
+}
+
+.buy-card-middle-buttons .transparent-btn {
+    max-width: 100%;
 }
 
 .buy-card-middle-contacts-left {
@@ -11558,6 +11609,38 @@ section {
 
 .news-tag-product.active {
     border-bottom: 1px solid var(--black);
+}
+
+/* Переключение табов в карточке товара */
+
+.open-product-tag {
+  display: none;           
+  opacity: 0;
+  transform: translateY(8px);
+  overflow: hidden;        
+  will-change: height, opacity, transform;
+}
+
+.open-product-tag.active {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.news-tag {
+  outline: none;
+}
+
+.news-tag:focus {
+  box-shadow: 0 0 0 3px rgba(0,0,0,0.06);
+}
+
+.open-product-tag-texts {
+    max-width: 1042px;
+    width: 100%;
+    margin-top: 20px;
+    font-family: 'Helvetica Neue Regular', sans-serif;
+    font-size: 16px;
+    line-height: 130%;
 }
 
 
@@ -11623,6 +11706,47 @@ section {
     padding: 80px;
 }
 
+.product-settings {
+    margin-top: 32px;
+}
+
+.product-settings h2 {
+    color: var(--black);
+}
+
+.product-settings-columns {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 32px;
+}
+
+.product-settings-document .statutory-documents-file-name {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 18px;
+}
+
+.product-settings-document .statutory-documents-file-name{
+    color: var(--black);
+}
+
+.product-settings-document:hover .statutory-documents-file-name {
+    color: #fff;
+}
+
+.product-settings-document:hover .statutory-documents-file-name svg path {
+    fill: #fff;
+}
+
+.product-settings-document:hover .statutory-documents-file-right svg path {
+    fill: #fff;
+}
+
+.document-product-settings {
+    margin-top: 40px;
+}
+
 /* Адаптив карточки товара */
 
 @media (max-width: 1700px) {
@@ -11631,9 +11755,141 @@ section {
     }
 }
 
-@media (max-width: 1500px) {
+@media (max-width: 1550px) {
     .about-us-product {
         padding: 70px 40px;
+    }
+
+    .product-card-content {
+        gap: 22px;
+    }
+
+    .product-info-first-line {
+        gap: 24px;
+    }
+
+    .product-miniature-images img {
+        width: 56px;
+        height: 56px;
+    }
+
+    .view-3D {
+        max-width: 56px;
+        max-height: 56px;
+    }
+
+    .product-info-checkmark p {
+        font-size: 16px;
+    }
+
+    .product-main-image {
+        padding: 16px 28px;
+    }
+
+    .product-main-image img {
+        width: 347px;
+        height: 319px;
+    }
+
+    .product-info-second-line .mdk-main-info-card-title {
+        font-size: 36px;
+    }
+
+    .product-info-second-line .mdk-main-info-card-desc {
+        font-size: 16px;
+    }
+
+    .product-info-second-line .mdk-main-info-card:nth-child(2n) {
+        padding-left: 0px;
+    }
+
+    .product-info-cards-desktop {
+        gap: 20px;
+    }
+
+    .buy-card-subtitle {
+        font-size: 14px;
+    }
+
+    .buy-card-price {
+        font-size: 28px;
+        margin-bottom: 16px;
+    }
+
+    .buy-card-middle-buttons .red-btn,
+    .buy-card-middle-buttons .transparent-btn {
+        font-size: 14px;
+    }
+
+    .discount-banner {
+        font-size: 14px;
+    }
+
+    .buy-card-middle-buttons .red-btn {
+        padding: 11.5px;
+    }
+
+    .buy-card-middle-buttons .transparent-btn {
+        padding: 15px !important;
+    }
+
+    .buy-card-middle {
+        margin-top: 12px;
+    }
+
+    .buy-card-middle-contacts {
+        padding: 16px 0px;
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .buy-card-middle-contacts .footer-social-links a {
+        width: 32px;
+        height: 32px;
+    }
+
+    .buy-card-middle-contacts .footer-social-links svg {
+        width: 16px;
+        height: 16px;
+    }
+
+    .buy-bottom-cards {
+        margin-top: 12px;
+        gap: 12px;
+    }
+
+    .buy-bottom-cards .get-contact-info-card svg {
+        width: 32px;
+        height: 32px;
+    }
+
+    .get-contact-info-card {
+        gap: 8px;
+    }
+
+    .buy-bottom-cards .get-contact-info-card .get-contact-info-card-text {
+        font-size: 13px;
+    }
+
+    .product-info-checkmark svg {
+        width: 20px;
+        height: 20px;
+    }
+
+    .product-card-links {
+        gap: 32px;
+    }
+
+    .download-pdf {
+        font-size: 16px;
+    }
+
+    .product-title {
+        font-size: 32px;
+    }
+
+    .product-buy-card {
+        padding: 16px 20px;
     }
 }
 
@@ -11644,6 +11900,25 @@ section {
 
     .adaptive-table th, .adaptive-table td {
         padding: 15px 8px;
+    }
+
+    .open-product-tag-texts {
+        max-width: 900px;
+        font-size: 14px;
+    }
+}
+
+@media (max-width: 1270px) {
+    .product-card-content {
+        grid-template-columns: 1fr;
+    }
+
+    .product-info-cards-desktop {
+        display: none;
+    }
+
+    .product-info-cards-mobile {
+        display: grid;
     }
 }
 
@@ -11656,8 +11931,35 @@ section {
     
     .table-container {
         overflow-y: hidden; 
+    }   
+}
+
+@media (max-width: 1000px) {
+    .product-miniature-images {
+        display: none;
     }
-    
+}
+
+@media (max-width: 900px) {
+    .product-info-first-line {
+        flex-direction: column;
+    }    
+
+    .product-images {
+        width: 100%;
+        height: 100%;
+    }
+
+    .product-main-image {
+        width: 100%;
+        height: 100%;
+    }
+
+    .product-main-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
 }
 
 @media (max-width: 700px) {
@@ -11665,3 +11967,4 @@ section {
         padding: 60px 16px;
     }
 }
+
