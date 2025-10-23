@@ -3710,21 +3710,30 @@ if (shareModal) {
 
 
 
-
-
+// Переключение фотографий карточки товара
 
 
 (function () {
-  const thumbnailsContainer = document.querySelector('.product-miniature-images');
+  // root содержит кнопки и прокручиваемую зону
+  const root = document.querySelector('.product-miniature-images');
+  if (!root) return;
+
+  const thumbnailsContainer = root.querySelector('.thumbs-scroll-area');
   if (!thumbnailsContainer) return;
+
   const thumbnails = Array.from(thumbnailsContainer.querySelectorAll('img'));
+  const topBtn = root.querySelector('.top-btn');
+  const bottomBtn = root.querySelector('.bottom-btn');
+
   const mainImgContainer = document.querySelector('.product-main-image');
   const mainImg = mainImgContainer && mainImgContainer.querySelector('img');
   const progressContainer = mainImgContainer && mainImgContainer.querySelector('.gallery-progress');
 
   if (!mainImg || thumbnails.length === 0 || !progressContainer) return;
 
-  // --- создание прогресс-баров (ticks) ---
+
+  
+  // --- progress ticks ---
   function buildProgress(n, container) {
     container.innerHTML = '';
     for (let i = 0; i < n; i++) {
@@ -3745,7 +3754,6 @@ if (shareModal) {
   let currentIndex = thumbnails.findIndex(t => t.classList.contains('product-img-active'));
   if (currentIndex === -1) currentIndex = 0;
 
-  // helper: обновить активные классы миниатюры и тик
   function updateActiveClasses(idx) {
     thumbnails.forEach(t => t.classList.remove('product-img-active'));
     ticks.forEach(t => t.classList.remove('active'));
@@ -3754,16 +3762,60 @@ if (shareModal) {
     if (ticks[idx]) ticks[idx].classList.add('active');
   }
 
-  // плавное переключение изображения (fade)
-  let switching = false;
-
-  // прокрутим миниатюру внутри контейнера (не document!)
-  function scrollThumbIntoView(thumb) {
-    if (!thumb || !thumbnailsContainer) return;
-    const top = thumb.offsetTop - (thumbnailsContainer.clientHeight - thumb.clientHeight) / 2;
-    thumbnailsContainer.scrollTo({ top, behavior: 'smooth' });
+  // ---- helper для размеров ----
+  function getThumbGap() {
+    // Попробуем найти gap/row-gap, иначе 0
+    const cs = getComputedStyle(thumbnailsContainer);
+    return parseFloat(cs.rowGap || cs.gap || 0) || 0;
   }
 
+  // шаг прокрутки — ровно 4 миниатюры (учитываем gap)
+  function getScrollStep() {
+    const thumb = thumbnails[0];
+    if (!thumb) return 0;
+    return Math.round((thumb.clientHeight + getThumbGap()) * 4);
+  }
+
+  // безопасный scrollTo (в границах)
+  function safeScrollTo(targetTop) {
+    const max = thumbnailsContainer.scrollHeight - thumbnailsContainer.clientHeight;
+    const t = Math.max(0, Math.min(max, Math.round(targetTop)));
+    thumbnailsContainer.scrollTo({ top: t, behavior: 'smooth' });
+  }
+
+  // --- скроллим так, чтобы миниатюра была видна и не попадала под кнопки ---
+  function scrollThumbIntoView(thumb) {
+    if (!thumb || !thumbnailsContainer) return;
+
+    // текущие scrollTop и размеры
+    const scrollTop = thumbnailsContainer.scrollTop;
+    const containerH = thumbnailsContainer.clientHeight;
+    const thumbTop = thumb.offsetTop;
+    const thumbH = thumb.clientHeight;
+
+    // высоты кнопок (они находятся вне thumbnailsContainer, поэтому берем их из root)
+    const topBtnEl = topBtn;
+    const bottomBtnEl = bottomBtn;
+    const topBtnH = topBtnEl ? topBtnEl.getBoundingClientRect().height : 0;
+    const bottomBtnH = bottomBtnEl ? bottomBtnEl.getBoundingClientRect().height : 0;
+
+    // доступная видимая зона внутри контейнера (без перекрытия кнопками)
+    const visibleTop = scrollTop + topBtnH;
+    const visibleBottom = scrollTop + containerH - bottomBtnH;
+
+    // если миниатюра выше видимой зоны — прокрутить вверх так, чтобы она была под topBtn
+    if (thumbTop < visibleTop) {
+      safeScrollTo(thumbTop - topBtnH - 4);
+    }
+    // если миниатюра ниже видимой зоны — прокрутить вниз так, чтобы она была над bottomBtn
+    else if (thumbTop + thumbH > visibleBottom) {
+      safeScrollTo(thumbTop + thumbH - containerH + bottomBtnH + 4);
+    }
+    // иначе уже видна — ничего не делаем
+  }
+
+  // плавное переключение изображения (fade)
+  let switching = false;
   function showImage(idx) {
     idx = ((idx % thumbnails.length) + thumbnails.length) % thumbnails.length;
     if (idx === currentIndex) return;
@@ -3777,8 +3829,10 @@ if (shareModal) {
     setTimeout(() => {
       mainImg.src = large;
       updateActiveClasses(idx);
+      // делаем безопасный центр/видимость миниатюры
       scrollThumbIntoView(thumb);
 
+      // завершаем анимацию
       requestAnimationFrame(() => {
         setTimeout(() => {
           mainImg.classList.remove('fading');
@@ -3797,11 +3851,13 @@ if (shareModal) {
     });
   });
 
-  // Инициализация: показать начальную миниатюру и активировать тик
+  // инициализация
   mainImg.src = thumbnails[currentIndex].dataset.large || thumbnails[currentIndex].src;
   updateActiveClasses(currentIndex);
+  // убедимся, что активная миниатюра видна при загрузке
+  setTimeout(() => scrollThumbIntoView(thumbnails[currentIndex]), 100);
 
-  // --- Поведение свайпа / drag: pointer events + десктопная поддержка ---
+  // --- свайп/drag для большого изображения (как было) ---
   const swipeArea = mainImgContainer;
   let startX = 0, startY = 0;
   let isDown = false;
@@ -3809,9 +3865,8 @@ if (shareModal) {
   let bodyLocked = false;
   const SWIPE_THRESHOLD = 40;
   const MAX_VERTICAL_DELTA = 120;
-
-  // Универсальная блокировка скролла (используем только для touch/pen)
   let bodyScrollY = 0;
+
   function lockBodyScroll() {
     if (bodyLocked) return;
     bodyScrollY = window.scrollY || window.pageYOffset || 0;
@@ -3836,26 +3891,15 @@ if (shareModal) {
     bodyLocked = false;
   }
 
-  // предотвращаем вертикальные скроллы/жесты при активном свайпе
   function preventWhileDown(e) {
-    if (isDown && e.cancelable) {
-      e.preventDefault();
-    }
+    if (isDown && e.cancelable) e.preventDefault();
   }
 
-  // предотвращение выделения текста на десктопе во время drag
   function onSelectStart(e) { e.preventDefault(); }
   function addSelectionLock() { document.addEventListener('selectstart', onSelectStart, true); }
   function removeSelectionLock() { document.removeEventListener('selectstart', onSelectStart, true); }
 
-  // прокрутка миниатюры (оставляем)
-  function scrollThumbIntoView(thumb) {
-    if (!thumb || !thumbnailsContainer) return;
-    const top = thumb.offsetTop - (thumbnailsContainer.clientHeight - thumb.clientHeight) / 2;
-    thumbnailsContainer.scrollTo({ top, behavior: 'smooth' });
-  }
-
-  // Pointer events
+  // pointer events
   swipeArea.addEventListener('pointerdown', (e) => {
     isDown = true;
     startX = e.clientX;
@@ -3863,13 +3907,10 @@ if (shareModal) {
     isMousePointer = (e.pointerType === 'mouse');
 
     if (isMousePointer) {
-      // Для мыши: не блокируем body (чтобы не ломать поведение страницы),
-      // но запрещаем выделение и меняем курсор
       addSelectionLock();
       document.documentElement.style.cursor = 'grabbing';
       document.body.style.cursor = 'grabbing';
     } else {
-      // Для touch/pen — блокируем прокрутку страницы (iOS/Android)
       lockBodyScroll();
     }
 
@@ -3877,9 +3918,7 @@ if (shareModal) {
   }, { passive: false });
 
   swipeArea.addEventListener('pointermove', (e) => {
-    // Общее предотвращение скролла/выделения во время нажатия
     preventWhileDown(e);
-    // Здесь можно добавить визуальный drag (например, сдвиг картинки), если нужно
   }, { passive: false });
 
   swipeArea.addEventListener('pointerup', (e) => {
@@ -3915,7 +3954,7 @@ if (shareModal) {
     }
   }, { passive: false });
 
-  // Fallback для старых браузеров: мышь (если pointer events не поддерживаются, всё ещё полезно)
+  // fallbacks for old browsers (mouse/touch)
   if (!window.PointerEvent) {
     swipeArea.addEventListener('mousedown', (e) => {
       isDown = true;
@@ -3948,7 +3987,6 @@ if (shareModal) {
     });
   }
 
-  // Touch fallback (в дополнение к pointer events) — для старых устройств
   swipeArea.addEventListener('touchstart', function (e) {
     if (e.touches && e.touches[0]) {
       startX = e.touches[0].clientX;
@@ -3977,10 +4015,65 @@ if (shareModal) {
     }
   }, { passive: false });
 
-  // Keyboard navigation
+  // keyboard
   window.addEventListener('keydown', (e) => {
     if (e.key === 'ArrowRight') showImage(currentIndex + 1);
     if (e.key === 'ArrowLeft') showImage(currentIndex - 1);
   });
 
+  // --- кнопки прокрутки: scroll по 4 миниатюры ---
+  if (topBtn) {
+    topBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      const step = getScrollStep();
+      safeScrollTo(thumbnailsContainer.scrollTop - step);
+    });
+  }
+  if (bottomBtn) {
+    bottomBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      const step = getScrollStep();
+      safeScrollTo(thumbnailsContainer.scrollTop + step);
+    });
+  }
+
+  // --- обновление видимости/состояния кнопок ---
+  function updateButtonsVisibility() {
+    if (!topBtn || !bottomBtn) return;
+
+    const maxScroll = thumbnailsContainer.scrollHeight - thumbnailsContainer.clientHeight;
+    const atTop = thumbnailsContainer.scrollTop <= 1;
+    const atBottom = thumbnailsContainer.scrollTop >= maxScroll - 1;
+
+    const topArrow = topBtn.querySelector('path.unvisible');
+    const bottomArrow = bottomBtn.querySelector('path.unvisible');
+    const activeColor = '#1A1A1A';
+    const inactiveColor = '#BDBDBD';
+
+    // Меняем активность стрелок
+    topBtn.classList.toggle('inactive', atTop);
+    bottomBtn.classList.toggle('inactive', atBottom);
+
+    if (topArrow) topArrow.setAttribute('fill', atTop ? inactiveColor : activeColor);
+    if (bottomArrow) bottomArrow.setAttribute('fill', atBottom ? inactiveColor : activeColor);
+
+    // Проверяем, нужно ли вообще скроллить
+    const totalBtnsHeight = (topBtn?.offsetHeight || 0) + (bottomBtn?.offsetHeight || 0);
+    const needScroll = thumbnailsContainer.scrollHeight > thumbnailsContainer.clientHeight + totalBtnsHeight - 2;
+
+    // Показываем или скрываем стрелки
+    topBtn.style.display = needScroll ? 'block' : 'none';
+    bottomBtn.style.display = needScroll ? 'block' : 'none';
+
+    // --- Управляем прогресс-баром ---
+    if (progressContainer) {
+      progressContainer.style.display = needScroll ? 'flex' : 'none';
+    }
+  }
+
+
+  thumbnailsContainer.addEventListener('scroll', updateButtonsVisibility, { passive: true });
+  window.addEventListener('resize', updateButtonsVisibility);
+  updateButtonsVisibility();
+  
 })();

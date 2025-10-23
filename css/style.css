@@ -11452,7 +11452,7 @@ section {
 
 .download-pdf:hover{ color:var(--red); }
 
-.share-menu{
+.share-menu {
   position:absolute;
   top:calc(100% + 8px);
   left:50%;
@@ -11551,11 +11551,85 @@ section {
 }
 
 .product-miniature-images {
-    display: flex;
-    flex-direction: column;
-    overflow-y: auto; 
-    -webkit-overflow-scrolling: touch;
-    max-height: 420px; 
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 64px;
+}
+
+.thumbs-scroll-area {
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  scroll-behavior: smooth;
+  max-height: 320px; 
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none; 
+  -ms-overflow-style: none;
+}
+
+.thumbs-scroll-area::-webkit-scrollbar {
+  display: none;
+}
+
+.thumbs-scroll-area img {
+  width: 64px;
+  height: 64px;
+  object-fit: cover;
+  border: 1px solid var(--stroke-gray);
+}
+
+.product-miniature-images button {
+  flex-shrink: 0; 
+  width: 64px;
+  height: 64px;
+  border: none;
+  background: #f5f5f5;
+  cursor: pointer;
+}
+
+.product-miniature-images button svg path:last-child {
+  transition: fill 0.2s ease;
+}
+
+
+
+.product-miniature-images button:not(.inactive):hover svg path:last-child {
+  fill: var(--red);
+}
+
+.product-miniature-images {
+  position: relative;
+}
+
+.product-miniature-images .top-btn,
+.product-miniature-images .bottom-btn {
+  position: sticky;
+  z-index: 5;
+  pointer-events: auto; 
+  background: #f5f5f5;
+  border: none;
+  cursor: pointer;
+  width: 64px;
+  height: 64px;
+}
+
+.product-miniature-images .top-btn {
+  top: 0;
+}
+
+.product-miniature-images .bottom-btn {
+  bottom: 0;
+}
+
+
+
+
+.product-miniature-images button {
+    border: none;
+    background-color: transparent;
+    padding: 0px;
+    margin: 0px;
 }
 
 .product-main-image {
@@ -11572,6 +11646,8 @@ section {
 .product-miniature-images img {
     width: 64px;
     height: 64px;
+    min-width: 64px;
+    min-height: 64px;
     object-fit: cover;
     border-top: 1px solid var(--stroke-gray);
     border-left: 1px solid var(--stroke-gray);
@@ -11590,7 +11666,7 @@ section {
 
 .product-main-image img {
   width: 478px;
-  height: 421px;
+  height: 446px;
   object-fit: cover;
   display: block;
   transition: opacity 260ms ease;
@@ -11637,7 +11713,7 @@ section {
   position: absolute;
   left: 0; top: 0; bottom: 0;
   width: 0%;
-  background: var(--red, #d32); /* активный цвет */
+  background: var(--green, red); /* теперь зелёный */
   transition: width 360ms cubic-bezier(.2,.9,.2,1);
 }
 
@@ -12066,6 +12142,10 @@ section {
         height: 357px;
     }
 
+    .thumbs-scroll-area {
+        max-height: 231px;
+    }
+
     .product-info-second-line .mdk-main-info-card-title {
         font-size: 36px;
     }
@@ -12281,7 +12361,7 @@ section {
     @media (max-width: 900px) {
         .product-main-image {
             width: 100%;
-            aspect-ratio: 4 / 3; 
+            aspect-ratio: 1 / 1; 
             position: relative;
             overflow: hidden;
         }
@@ -12465,3 +12545,9 @@ section {
 .share-modal-link:hover svg g {
   fill: var(--black) !important;
 }
+
+
+
+
+
+
