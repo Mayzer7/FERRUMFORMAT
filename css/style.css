@@ -8171,7 +8171,7 @@ model-viewer::part(default-progress-bar) {
 .requisites {
     background-color: #fff;
     color: var(--black);
-    padding: 0px 80px 90px 80px;
+    padding: 0px 80px 50px 80px;
 }
 
 .requisites-content {
@@ -8296,11 +8296,24 @@ model-viewer::part(default-progress-bar) {
   box-shadow: 0 8px 24px rgba(0,0,0,0.08);
 }
 
+.requisites-open-tag {
+    padding: 0px !important;
+    margin-top: 60px;
+}
+
+.delivery-open-tag {
+    padding: 0px !important;
+}
+
+.guarantee-open-tag {
+    margin-top: 32px;
+}
+
 /* Адаптив секции "Реквизиты" */
 
 @media (max-width: 1700px) {
     .requisites {
-        padding: 0px 60px 90px 60px;
+        padding: 0px 60px 50px 60px;
     }
 }
 
@@ -8370,6 +8383,18 @@ model-viewer::part(default-progress-bar) {
     .contacts-card-right p, .contacts-card-right a {
         font-size: 16px;
     }
+
+    .open-product-tag .payment {
+        padding-top: 4px;
+    }
+
+    .requisites-open-tag {
+        margin-top: 40px;
+    }
+
+    .guarantee-open-tag {
+        margin-top: 20px;
+    } 
 }
 
 @media (max-width: 1270px) {
@@ -8422,6 +8447,18 @@ model-viewer::part(default-progress-bar) {
         max-width: 100%;
         width: 100%;
     }
+
+    .open-product-tag .payment {
+        padding-top: 0px;
+    }
+
+    .requisites-open-tag {
+        margin-top: 32px;
+    }
+
+    .guarantee-open-tag {
+        margin-top: 16px;
+    } 
 }
 
 @media (max-width: 500px) {
@@ -9516,11 +9553,6 @@ model-viewer::part(default-progress-bar) {
   justify-content: flex-start;
 }
 
-.news-card-info-setting-title {
-     order: 1; 
-     margin: 0; 
-}
-
 .news-card-info-setting::before {
   content: "";
   order: 2;
@@ -9540,9 +9572,17 @@ model-viewer::part(default-progress-bar) {
   pointer-events: none;
 }
 
-.news-card-info-setting-value { order: 3; 
+.news-card-info-setting-title {
+     order: 1; 
+     margin: 0; 
+}
+
+
+.news-card-info-setting-value { 
+    order: 3; 
     margin: 0; 
-    white-space: nowrap; 
+    text-align: right;
+
 }
 
 .news-card-info-setting-title {
@@ -11747,6 +11787,89 @@ section {
     margin-top: 40px;
 }
 
+.open-settings-title {
+    margin-bottom: 16px;
+}
+
+.product-settings-columns .news-card-info-setting-title {
+    font-size: 16px;
+}
+
+.product-settings-columns .news-card-info-setting-value {
+    font-size: 18px;
+}
+
+.coloring-content {
+    margin-top: 32px;
+}
+
+.coloring-title {
+    font-family: 'Helvetica Neue Regular', sans-serif;
+    font-weight: normal;
+    font-size: 28px;
+    line-height: 110%;
+    letter-spacing: -0.02em;
+    margin-bottom: 12px;
+}
+
+.coloring-subtitle {
+    font-family: 'Helvetica Neue Regular', sans-serif;
+    font-weight: normal;
+    font-size: 16px;
+    line-height: 130%;
+    max-width: 1042px;
+    width: 100%;
+}
+
+.coloring-table-title {
+    font-family: 'Helvetica Neue Regular', sans-serif;
+    font-weight: normal;
+    font-size: 20px;
+    margin-top: 32px;
+    margin-bottom: 12px;
+}
+
+.coloring-images {
+    margin-top: 32px;
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+}
+
+.coloring-image {
+    width: 100%;
+    height: 100%;
+}
+
+.coloring-image img {
+  display: inline-block;
+  max-width: 100%;
+  height: auto;
+}
+
+.reviews-open-tag-content {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    justify-content: space-between;
+}
+
+.reviews-open-tag-right {
+    justify-self: end;
+    width: 86%;
+}
+
+.reviews-open-tag {
+    grid-template-columns: 1fr;
+}
+
+.reviews-open-tag-container {
+    margin-top: 32px;
+}
+
+.reviews-open-tag-container .open-settings-title {
+    color: var(--black);
+}
+
 /* Адаптив карточки товара */
 
 @media (max-width: 1700px) {
@@ -11906,6 +12029,34 @@ section {
         max-width: 900px;
         font-size: 14px;
     }
+
+    .product-settings {
+        margin-top: 20px;
+    }
+
+    .open-settings-title {
+        margin-bottom: 12px;
+    }
+
+    .product-settings-columns {
+        gap: 24px;
+    }
+
+    .product-settings-columns .news-card-info-setting-title {
+        font-size: 14px;
+    }
+
+    .product-settings-columns .news-card-info-setting-value {
+        font-size: 16px;
+    }
+
+    .document-product-settings {
+        margin-top: 32px;
+    }
+
+    .reviews-open-tag-container {
+        margin-top: 20px;
+    }
 }
 
 @media (max-width: 1270px) {
@@ -11919,6 +12070,31 @@ section {
 
     .product-info-cards-mobile {
         display: grid;
+    }
+
+    .product-settings-columns {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+
+    .product-settings-columns .news-card-info-settings {
+        margin-top: 0px;
+        margin-bottom: 0px;
+        gap: 12px;
+    }
+
+    .reviews-open-tag-content {
+        grid-template-columns: 1fr;
+        gap: 32px;
+    }
+
+    .reviews-open-tag-right {
+        justify-self: start;
+        width: 64%;
+    }
+
+    .reviews-open-tag-left .reviews-card {
+        justify-content: space-between;
     }
 }
 
@@ -11962,9 +12138,37 @@ section {
     }
 }
 
+@media (max-width: 840px) {
+    .reviews-open-tag-right {
+        justify-self: start;
+        width: 100%;
+    }
+}
+
 @media (max-width: 700px) {
     .about-us-product {
         padding: 60px 16px;
     }
+
+    .product-settings-columns .news-card-info-setting-value {
+        font-size: 14px;
+    }
+
+    .product-settings-document .statutory-documents-file-name {
+        font-size: 14px;
+    }
+
+    .product-settings-document .statutory-documents-file-name svg {
+        flex-shrink: 0;
+        width: 20px;
+        height: 20px;
+    }
+
+    .reviews-open-tag-container {
+        margin-top: 16px;
+    }
 }
 
+.badge {
+    border-radius: 0px !important;
+}

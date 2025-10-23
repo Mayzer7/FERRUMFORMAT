@@ -3383,43 +3383,35 @@ document.addEventListener('keydown', (e) => {
 // Переключение табов в карточке товара
 
 (function () {
-  // конфигурация анимации
   const DURATION = 320; // ms
 
-  // элементы
   const tagsContainer = document.querySelector('.news-tags');
   if (!tagsContainer) return;
   const tags = Array.from(document.querySelectorAll('.news-tag'));
   const panels = Array.from(document.querySelectorAll('.open-product-tag'));
 
-  // Если некоторые теги не имеют data-open-tag — проставим их по порядку (начиная с 1)
   tags.forEach((tag, i) => {
     if (!tag.hasAttribute('data-open-tag')) {
       const val = String(i + 1);
       tag.setAttribute('data-open-tag', val);
     } else {
-      // нормализуем атрибут в camelCase dataset формате
       tag.dataset.openTag = tag.getAttribute('data-open-tag');
     }
-    // делаем тег доступным как клавиатурная кнопка
     if (!tag.hasAttribute('tabindex')) tag.setAttribute('tabindex', '0');
-    // ставим role (рекомендуемо) — можно убрать, если не нужно
     if (!tag.hasAttribute('role')) tag.setAttribute('role', 'tab');
   });
 
   panels.forEach((p, i) => {
-    // нормализуем data
     if (!p.hasAttribute('data-open-tag')) {
       p.setAttribute('data-open-tag', String(i + 1));
     }
-    // скрыть панели на старте кроме активной, если есть
+
     if (!p.classList.contains('active')) {
       p.style.display = 'none';
       p.style.height = '0px';
       p.style.opacity = '0';
       p.style.transform = 'translateY(8px)';
     } else {
-      // если кто-то пометил active в HTML — откроем его корректно
       p.style.display = 'block';
       p.style.height = 'auto';
       p.style.opacity = '1';
@@ -3427,32 +3419,25 @@ document.addEventListener('keydown', (e) => {
     }
   });
 
-  // вспомогательные функции анимации (показываем / скрываем)
   function animateShow(panel) {
-    // если уже открыт — ничего не делаем
     if (panel.classList.contains('animating') || panel.classList.contains('active')) return;
     panel.classList.add('animating');
 
     panel.style.display = 'block';
-    // начальное значение: 0 высота, 0 opacity
     panel.style.transition = 'none';
     panel.style.height = '0px';
     panel.style.opacity = '0';
     panel.style.transform = 'translateY(8px)';
 
-    // заставим браузер применять начальные стили
     panel.getBoundingClientRect();
 
-    // вычисляем желаемую высоту
     const targetHeight = panel.scrollHeight + 'px';
 
-    // включаем переход
     panel.style.transition = `height ${DURATION}ms cubic-bezier(.2,.9,.2,1), opacity ${DURATION}ms ease, transform ${DURATION}ms ease`;
     panel.style.height = targetHeight;
     panel.style.opacity = '1';
     panel.style.transform = 'translateY(0)';
 
-    // после окончания анимации — убираем жесткую высоту (чтобы адаптировалось содержимое)
     const onEnd = (e) => {
       if (e && e.target !== panel) return;
       panel.removeEventListener('transitionend', onEnd);
@@ -3468,13 +3453,11 @@ document.addEventListener('keydown', (e) => {
     if (!panel || panel.classList.contains('animating')) return;
     panel.classList.add('animating');
 
-    // зафиксируем текущ реальный размер
     const startHeight = panel.scrollHeight + 'px';
     panel.style.height = startHeight;
     panel.style.transition = 'none';
     panel.getBoundingClientRect();
 
-    // включаем переход к нулю
     panel.style.transition = `height ${DURATION}ms cubic-bezier(.2,.9,.2,1), opacity ${DURATION}ms ease, transform ${DURATION}ms ease`;
     panel.style.height = '0px';
     panel.style.opacity = '0';
@@ -3487,13 +3470,11 @@ document.addEventListener('keydown', (e) => {
       panel.style.display = 'none';
       panel.classList.remove('animating');
       panel.classList.remove('active');
-      // очистим inline-height, оставим display:none
       panel.style.height = '0px';
     };
     panel.addEventListener('transitionend', onEnd);
   }
 
-  // переключатель - находит панель по data-open-tag
   function openByTag(tagValue) {
     if (!tagValue) return;
     const targetPanel = document.querySelector(`.open-product-tag[data-open-tag="${tagValue}"]`);
@@ -3502,20 +3483,16 @@ document.addEventListener('keydown', (e) => {
     const currentTag = document.querySelector('.news-tag.active');
     const currentPanel = document.querySelector('.open-product-tag.active');
 
-    // переключаем активный класс на теге
     if (currentTag) currentTag.classList.remove('active');
     const newTag = document.querySelector(`.news-tag[data-open-tag="${tagValue}"]`);
     if (newTag) newTag.classList.add('active');
 
-    // если панель совпадает — ничего не делаем
     if (currentPanel === targetPanel) return;
 
-    // спрятать старую и показать новую
     if (currentPanel) animateHide(currentPanel);
     animateShow(targetPanel);
   }
 
-  // делегирование кликов
   tagsContainer.addEventListener('click', function (e) {
     const tag = e.target.closest('.news-tag');
     if (!tag) return;
@@ -3523,7 +3500,6 @@ document.addEventListener('keydown', (e) => {
     openByTag(tagValue);
   });
 
-  // keyboard support: Enter / Space
   tagsContainer.addEventListener('keydown', function (e) {
     const tag = e.target.closest('.news-tag');
     if (!tag) return;
@@ -3532,7 +3508,6 @@ document.addEventListener('keydown', (e) => {
       const tagValue = tag.getAttribute('data-open-tag') || tag.dataset.openTag;
       openByTag(tagValue);
     }
-    // навигация стрелками (опционально)
     if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') {
       e.preventDefault();
       const idx = tags.indexOf(tag);
@@ -3542,14 +3517,11 @@ document.addEventListener('keydown', (e) => {
     }
   });
 
-  // если хотим показать по умолчанию тег 1 при загрузке:
   const initial = document.querySelector('.news-tag.active') || document.querySelector('.news-tag[data-open-tag="1"]') || tags[0];
   if (initial) {
-    // даём небольшой таймаут, чтобы DOM готов был к измерениям
     setTimeout(() => {
       const val = initial.getAttribute('data-open-tag') || initial.dataset.openTag;
       openByTag(val);
     }, 20);
   }
-
 })();
