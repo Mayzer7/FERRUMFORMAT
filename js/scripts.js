@@ -2489,7 +2489,6 @@ if (mdkWeProduceBanners) {
 
 
 
-
 // Попап "Скопировано" на странице "Контакты"
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -2518,21 +2517,43 @@ document.addEventListener('DOMContentLoaded', () => {
     btn.addEventListener('click', async (e) => {
       e.preventDefault();
 
-      const container = btn.parentElement;
-      if (!container) return;
+      const attrCopy = btn.getAttribute('data-copy');
+      let textToCopy = (typeof attrCopy === 'string' && attrCopy.trim().length) ? attrCopy.trim() : null;
 
-      const clone = container.cloneNode(true);
-      const btnInClone = clone.querySelector('.copy-button');
-      if (btnInClone) btnInClone.remove();
-      let text = (clone.innerText || clone.textContent || '').replace(/\u00A0/g, ' ').trim();
-      if (!text) return;
+      if (!textToCopy) {
+        const selector = btn.getAttribute('data-copy-target');
+        if (selector) {
+          try {
+            const target = document.querySelector(selector);
+            if (target) {
+              if (('value' in target) && (target.value !== undefined)) {
+                textToCopy = String(target.value).replace(/\u00A0/g, ' ').trim();
+              } else {
+                textToCopy = (target.innerText || target.textContent || '').replace(/\u00A0/g, ' ').trim();
+              }
+            }
+          } catch (err) {
+            console.warn('Invalid selector in data-copy-target:', selector, err);
+          }
+        }
+      }
+
+      if (!textToCopy) {
+        const container = btn.parentElement;
+        if (!container) return;
+        const clone = container.cloneNode(true);
+        const btnInClone = clone.querySelector('.copy-button');
+        if (btnInClone) btnInClone.remove();
+        textToCopy = (clone.innerText || clone.textContent || '').replace(/\u00A0/g, ' ').trim();
+        if (!textToCopy) return;
+      }
 
       try {
         if (navigator.clipboard && navigator.clipboard.writeText) {
-          await navigator.clipboard.writeText(text);
+          await navigator.clipboard.writeText(textToCopy);
         } else {
           const ta = document.createElement('textarea');
-          ta.value = text;
+          ta.value = textToCopy;
           ta.style.position = 'fixed';
           ta.style.left = '-9999px';
           document.body.appendChild(ta);
@@ -2581,7 +2602,7 @@ document.addEventListener('DOMContentLoaded', () => {
           let top = coordY - popupRect.height - 12;
 
           if (top < pad) {
-            top = coordY + 12;
+            top = coordX + 12;
           }
 
           left = Math.min(Math.max(pad, left), vw - popupRect.width - pad);
@@ -2598,7 +2619,6 @@ document.addEventListener('DOMContentLoaded', () => {
       popupTimer = setTimeout(() => popup.classList.remove('show'), 1000);
     }, { passive: false });
   });
-
 });
 
 
@@ -2651,7 +2671,6 @@ if (modalVideo) {
 
     document.documentElement.classList.add('no-scroll-modal');
     document.body.classList.add('no-scroll-modal');
-
 
     try {
       const p = video.play();
@@ -3525,3 +3544,161 @@ document.addEventListener('keydown', (e) => {
     }, 20);
   }
 })();
+
+
+// Попап "Поделиться"
+
+(function(){
+  const btn = document.getElementById('shareBtn');
+  const menu = document.getElementById('shareMenu');
+  const originalParent = menu.parentNode;
+  let isFloating = false;
+  let cleanupListeners = null;
+
+  function getButtonRect() {
+    return btn.getBoundingClientRect();
+  }
+
+  function openFloatingMenu() {
+    if(isFloating) return;
+    menu.classList.add('floating');
+    menu.classList.add('open');
+
+    document.body.appendChild(menu);
+
+    const rect = getButtonRect();
+    const top = window.pageYOffset + rect.bottom + 8; // 8px отступ
+    const left = window.pageXOffset + rect.left + rect.width / 2;
+
+    menu.style.position = 'absolute';
+    menu.style.top = top + 'px';
+    menu.style.left = left + 'px';
+
+    const onScrollResize = () => {
+      const r = getButtonRect();
+      const t = window.pageYOffset + r.bottom + 8;
+      const l = window.pageXOffset + r.left + r.width / 2;
+      menu.style.top = t + 'px';
+      menu.style.left = l + 'px';
+    };
+    window.addEventListener('scroll', onScrollResize, {passive: true});
+    window.addEventListener('resize', onScrollResize);
+
+    cleanupListeners = () => {
+      window.removeEventListener('scroll', onScrollResize);
+      window.removeEventListener('resize', onScrollResize);
+    };
+
+    isFloating = true;
+    btn.setAttribute('aria-expanded', 'true');
+    menu.setAttribute('aria-hidden', 'false');
+  }
+
+  function closeFloatingMenu() {
+    if(!isFloating) return;
+    menu.classList.remove('open');
+
+    const onTransitionEnd = () => {
+      originalParent.appendChild(menu);
+      menu.style.position = '';
+      menu.style.top = '';
+      menu.style.left = '';
+      menu.classList.remove('floating');
+      menu.removeEventListener('transitionend', onTransitionEnd);
+    };
+    menu.addEventListener('transitionend', onTransitionEnd);
+
+    if(typeof cleanupListeners === 'function') cleanupListeners();
+    isFloating = false;
+    btn.setAttribute('aria-expanded', 'false');
+    menu.setAttribute('aria-hidden', 'true');
+  }
+
+  btn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    if(menu.classList.contains('open')) {
+      closeFloatingMenu();
+    } else {
+      openFloatingMenu();
+      const first = menu.querySelector('[role="menuitem"]');
+      if(first) first.focus();
+    }
+  });
+
+  document.addEventListener('click', (e) => {
+    if(!menu.classList.contains('open')) return;
+    if(e.target === btn || menu.contains(e.target)) return;
+    closeFloatingMenu();
+  });
+
+  document.addEventListener('keydown', (ev) => {
+    if(ev.key === 'Escape' && menu.classList.contains('open')) {
+      closeFloatingMenu();
+      btn.focus();
+    }
+    if(menu.classList.contains('open') && (ev.key === 'ArrowDown' || ev.key === 'ArrowUp')) {
+      ev.preventDefault();
+      const items = Array.from(menu.querySelectorAll('[role="menuitem"]'));
+      const idx = items.indexOf(document.activeElement);
+      let next;
+      if(ev.key === 'ArrowDown') next = items[(idx + 1) % items.length];
+      else next = items[(idx - 1 + items.length) % items.length];
+      if(next) next.focus();
+    }
+  });
+
+  menu.addEventListener('click', (e) => {
+    const li = e.target.closest('[role="menuitem"]');
+    if(!li) return;
+    btn.focus();
+  });
+
+})();
+
+// Модальное окно "Поделиться" на мобилке
+
+const shareModal = document.querySelector('.share-modal');
+
+if (shareModal) {
+  function openShareModal() {
+    document.documentElement.classList.add('no-scroll-modal');
+    document.body.classList.add('no-scroll-modal');
+    const overlay = document.querySelector('.share-overlay');
+    overlay.classList.add('active');
+  }
+
+  function closeShareModal() {
+    document.documentElement.classList.remove('no-scroll-modal');
+    document.body.classList.remove('no-scroll-modal');
+    const overlay = document.querySelector('.share-overlay');
+    overlay.classList.remove('active');
+  }
+
+  // Закрытие при клике вне модалки
+  document.addEventListener('click', (e) => {
+    const overlay = document.querySelector('.share-overlay');
+    if (e.target.classList.contains('share-overlay')) {
+      closeShareModal();
+    }
+  });
+
+  // Закрытие по кнопке "крестик"
+  document.addEventListener('click', (e) => {
+    if (e.target.closest('.close-share-modal')) {
+      closeShareModal();
+    }
+  });
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
