@@ -3702,3 +3702,285 @@ if (shareModal) {
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+(function () {
+  const thumbnailsContainer = document.querySelector('.product-miniature-images');
+  if (!thumbnailsContainer) return;
+  const thumbnails = Array.from(thumbnailsContainer.querySelectorAll('img'));
+  const mainImgContainer = document.querySelector('.product-main-image');
+  const mainImg = mainImgContainer && mainImgContainer.querySelector('img');
+  const progressContainer = mainImgContainer && mainImgContainer.querySelector('.gallery-progress');
+
+  if (!mainImg || thumbnails.length === 0 || !progressContainer) return;
+
+  // --- создание прогресс-баров (ticks) ---
+  function buildProgress(n, container) {
+    container.innerHTML = '';
+    for (let i = 0; i < n; i++) {
+      const tick = document.createElement('div');
+      tick.className = 'tick';
+      const bar = document.createElement('div');
+      bar.className = 'bar';
+      tick.appendChild(bar);
+      container.appendChild(tick);
+    }
+    return Array.from(container.children);
+  }
+  const ticks = buildProgress(thumbnails.length, progressContainer);
+
+  // запрет drag на картинке
+  mainImg.addEventListener('dragstart', e => e.preventDefault());
+
+  let currentIndex = thumbnails.findIndex(t => t.classList.contains('product-img-active'));
+  if (currentIndex === -1) currentIndex = 0;
+
+  // helper: обновить активные классы миниатюры и тик
+  function updateActiveClasses(idx) {
+    thumbnails.forEach(t => t.classList.remove('product-img-active'));
+    ticks.forEach(t => t.classList.remove('active'));
+    const thumb = thumbnails[idx];
+    if (thumb) thumb.classList.add('product-img-active');
+    if (ticks[idx]) ticks[idx].classList.add('active');
+  }
+
+  // плавное переключение изображения (fade)
+  let switching = false;
+
+  // прокрутим миниатюру внутри контейнера (не document!)
+  function scrollThumbIntoView(thumb) {
+    if (!thumb || !thumbnailsContainer) return;
+    const top = thumb.offsetTop - (thumbnailsContainer.clientHeight - thumb.clientHeight) / 2;
+    thumbnailsContainer.scrollTo({ top, behavior: 'smooth' });
+  }
+
+  function showImage(idx) {
+    idx = ((idx % thumbnails.length) + thumbnails.length) % thumbnails.length;
+    if (idx === currentIndex) return;
+    if (switching) return;
+    switching = true;
+
+    const thumb = thumbnails[idx];
+    const large = thumb.dataset.large || thumb.src;
+
+    mainImg.classList.add('fading');
+    setTimeout(() => {
+      mainImg.src = large;
+      updateActiveClasses(idx);
+      scrollThumbIntoView(thumb);
+
+      requestAnimationFrame(() => {
+        setTimeout(() => {
+          mainImg.classList.remove('fading');
+          currentIndex = idx;
+          switching = false;
+        }, 60);
+      });
+    }, 180);
+  }
+
+  // клик на миниатюре
+  thumbnails.forEach((t, i) => {
+    t.style.cursor = 'pointer';
+    t.addEventListener('click', () => {
+      showImage(i);
+    });
+  });
+
+  // Инициализация: показать начальную миниатюру и активировать тик
+  mainImg.src = thumbnails[currentIndex].dataset.large || thumbnails[currentIndex].src;
+  updateActiveClasses(currentIndex);
+
+  // --- Поведение свайпа / drag: pointer events + десктопная поддержка ---
+  const swipeArea = mainImgContainer;
+  let startX = 0, startY = 0;
+  let isDown = false;
+  let isMousePointer = false;
+  let bodyLocked = false;
+  const SWIPE_THRESHOLD = 40;
+  const MAX_VERTICAL_DELTA = 120;
+
+  // Универсальная блокировка скролла (используем только для touch/pen)
+  let bodyScrollY = 0;
+  function lockBodyScroll() {
+    if (bodyLocked) return;
+    bodyScrollY = window.scrollY || window.pageYOffset || 0;
+    document.body.style.position = 'fixed';
+    document.body.style.top = `-${bodyScrollY}px`;
+    document.body.style.left = '0';
+    document.body.style.right = '0';
+    document.body.style.overflow = 'hidden';
+    document.documentElement.style.overflow = 'hidden';
+    bodyLocked = true;
+  }
+  function unlockBodyScroll() {
+    if (!bodyLocked) return;
+    document.body.style.position = '';
+    document.body.style.top = '';
+    document.body.style.left = '';
+    document.body.style.right = '';
+    document.body.style.overflow = '';
+    document.documentElement.style.overflow = '';
+    window.scrollTo(0, bodyScrollY);
+    bodyScrollY = 0;
+    bodyLocked = false;
+  }
+
+  // предотвращаем вертикальные скроллы/жесты при активном свайпе
+  function preventWhileDown(e) {
+    if (isDown && e.cancelable) {
+      e.preventDefault();
+    }
+  }
+
+  // предотвращение выделения текста на десктопе во время drag
+  function onSelectStart(e) { e.preventDefault(); }
+  function addSelectionLock() { document.addEventListener('selectstart', onSelectStart, true); }
+  function removeSelectionLock() { document.removeEventListener('selectstart', onSelectStart, true); }
+
+  // прокрутка миниатюры (оставляем)
+  function scrollThumbIntoView(thumb) {
+    if (!thumb || !thumbnailsContainer) return;
+    const top = thumb.offsetTop - (thumbnailsContainer.clientHeight - thumb.clientHeight) / 2;
+    thumbnailsContainer.scrollTo({ top, behavior: 'smooth' });
+  }
+
+  // Pointer events
+  swipeArea.addEventListener('pointerdown', (e) => {
+    isDown = true;
+    startX = e.clientX;
+    startY = e.clientY;
+    isMousePointer = (e.pointerType === 'mouse');
+
+    if (isMousePointer) {
+      // Для мыши: не блокируем body (чтобы не ломать поведение страницы),
+      // но запрещаем выделение и меняем курсор
+      addSelectionLock();
+      document.documentElement.style.cursor = 'grabbing';
+      document.body.style.cursor = 'grabbing';
+    } else {
+      // Для touch/pen — блокируем прокрутку страницы (iOS/Android)
+      lockBodyScroll();
+    }
+
+    try { swipeArea.setPointerCapture && swipeArea.setPointerCapture(e.pointerId); } catch (err) {}
+  }, { passive: false });
+
+  swipeArea.addEventListener('pointermove', (e) => {
+    // Общее предотвращение скролла/выделения во время нажатия
+    preventWhileDown(e);
+    // Здесь можно добавить визуальный drag (например, сдвиг картинки), если нужно
+  }, { passive: false });
+
+  swipeArea.addEventListener('pointerup', (e) => {
+    if (!isDown) return;
+    isDown = false;
+
+    if (isMousePointer) {
+      removeSelectionLock();
+      document.documentElement.style.cursor = '';
+      document.body.style.cursor = '';
+    } else {
+      unlockBodyScroll();
+    }
+
+    const dx = e.clientX - startX;
+    const dy = e.clientY - startY;
+    if (Math.abs(dx) > SWIPE_THRESHOLD && Math.abs(dy) < MAX_VERTICAL_DELTA) {
+      if (dx < 0) showImage(currentIndex + 1);
+      else showImage(currentIndex - 1);
+    }
+
+    try { swipeArea.releasePointerCapture && swipeArea.releasePointerCapture(e.pointerId); } catch (err) {}
+  }, { passive: false });
+
+  swipeArea.addEventListener('pointercancel', () => {
+    isDown = false;
+    if (isMousePointer) {
+      removeSelectionLock();
+      document.documentElement.style.cursor = '';
+      document.body.style.cursor = '';
+    } else {
+      unlockBodyScroll();
+    }
+  }, { passive: false });
+
+  // Fallback для старых браузеров: мышь (если pointer events не поддерживаются, всё ещё полезно)
+  if (!window.PointerEvent) {
+    swipeArea.addEventListener('mousedown', (e) => {
+      isDown = true;
+      isMousePointer = true;
+      startX = e.clientX;
+      startY = e.clientY;
+      addSelectionLock();
+      document.documentElement.style.cursor = 'grabbing';
+      document.body.style.cursor = 'grabbing';
+    });
+
+    document.addEventListener('mousemove', (e) => {
+      if (!isDown) return;
+      preventWhileDown(e);
+    });
+
+    document.addEventListener('mouseup', (e) => {
+      if (!isDown) return;
+      isDown = false;
+      removeSelectionLock();
+      document.documentElement.style.cursor = '';
+      document.body.style.cursor = '';
+
+      const dx = e.clientX - startX;
+      const dy = e.clientY - startY;
+      if (Math.abs(dx) > SWIPE_THRESHOLD && Math.abs(dy) < MAX_VERTICAL_DELTA) {
+        if (dx < 0) showImage(currentIndex + 1);
+        else showImage(currentIndex - 1);
+      }
+    });
+  }
+
+  // Touch fallback (в дополнение к pointer events) — для старых устройств
+  swipeArea.addEventListener('touchstart', function (e) {
+    if (e.touches && e.touches[0]) {
+      startX = e.touches[0].clientX;
+      startY = e.touches[0].clientY;
+      isDown = true;
+      isMousePointer = false;
+      lockBodyScroll();
+    }
+  }, { passive: false });
+
+  swipeArea.addEventListener('touchmove', function (e) {
+    preventWhileDown(e);
+  }, { passive: false });
+
+  swipeArea.addEventListener('touchend', function (e) {
+    if (!isDown) return;
+    isDown = false;
+    unlockBodyScroll();
+    const t = (e.changedTouches && e.changedTouches[0]) || null;
+    if (!t) return;
+    const dx = t.clientX - startX;
+    const dy = t.clientY - startY;
+    if (Math.abs(dx) > SWIPE_THRESHOLD && Math.abs(dy) < MAX_VERTICAL_DELTA) {
+      if (dx < 0) showImage(currentIndex + 1);
+      else showImage(currentIndex - 1);
+    }
+  }, { passive: false });
+
+  // Keyboard navigation
+  window.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowRight') showImage(currentIndex + 1);
+    if (e.key === 'ArrowLeft') showImage(currentIndex - 1);
+  });
+
+})();

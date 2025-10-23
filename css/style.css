@@ -11553,6 +11553,13 @@ section {
 .product-miniature-images {
     display: flex;
     flex-direction: column;
+    overflow-y: auto; 
+    -webkit-overflow-scrolling: touch;
+    max-height: 420px; 
+}
+
+.product-main-image {
+  touch-action: pan-x; 
 }
 
 .view-3D {
@@ -11575,15 +11582,74 @@ section {
 }
 
 .product-main-image {
-    padding: 21px 35px;
-    background-color: #f5f5f5;
-    border: 1px solid var(--stroke-gray);
+  position: relative;
+  padding: 21px 35px;
+  background-color: #f5f5f5;
+  border: 1px solid var(--stroke-gray);
+  touch-action: none; /* отключаем встроенную обработку жестов, чтобы управлять сами */
 }
 
 .product-main-image img {
-    width: 408px;
-    height: 375px;
-    object-fit: cover;
+  width: 408px;
+  height: 375px;
+  object-fit: cover;
+  display: block;
+  transition: opacity 260ms ease;
+  opacity: 1;
+  will-change: opacity;
+  user-select: none;
+  -webkit-user-drag: none;
+  pointer-events: none; /* чтобы pointer события обрабатывал контейнер, а не сам <img> */
+}
+
+/* Когда мы подменяем картинку: будем кратко анимировать через класс .fading */
+.product-main-image img.fading {
+  opacity: 0;
+}
+
+/* --- Прогресс-бар (штрих-линии) --- */
+.gallery-progress {
+  position: absolute;
+  left: 12px;
+  right: 12px;
+  bottom: 6px;
+  height: 12px;
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  z-index: 5;
+}
+
+/* Одна "штрих-линия" */
+.gallery-progress .tick {
+  flex: 0 0 auto;
+  width: 14px;    /* длина штриха */
+  height: 3px;    /* толщина линии */
+  background: rgba(0,0,0,0.12);
+  border-radius: 2px;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Внутренний индикатор для анимации прогресса */
+.gallery-progress .tick .bar {
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: 0%;
+  background: var(--red, #d32); /* активный цвет */
+  transition: width 360ms cubic-bezier(.2,.9,.2,1);
+}
+
+/* Активный тик — расширяем bar до 100% */
+.gallery-progress .tick.active .bar {
+  width: 100%;
+}
+
+/* Активный тик внешне сильнее */
+.gallery-progress .tick.active {
+  background: rgba(0,0,0,0.06);
 }
 
 .product-img-active {
