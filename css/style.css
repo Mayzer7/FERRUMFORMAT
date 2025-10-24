@@ -11661,7 +11661,7 @@ section {
   position: relative;
   background-color: #f5f5f5;
   border: 1px solid var(--stroke-gray);
-  touch-action: none; /* отключаем встроенную обработку жестов, чтобы управлять сами */
+  touch-action: none; 
 }
 
 .product-main-image img {
@@ -11674,10 +11674,9 @@ section {
   will-change: opacity;
   user-select: none;
   -webkit-user-drag: none;
-  pointer-events: none; /* чтобы pointer события обрабатывал контейнер, а не сам <img> */
+  pointer-events: none; 
 }
 
-/* Когда мы подменяем картинку: будем кратко анимировать через класс .fading */
 .product-main-image img.fading {
   opacity: 0;
 }
@@ -11697,32 +11696,28 @@ section {
   z-index: 5;
 }
 
-/* Одна "штрих-линия" */
 .gallery-progress .tick {
   flex: 0 0 auto;
-  width: 14px;    /* длина штриха */
-  height: 3px;    /* толщина линии */
+  width: 14px;   
+  height: 3px;   
   background: rgba(0,0,0,0.12);
   border-radius: 2px;
   position: relative;
   overflow: hidden;
 }
 
-/* Внутренний индикатор для анимации прогресса */
 .gallery-progress .tick .bar {
   position: absolute;
   left: 0; top: 0; bottom: 0;
   width: 0%;
-  background: var(--green, red); /* теперь зелёный */
+  background: var(--green, red); 
   transition: width 360ms cubic-bezier(.2,.9,.2,1);
 }
 
-/* Активный тик — расширяем bar до 100% */
 .gallery-progress .tick.active .bar {
   width: 100%;
 }
 
-/* Активный тик внешне сильнее */
 .gallery-progress .tick.active {
   background: rgba(0,0,0,0.06);
 }
@@ -12551,3 +12546,425 @@ section {
 
 
 
+
+
+/* Модальное окно для просмотра товара */
+
+.product-gallery-modal {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1500;
+  background: rgba(17,17,17,0.0); 
+  -webkit-tap-highlight-color: transparent;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none; 
+  transition: opacity 260ms cubic-bezier(.2,.9,.2,1), background-color 260ms cubic-bezier(.2,.9,.2,1), visibility 260ms;
+}
+
+.product-gallery-modal.open {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  background: rgba(17,17,17,0.85);
+}
+
+.product-gallery-modal .modal-inner {
+  transform: translateY(8px) scale(0.995);
+  transition: transform 260ms cubic-bezier(.2,.9,.2,1), box-shadow 260ms;
+  will-change: transform;
+}
+.product-gallery-modal.open .modal-inner {
+  transform: translateY(0) scale(1);
+}
+
+.product-gallery-modal.closing {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  background: rgba(17,17,17,0);
+}
+
+
+.product-gallery-modal .modal-inner {
+  width: 100vw;
+  height: 100vh;
+  min-width: 320px;
+  background: #f5f5f5;
+  position: relative;
+  overflow: hidden;
+  display: grid;
+  grid-template-rows: 56px 1fr auto; 
+  box-shadow: none;
+  border-radius: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.product-gallery-modal .modal-header {
+  height: 56px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:20px;
+  padding: 40px 60px 40px 100px;
+  width:100%;
+  background: transparent;
+  color:var(--black);
+  z-index: 4;
+}
+
+.product-gallery-modal .modal-body {
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding: 18px;
+  box-sizing: border-box;
+  background: #f5f5f5;
+  min-height: 0; 
+  overflow: hidden;
+}
+.product-gallery-modal .modal-img {
+  max-width: 92vw;
+  max-height: calc(100vh - 160px);
+  object-fit: contain;
+  display:block;
+  transition: opacity 220ms ease;
+  user-select: none;
+  -webkit-user-drag: none;
+  pointer-events: none; 
+}
+
+.product-gallery-modal .modal-img.fading { opacity: 0; }
+
+.product-gallery-modal .modal-nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 56px;
+  height: 56px;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  border: 1px solid var(--gray);
+  background-color: #F5F5F5;
+  z-index: 5;
+  transition: all 0.3s ease;
+}
+
+.product-gallery-modal .modal-nav:hover {
+    border: 1px solid var(--black);
+}
+
+.product-gallery-modal .modal-nav.left { 
+    left: 100px; 
+}
+
+.product-gallery-modal .modal-nav.right { 
+    right: 100px; 
+}
+
+.product-gallery-modal .modal-thumbs-wrap {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: 18px;
+  display:flex;
+  align-items:center;
+  gap: 8px;
+  padding: 4px 8px;
+  padding-top: 20px;
+  box-sizing:border-box;
+  z-index: 6;
+  pointer-events: auto;
+}
+
+.product-gallery-modal .thumbs-nav {
+  min-width: 64px;
+  min-height: 64px;
+  border: none;
+  background: transparent;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  flex: 0 0 auto;
+  box-shadow: none;
+  padding: 0;
+  margin: 0;
+}
+
+.product-gallery-modal .thumbs-nav.inactive {
+  opacity: 0.42;
+  pointer-events: none;
+}
+
+.product-gallery-modal .thumbs-nav svg {
+  display: block;
+  width: 64px;
+  height: 64px;
+}
+
+.product-gallery-modal .thumbs-nav svg path.unvisible {
+  transition: fill 160ms ease;
+  fill: #1A1A1A;
+}
+
+.product-gallery-modal .thumbs-nav.inactive svg path.unvisible {
+  fill: #BDBDBD; 
+}
+
+.product-gallery-modal .modal-thumbs {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding: 8px;
+  box-sizing: border-box;
+  align-items: center;
+  justify-content: flex-start;
+  max-width: calc((64px * 7) + (8px * 6));
+  background: transparent;
+  -webkit-overflow-scrolling: touch;
+  scroll-behavior: smooth;
+  
+  scrollbar-width: none;
+  -ms-overflow-style: none; 
+}
+
+.product-gallery-modal .modal-thumbs::-webkit-scrollbar {
+  display: none;
+}
+
+.product-gallery-modal .modal-thumbs img {
+  width:64px;
+  height:64px;
+  object-fit:cover;
+  border:1px solid var(--stroke-gray);
+  cursor:pointer;
+  flex:0 0 auto;
+}
+
+.product-gallery-modal .modal-body .modal-media {
+  width: 100%;
+  height: 100%;
+  min-width: 320px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  box-sizing: border-box;
+}
+
+.product-gallery-modal .modal-body model-viewer,
+.product-gallery-modal .modal-body img.modal-img {
+  display: block;
+  max-width: 92vw;
+  max-height: calc(100vh - 160px);
+  width: 100%;
+  height: 100%;
+  min-width: 320px;
+  aspect-ratio: 16 / 9; 
+  object-fit: contain;
+}
+
+.product-gallery-modal .modal-thumbs-wrap {
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap: 0px;
+  box-sizing:border-box;
+  z-index: 6;
+  pointer-events: auto;
+  position: relative; 
+  background: transparent;
+  width: 100%;
+}
+
+.product-gallery-modal .modal-thumbs {
+  display: flex;
+  gap: 0px;
+  overflow-x: auto;
+  box-sizing: border-box;
+  align-items: center;
+  justify-content: flex-start;
+  max-width: calc((64px * 7) + (8px * 6));
+  -webkit-overflow-scrolling: touch;
+  scroll-behavior: smooth;
+  padding: 0px;
+  margin: 0px;
+}
+
+.product-gallery-modal .modal-thumbs img {
+  width:64px;
+  height:64px;
+  object-fit:cover;
+  border:1px solid var(--stroke-gray);
+  cursor:pointer;
+  flex:0 0 auto;
+  transition: transform .12s ease, outline .12s ease;
+}
+
+.product-gallery-modal .modal-thumbs img.active {
+  border: 1px solid var(--red);
+}
+
+.product-gallery-modal .modal-thumbs::-webkit-scrollbar { display: none; }
+
+.gallery-modal-title {
+    font-family: 'Helvetica Neue Regular', sans-serif;
+    font-weight: normal;
+    font-size: 22px;
+    color: var(--gray);
+}
+
+.modal-close {
+    border: none;
+    background-color: transparent;
+    padding: 0;
+    margin: 0;
+    color: var(--gray);
+    transition: all 0.3s ease;
+}
+
+.modal-close:hover {
+    color: var(--red);
+}
+
+.fab {
+    display: none !important;
+}
+
+.product-gallery-modal {
+  --thumb-size: 64px;
+  --thumb-gap: 0px;     
+  --visible-thumbs: 7;
+}
+
+.product-gallery-modal .modal-thumbs-viewport {
+  overflow: hidden;
+  width: calc((var(--thumb-size) * var(--visible-thumbs)) + (var(--thumb-gap) * (var(--visible-thumbs) - 1)));
+  display: inline-block;
+  box-sizing: content-box;
+}
+
+.product-gallery-modal .modal-thumbs {
+  display: flex;
+  gap: var(--thumb-gap);
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scroll-behavior: smooth;
+  scroll-snap-type: x mandatory; 
+  padding: 0;
+  margin: 0;
+}
+
+.product-gallery-modal .modal-thumbs img {
+  width: var(--thumb-size);
+  height: var(--thumb-size);
+  object-fit: cover;
+  flex: 0 0 auto;
+  scroll-snap-align: start; 
+  box-sizing: border-box;
+  transition: transform .12s ease, outline .12s ease;
+}
+
+/* Адаптив модального окна для просмотра товара */
+
+@media (max-width: 1700px) {
+    .product-gallery-modal .modal-nav.right {
+        right: 70px;
+    }
+
+    .product-gallery-modal .modal-nav.left {
+        left: 70px;
+    }
+
+    .product-gallery-modal .modal-header {
+        padding: 40px 40px 40px 72px;
+    }
+
+    .modal-close {
+        right: 40px;
+    }
+}
+
+@media (max-width: 1350px) {
+    .product-gallery-modal .modal-thumbs img {
+        width: 56px;
+        height: 56px;
+    }
+
+    .product-gallery-modal .thumbs-nav {
+        width: 56px;
+        height: 56px;
+        min-width: 56px;
+        min-height: 56px;
+    }
+
+    .gallery-modal-title {
+        font-size: 20px;
+    }
+
+    .product-gallery-modal .modal-nav.right {
+        right: 34px;
+    }
+
+    .product-gallery-modal .modal-nav.left {
+        left: 34px;
+    }
+
+    .product-gallery-modal {
+        --thumb-size: 56px;    
+        --thumb-gap: 0px;
+    }
+}
+
+@media (max-width: 900px) {
+    .product-gallery-modal .modal-header {
+        padding: 40px 16px 40px 16px;
+    }
+
+    .modal-close {
+        right: 16px;
+    }
+
+    .product-gallery-modal {
+        --thumb-size: 56px;    
+        --thumb-gap: 0px;
+        --visible-thumbs: 4;  
+    }
+
+    .product-gallery-modal .modal-thumbs img {
+        width: var(--thumb-size);
+        height: var(--thumb-size);
+    }
+
+    .product-gallery-modal .modal-thumbs-viewport {
+        width: calc((var(--thumb-size) * var(--visible-thumbs)) + (var(--thumb-gap) * (var(--visible-thumbs) - 1)));
+    }
+}
+
+@media (max-width: 500px) {
+    .product-gallery-modal .modal-nav.right {
+        right: 20px;
+    }
+
+    .product-gallery-modal .modal-nav.left {
+        left: 20px;
+    }
+}
+
+
+@media (max-width: 370px) {
+  .product-gallery-modal {
+    --thumb-size: 56px;  
+    --thumb-gap: 0px;
+    --visible-thumbs: 3;  
+  }
+
+}

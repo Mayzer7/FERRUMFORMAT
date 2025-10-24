@@ -5588,6 +5588,72 @@
             </div>
         </div>
     </div>
+
+    <!-- Модалка просмотра изображений товара -->
+     <div class="product-gallery-modal" role="dialog" aria-modal="true">
+        <div class="modal-inner">
+            <div class="modal-header">
+                <div class="gallery-modal-title">
+                    Почтовый ящик серии «Гарант»
+                </div>
+
+                <button class="modal-close" aria-label="Закрыть">
+                    <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M31.178 11.177L28.8213 8.82031L19.9996 17.642L11.178 8.82031L8.82129 11.177L17.643 19.9986L8.82129 28.8203L11.178 31.177L19.9996 22.3553L28.8213 31.177L31.178 28.8203L22.3563 19.9986L31.178 11.177Z" fill="currentColor"/>
+                    </svg>
+                </button>
+            </div>
+
+            <div class="modal-body">
+            <button class="modal-nav left" aria-label="Previous">
+                <svg width="56" height="56" viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <rect width="56" height="56" fill="#F5F5F5"/>
+                    <path d="M20.7764 19.2227L22.2018 20.6481L15.8588 26.9911H44V29.007H15.8588L22.2018 35.3499L20.7764 36.7753L12 27.999L20.7764 19.2227Z" fill="#D51A1A"/>
+                </svg>
+            </button>
+
+            <div class="modal-media">
+                <img class="modal-img" src="" alt="Фото товара">
+            </div>
+
+            <button class="modal-nav right" aria-label="Next">
+                <svg width="56" height="56" viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <rect width="56" height="56" fill="#F5F5F5"/>
+                    <path d="M35.2236 19.2227L33.7982 20.6481L40.1412 26.9911H12V29.007H40.1412L33.7982 35.3499L35.2236 36.7753L44 27.999L35.2236 19.2227Z" fill="#D51A1A"/>
+                </svg>
+            </button>
+            </div>
+
+            <!-- thumbs -->
+            <div class="modal-thumbs-wrap">
+            <button class="thumbs-nav left" aria-label="thumbs-prev">
+                <svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <mask id="path-1-inside-1_2778_42114" fill="white">
+                    <path d="M0 0H64V64H0V0Z"/>
+                    </mask>
+                    <path d="M0 0H64V64H0V0Z" fill="#F5F5F5"/>
+                    <path d="M0 0V-1H-1V0H0ZM64 0H65V-1H64V0ZM64 64V65H65V64H64ZM0 64H-1V65H0V64ZM0 0V1H64V0V-1H0V0ZM64 0H63V64H64H65V0H64ZM64 64V63H0V64V65H64V64ZM0 64H1V0H0H-1V64H0Z" fill="#D2D2D2" mask="url(#path-1-inside-1_2778_42114)"/>
+                    <path d="M34.6195 38.2089L28.4758 32.6967C28.3757 32.6069 28.296 32.4986 28.2415 32.3784C28.187 32.2582 28.1589 32.1286 28.1589 31.9977C28.1589 31.8667 28.187 31.7371 28.2415 31.6169C28.296 31.4967 28.3757 31.3884 28.4758 31.2986L34.6195 25.7864C35.0812 25.3723 35.8389 25.6842 35.8389 26.2887L35.8389 37.7066C35.8389 38.3111 35.0812 38.623 34.6195 38.2089Z" fill="#1A1A1A"/>
+                </svg>
+            </button>
+
+            <div class="modal-thumbs-viewport">
+                <div class="modal-thumbs" role="list"></div>
+            </div>
+
+            <button class="thumbs-nav right" aria-label="thumbs-next">
+                <svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <mask id="path-1-inside-1_2778_42114" fill="white">
+                    <path d="M0 0H64V64H0V0Z"/>
+                    </mask>
+                    <path d="M0 0H64V64H0V0Z" fill="#F5F5F5"/>
+                    <path d="M0 0V-1H-1V0H0ZM64 0H65V-1H64V0ZM64 64V65H65V64H64ZM0 64H-1V65H0V64ZM0 0V1H64V0V-1H0V0ZM64 0H63V64H64H65V0H64ZM64 64V63H0V64V65H64V64ZM0 64H1V0H0H-1V64H0Z" fill="#D2D2D2" mask="url(#path-1-inside-1_2778_42114)"/>
+                    <path d="M29.3785 38.2089L35.5223 32.6967C35.6223 32.6069 35.7021 32.4986 35.7566 32.3784C35.8111 32.2582 35.8392 32.1286 35.8392 31.9977C35.8392 31.8667 35.8111 31.7371 35.7566 31.6169C35.7021 31.4967 35.6223 31.3884 35.5223 31.2986L29.3785 25.7864C28.9168 25.3723 28.1592 25.6842 28.1592 26.2887L28.1592 37.7066C28.1592 38.3111 28.9168 38.623 29.3785 38.2089Z" fill="#1A1A1A"/>
+                </svg>
+            </button>
+            </div>
+        </div>
+    </div>
         
     <!-- Яндекс карта -->
     <script src="https://api-maps.yandex.ru/2.1/?lang=ru_RU&amp;apikey=6a0a70e3-b1fe-4c23-ab8b-779377082ed2" type="text/javascript"></script>

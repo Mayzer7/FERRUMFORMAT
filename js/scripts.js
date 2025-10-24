@@ -2172,8 +2172,11 @@ if (modelModal) {
       imageEl.addEventListener('pointermove', () => dragging = true);
       imageEl.addEventListener('pointerup', () => setTimeout(()=> dragging = false, 50));
     });
+    
   })();
 }
+
+
 
 
 // Меню бургера
@@ -3691,49 +3694,49 @@ if (shareModal) {
 }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 // Переключение фотографий карточки товара
 
-
 (function () {
-  // root содержит кнопки и прокручиваемую зону
   const root = document.querySelector('.product-miniature-images');
   if (!root) return;
-
   const thumbnailsContainer = root.querySelector('.thumbs-scroll-area');
   if (!thumbnailsContainer) return;
 
-  const thumbnails = Array.from(thumbnailsContainer.querySelectorAll('img'));
+  const thumbnails = Array.from(thumbnailsContainer.children).filter(el => {
+    const tag = el.tagName && el.tagName.toLowerCase();
+    return tag === 'img' || el.classList.contains('view-3D');
+  });
+
   const topBtn = root.querySelector('.top-btn');
   const bottomBtn = root.querySelector('.bottom-btn');
-
   const mainImgContainer = document.querySelector('.product-main-image');
   const mainImg = mainImgContainer && mainImgContainer.querySelector('img');
   const progressContainer = mainImgContainer && mainImgContainer.querySelector('.gallery-progress');
-
   if (!mainImg || thumbnails.length === 0 || !progressContainer) return;
 
+  function is3DItem(item) {
+    return item && item.classList && item.classList.contains('view-3D');
+  }
+  function getItemThumbSrc(item) {
+    if (is3DItem(item)) {
+      const b = item.querySelector('.banner-3D');
+      return (b && b.src) || (b && b.getAttribute('src')) || 'images/3D.svg';
+    } else {
+      return item.dataset && (item.dataset.thumb || item.dataset.large) || item.src;
+    }
+  }
+  function getItemLargeSrc(item) {
+    if (is3DItem(item)) {
+      const b = item.querySelector('.banner-3D');
+      return (b && b.src) || item.dataset && (item.dataset.large) || item.src || 'images/3D.svg';
+    } else {
+      return item.dataset && (item.dataset.large) || item.src;
+    }
+  }
+  function getItemModelPath(item) {
+    return is3DItem(item) ? (item.dataset && item.dataset.model) : null;
+  }
 
-  
-  // --- progress ticks ---
   function buildProgress(n, container) {
     container.innerHTML = '';
     for (let i = 0; i < n; i++) {
@@ -3748,91 +3751,65 @@ if (shareModal) {
   }
   const ticks = buildProgress(thumbnails.length, progressContainer);
 
-  // запрет drag на картинке
   mainImg.addEventListener('dragstart', e => e.preventDefault());
 
-  let currentIndex = thumbnails.findIndex(t => t.classList.contains('product-img-active'));
+  let currentIndex = thumbnails.findIndex(t => t.classList && t.classList.contains('product-img-active'));
   if (currentIndex === -1) currentIndex = 0;
 
   function updateActiveClasses(idx) {
-    thumbnails.forEach(t => t.classList.remove('product-img-active'));
+    thumbnails.forEach(t => t.classList && t.classList.remove('product-img-active'));
     ticks.forEach(t => t.classList.remove('active'));
     const thumb = thumbnails[idx];
     if (thumb) thumb.classList.add('product-img-active');
     if (ticks[idx]) ticks[idx].classList.add('active');
   }
 
-  // ---- helper для размеров ----
   function getThumbGap() {
-    // Попробуем найти gap/row-gap, иначе 0
     const cs = getComputedStyle(thumbnailsContainer);
     return parseFloat(cs.rowGap || cs.gap || 0) || 0;
   }
-
-  // шаг прокрутки — ровно 4 миниатюры (учитываем gap)
   function getScrollStep() {
     const thumb = thumbnails[0];
     if (!thumb) return 0;
     return Math.round((thumb.clientHeight + getThumbGap()) * 4);
   }
-
-  // безопасный scrollTo (в границах)
   function safeScrollTo(targetTop) {
     const max = thumbnailsContainer.scrollHeight - thumbnailsContainer.clientHeight;
     const t = Math.max(0, Math.min(max, Math.round(targetTop)));
     thumbnailsContainer.scrollTo({ top: t, behavior: 'smooth' });
   }
-
-  // --- скроллим так, чтобы миниатюра была видна и не попадала под кнопки ---
   function scrollThumbIntoView(thumb) {
     if (!thumb || !thumbnailsContainer) return;
-
-    // текущие scrollTop и размеры
     const scrollTop = thumbnailsContainer.scrollTop;
     const containerH = thumbnailsContainer.clientHeight;
     const thumbTop = thumb.offsetTop;
     const thumbH = thumb.clientHeight;
-
-    // высоты кнопок (они находятся вне thumbnailsContainer, поэтому берем их из root)
     const topBtnEl = topBtn;
     const bottomBtnEl = bottomBtn;
     const topBtnH = topBtnEl ? topBtnEl.getBoundingClientRect().height : 0;
     const bottomBtnH = bottomBtnEl ? bottomBtnEl.getBoundingClientRect().height : 0;
-
-    // доступная видимая зона внутри контейнера (без перекрытия кнопками)
     const visibleTop = scrollTop + topBtnH;
     const visibleBottom = scrollTop + containerH - bottomBtnH;
-
-    // если миниатюра выше видимой зоны — прокрутить вверх так, чтобы она была под topBtn
     if (thumbTop < visibleTop) {
       safeScrollTo(thumbTop - topBtnH - 4);
-    }
-    // если миниатюра ниже видимой зоны — прокрутить вниз так, чтобы она была над bottomBtn
-    else if (thumbTop + thumbH > visibleBottom) {
+    } else if (thumbTop + thumbH > visibleBottom) {
       safeScrollTo(thumbTop + thumbH - containerH + bottomBtnH + 4);
     }
-    // иначе уже видна — ничего не делаем
   }
 
-  // плавное переключение изображения (fade)
   let switching = false;
   function showImage(idx) {
     idx = ((idx % thumbnails.length) + thumbnails.length) % thumbnails.length;
     if (idx === currentIndex) return;
     if (switching) return;
     switching = true;
-
     const thumb = thumbnails[idx];
-    const large = thumb.dataset.large || thumb.src;
-
+    const large = getItemLargeSrc(thumb);
     mainImg.classList.add('fading');
     setTimeout(() => {
       mainImg.src = large;
       updateActiveClasses(idx);
-      // делаем безопасный центр/видимость миниатюры
       scrollThumbIntoView(thumb);
-
-      // завершаем анимацию
       requestAnimationFrame(() => {
         setTimeout(() => {
           mainImg.classList.remove('fading');
@@ -3843,7 +3820,6 @@ if (shareModal) {
     }, 180);
   }
 
-  // клик на миниатюре
   thumbnails.forEach((t, i) => {
     t.style.cursor = 'pointer';
     t.addEventListener('click', () => {
@@ -3851,13 +3827,10 @@ if (shareModal) {
     });
   });
 
-  // инициализация
-  mainImg.src = thumbnails[currentIndex].dataset.large || thumbnails[currentIndex].src;
+  mainImg.src = getItemLargeSrc(thumbnails[currentIndex]);
   updateActiveClasses(currentIndex);
-  // убедимся, что активная миниатюра видна при загрузке
   setTimeout(() => scrollThumbIntoView(thumbnails[currentIndex]), 100);
 
-  // --- свайп/drag для большого изображения (как было) ---
   const swipeArea = mainImgContainer;
   let startX = 0, startY = 0;
   let isDown = false;
@@ -3871,7 +3844,7 @@ if (shareModal) {
     if (bodyLocked) return;
     bodyScrollY = window.scrollY || window.pageYOffset || 0;
     document.body.style.position = 'fixed';
-    document.body.style.top = `-${bodyScrollY}px`;
+    document.body.style.top = -bodyScrollY + 'px';
     document.body.style.left = '0';
     document.body.style.right = '0';
     document.body.style.overflow = 'hidden';
@@ -3890,22 +3863,22 @@ if (shareModal) {
     bodyScrollY = 0;
     bodyLocked = false;
   }
-
-  function preventWhileDown(e) {
-    if (isDown && e.cancelable) e.preventDefault();
-  }
-
+  function preventWhileDown(e) { if (isDown && e.cancelable) e.preventDefault(); }
   function onSelectStart(e) { e.preventDefault(); }
   function addSelectionLock() { document.addEventListener('selectstart', onSelectStart, true); }
   function removeSelectionLock() { document.removeEventListener('selectstart', onSelectStart, true); }
 
-  // pointer events
+  function isModalOpen() {
+    const m = document.querySelector('.product-gallery-modal');
+    return m && m.classList.contains('open');
+  }
+
   swipeArea.addEventListener('pointerdown', (e) => {
+    if (isModalOpen()) return;
     isDown = true;
     startX = e.clientX;
     startY = e.clientY;
     isMousePointer = (e.pointerType === 'mouse');
-
     if (isMousePointer) {
       addSelectionLock();
       document.documentElement.style.cursor = 'grabbing';
@@ -3913,167 +3886,385 @@ if (shareModal) {
     } else {
       lockBodyScroll();
     }
-
     try { swipeArea.setPointerCapture && swipeArea.setPointerCapture(e.pointerId); } catch (err) {}
   }, { passive: false });
 
-  swipeArea.addEventListener('pointermove', (e) => {
-    preventWhileDown(e);
-  }, { passive: false });
+  swipeArea.addEventListener('pointermove', (e) => { preventWhileDown(e); }, { passive: false });
 
   swipeArea.addEventListener('pointerup', (e) => {
     if (!isDown) return;
     isDown = false;
-
-    if (isMousePointer) {
-      removeSelectionLock();
-      document.documentElement.style.cursor = '';
-      document.body.style.cursor = '';
-    } else {
-      unlockBodyScroll();
-    }
-
+    if (isMousePointer) { removeSelectionLock(); document.documentElement.style.cursor = ''; document.body.style.cursor = ''; } else { unlockBodyScroll(); }
     const dx = e.clientX - startX;
     const dy = e.clientY - startY;
     if (Math.abs(dx) > SWIPE_THRESHOLD && Math.abs(dy) < MAX_VERTICAL_DELTA) {
-      if (dx < 0) showImage(currentIndex + 1);
-      else showImage(currentIndex - 1);
+      if (dx < 0) showImage(currentIndex + 1); else showImage(currentIndex - 1);
     }
-
     try { swipeArea.releasePointerCapture && swipeArea.releasePointerCapture(e.pointerId); } catch (err) {}
   }, { passive: false });
 
   swipeArea.addEventListener('pointercancel', () => {
     isDown = false;
-    if (isMousePointer) {
-      removeSelectionLock();
-      document.documentElement.style.cursor = '';
-      document.body.style.cursor = '';
-    } else {
-      unlockBodyScroll();
-    }
+    if (isMousePointer) { removeSelectionLock(); document.documentElement.style.cursor = ''; document.body.style.cursor = ''; } else { unlockBodyScroll(); }
   }, { passive: false });
 
-  // fallbacks for old browsers (mouse/touch)
   if (!window.PointerEvent) {
     swipeArea.addEventListener('mousedown', (e) => {
-      isDown = true;
-      isMousePointer = true;
-      startX = e.clientX;
-      startY = e.clientY;
-      addSelectionLock();
-      document.documentElement.style.cursor = 'grabbing';
-      document.body.style.cursor = 'grabbing';
+      if (isModalOpen()) return;
+      isDown = true; isMousePointer = true; startX = e.clientX; startY = e.clientY; addSelectionLock();
+      document.documentElement.style.cursor = 'grabbing'; document.body.style.cursor = 'grabbing';
     });
-
-    document.addEventListener('mousemove', (e) => {
-      if (!isDown) return;
-      preventWhileDown(e);
-    });
-
+    document.addEventListener('mousemove', (e) => { if (!isDown) return; preventWhileDown(e); });
     document.addEventListener('mouseup', (e) => {
-      if (!isDown) return;
-      isDown = false;
-      removeSelectionLock();
-      document.documentElement.style.cursor = '';
-      document.body.style.cursor = '';
-
-      const dx = e.clientX - startX;
-      const dy = e.clientY - startY;
+      if (!isDown) return; isDown = false; removeSelectionLock(); document.documentElement.style.cursor = ''; document.body.style.cursor = '';
+      const dx = e.clientX - startX; const dy = e.clientY - startY;
       if (Math.abs(dx) > SWIPE_THRESHOLD && Math.abs(dy) < MAX_VERTICAL_DELTA) {
-        if (dx < 0) showImage(currentIndex + 1);
-        else showImage(currentIndex - 1);
+        if (dx < 0) showImage(currentIndex + 1); else showImage(currentIndex - 1);
       }
     });
   }
 
   swipeArea.addEventListener('touchstart', function (e) {
+    if (isModalOpen()) return;
     if (e.touches && e.touches[0]) {
-      startX = e.touches[0].clientX;
-      startY = e.touches[0].clientY;
-      isDown = true;
-      isMousePointer = false;
-      lockBodyScroll();
+      startX = e.touches[0].clientX; startY = e.touches[0].clientY; isDown = true; isMousePointer = false; lockBodyScroll();
     }
   }, { passive: false });
 
-  swipeArea.addEventListener('touchmove', function (e) {
-    preventWhileDown(e);
-  }, { passive: false });
-
+  swipeArea.addEventListener('touchmove', function (e) { preventWhileDown(e); }, { passive: false });
   swipeArea.addEventListener('touchend', function (e) {
-    if (!isDown) return;
-    isDown = false;
-    unlockBodyScroll();
+    if (!isDown) return; isDown = false; unlockBodyScroll();
     const t = (e.changedTouches && e.changedTouches[0]) || null;
     if (!t) return;
-    const dx = t.clientX - startX;
-    const dy = t.clientY - startY;
+    const dx = t.clientX - startX; const dy = t.clientY - startY;
     if (Math.abs(dx) > SWIPE_THRESHOLD && Math.abs(dy) < MAX_VERTICAL_DELTA) {
-      if (dx < 0) showImage(currentIndex + 1);
-      else showImage(currentIndex - 1);
+      if (dx < 0) showImage(currentIndex + 1); else showImage(currentIndex - 1);
     }
   }, { passive: false });
 
-  // keyboard
   window.addEventListener('keydown', (e) => {
+    if (isModalOpen()) return;
     if (e.key === 'ArrowRight') showImage(currentIndex + 1);
     if (e.key === 'ArrowLeft') showImage(currentIndex - 1);
   });
 
-  // --- кнопки прокрутки: scroll по 4 миниатюры ---
   if (topBtn) {
-    topBtn.addEventListener('click', (e) => {
-      e.preventDefault();
-      const step = getScrollStep();
-      safeScrollTo(thumbnailsContainer.scrollTop - step);
-    });
+    topBtn.addEventListener('click', (e) => { e.preventDefault(); const step = getScrollStep(); safeScrollTo(thumbnailsContainer.scrollTop - step); });
   }
   if (bottomBtn) {
-    bottomBtn.addEventListener('click', (e) => {
-      e.preventDefault();
-      const step = getScrollStep();
-      safeScrollTo(thumbnailsContainer.scrollTop + step);
-    });
+    bottomBtn.addEventListener('click', (e) => { e.preventDefault(); const step = getScrollStep(); safeScrollTo(thumbnailsContainer.scrollTop + step); });
   }
 
-  // --- обновление видимости/состояния кнопок ---
   function updateButtonsVisibility() {
     if (!topBtn || !bottomBtn) return;
-
     const maxScroll = thumbnailsContainer.scrollHeight - thumbnailsContainer.clientHeight;
     const atTop = thumbnailsContainer.scrollTop <= 1;
     const atBottom = thumbnailsContainer.scrollTop >= maxScroll - 1;
-
     const topArrow = topBtn.querySelector('path.unvisible');
     const bottomArrow = bottomBtn.querySelector('path.unvisible');
     const activeColor = '#1A1A1A';
     const inactiveColor = '#BDBDBD';
-
-    // Меняем активность стрелок
     topBtn.classList.toggle('inactive', atTop);
     bottomBtn.classList.toggle('inactive', atBottom);
-
     if (topArrow) topArrow.setAttribute('fill', atTop ? inactiveColor : activeColor);
     if (bottomArrow) bottomArrow.setAttribute('fill', atBottom ? inactiveColor : activeColor);
-
-    // Проверяем, нужно ли вообще скроллить
     const totalBtnsHeight = (topBtn?.offsetHeight || 0) + (bottomBtn?.offsetHeight || 0);
     const needScroll = thumbnailsContainer.scrollHeight > thumbnailsContainer.clientHeight + totalBtnsHeight - 2;
-
-    // Показываем или скрываем стрелки
     topBtn.style.display = needScroll ? 'block' : 'none';
     bottomBtn.style.display = needScroll ? 'block' : 'none';
-
-    // --- Управляем прогресс-баром ---
-    if (progressContainer) {
-      progressContainer.style.display = needScroll ? 'flex' : 'none';
-    }
+    if (progressContainer) { progressContainer.style.display = needScroll ? 'flex' : 'none'; }
   }
-
-
   thumbnailsContainer.addEventListener('scroll', updateButtonsVisibility, { passive: true });
   window.addEventListener('resize', updateButtonsVisibility);
   updateButtonsVisibility();
-  
+
+  (function () {
+    const VISIBLE_THUMBS = 7;
+    let modal = null;
+    let modalIndex = (typeof currentIndex !== 'undefined' ? currentIndex : 0) || 0;
+    let modalSwitching = false;
+    let modelViewerScriptLoaded = false;
+
+    function ensureModelViewerScript() {
+      if (window.customElements && window.customElements.get && window.customElements.get('model-viewer')) {
+        return Promise.resolve();
+      }
+
+      if (window._modelViewerPromise) {
+        return window._modelViewerPromise;
+      }
+
+      const existing = Array.from(document.querySelectorAll('script[type="module"]'))
+        .find(s => {
+          const src = s.getAttribute('src') || '';
+          return src.includes('model-viewer') || src.includes('@google/model-viewer');
+        });
+
+      if (existing) {
+        window._modelViewerPromise = new Promise((resolve, reject) => {
+          if (existing.__modelViewerLoaded) {
+            if (window.customElements && customElements.whenDefined) {
+              customElements.whenDefined('model-viewer').then(() => resolve()).catch(reject);
+            } else {
+              setTimeout(resolve, 50);
+            }
+            return;
+          }
+
+          existing.addEventListener('load', () => {
+            if (window.customElements && customElements.whenDefined) {
+              customElements.whenDefined('model-viewer').then(() => {
+                existing.__modelViewerLoaded = true;
+                resolve();
+              }).catch(reject);
+            } else {
+              existing.__modelViewerLoaded = true;
+              setTimeout(resolve, 50);
+            }
+          });
+          existing.addEventListener('error', (e) => reject(e));
+        });
+        return window._modelViewerPromise;
+      }
+
+      window._modelViewerPromise = new Promise((resolve, reject) => {
+        try {
+          const script = document.createElement('script');
+          script.type = 'module';
+          script.src = 'js/libs/model-viewer.min.js';
+          script.addEventListener('load', () => {
+            if (window.customElements && customElements.whenDefined) {
+              customElements.whenDefined('model-viewer').then(() => resolve()).catch(reject);
+            } else {
+              setTimeout(resolve, 50);
+            }
+          });
+          script.addEventListener('error', (e) => reject(e));
+          document.head.appendChild(script);
+        } catch (err) {
+          reject(err);
+        }
+      });
+
+      return window._modelViewerPromise;
+    }
+
+    function createModal() {
+      if (modal) return modal;
+      modal = document.querySelector('.product-gallery-modal');
+      if (!modal) {
+        console.error('Modal HTML not found in document!');
+        return null;
+      }
+
+      const closeBtn = modal.querySelector('.modal-close');
+      const leftBtn = modal.querySelector('.modal-nav.left');
+      const rightBtn = modal.querySelector('.modal-nav.right');
+      const modalMediaWrap = modal.querySelector('.modal-media');
+      const imgEl = modalMediaWrap.querySelector('.modal-img');
+      const thumbsEl = modal.querySelector('.modal-thumbs');
+      const thumbsPrev = modal.querySelector('.thumbs-nav.left');
+      const thumbsNext = modal.querySelector('.thumbs-nav.right');
+
+      function rebuildThumbs() {
+        thumbsEl.innerHTML = '';
+        const srcList = thumbnails;
+        srcList.forEach((t, i) => {
+          const thumbImg = document.createElement('img');
+          thumbImg.src = getItemThumbSrc(t);
+          thumbImg.dataset.idx = i;
+          thumbImg.alt = t.alt || '';
+          thumbImg.addEventListener('click', (ev) => {
+            ev.stopPropagation();
+            modalShowImage(i);
+            try { thumbImg.scrollIntoView({ inline: 'center', block: 'nearest', behavior: 'smooth' }); } catch (e) {}
+          });
+          thumbsEl.appendChild(thumbImg);
+        });
+        updateThumbsNavVisibility();
+        updateThumbsActive();
+      }
+
+      function getThumbMetrics() {
+        const first = thumbsEl.querySelector('img');
+        const cs = getComputedStyle(thumbsEl);
+        const gap = parseFloat(cs.gap || cs.columnGap || 8) || 8;
+        const thumbW = first ? Math.round(first.getBoundingClientRect().width) : 64;
+        return { thumbW, gap };
+      }
+      function getScrollStep() {
+        const { thumbW, gap } = getThumbMetrics();
+        const visible = Math.min(VISIBLE_THUMBS, thumbnails.length);
+        return Math.round((thumbW + gap) * visible);
+      }
+
+      function renderModalMediaForIndex(idx) {
+        const item = thumbnails[idx];
+        if (!item) {
+          modalMediaWrap.innerHTML = '<img class="modal-img" src="" alt="Фото товара">';
+          return;
+        }
+        if (is3DItem(item)) {
+          const modelPath = getItemModelPath(item) || '';
+          const poster = getItemThumbSrc(item) || 'images/3D.svg';
+
+          modalMediaWrap.innerHTML = '';
+          const mv = document.createElement('model-viewer');
+          mv.tabIndex = 0;
+          if (modelPath) mv.setAttribute('src', encodeURI(modelPath));
+          mv.setAttribute('alt', '3D модель');
+          mv.setAttribute('camera-controls', '');
+          mv.setAttribute('interaction-prompt', 'auto');
+          mv.style.maxWidth = '92vw';
+          mv.style.maxHeight = 'calc(100vh - 160px)';
+          mv.style.aspectRatio = '16/9';
+          mv.style.display = 'block';
+
+          modalMediaWrap.appendChild(mv);
+
+          ensureModelViewerScript()
+            .then(() => {
+              let loaded = false;
+              const cleanup = () => {
+                mv.removeEventListener('load', onLoad);
+                mv.removeEventListener('error', onError);
+                clearTimeout(fallbackTimer);
+              };
+              function onLoad() {
+                loaded = true;
+                cleanup();
+              }
+              function onError() {
+                cleanup();
+                const img = document.createElement('img');
+                img.className = 'modal-img';
+                img.src = poster;
+                img.alt = '3D модель (заглушка)';
+                modalMediaWrap.innerHTML = '';
+                modalMediaWrap.appendChild(img);
+              }
+
+              mv.addEventListener('load', onLoad, { once: true });
+              mv.addEventListener('error', onError, { once: true });
+
+              const fallbackTimer = setTimeout(() => {
+                if (!loaded) onError();
+              }, 5000);
+            })
+            .catch(() => {
+              modalMediaWrap.innerHTML = `<img class="modal-img" src="${poster}" alt="3D модель (заглушка)">`;
+            });
+
+        } else {
+          const src = getItemLargeSrc(item) || '';
+          modalMediaWrap.innerHTML = `<img class="modal-img" src="${src}" alt="${item.alt || 'Фото товара'}">`;
+        }
+      }
+
+      function modalShowImage(idx) {
+        if (modalSwitching) return;
+        modalSwitching = true;
+        const total = thumbnails.length;
+        if (total === 0) { modalSwitching = false; return; }
+        idx = ((idx % total) + total) % total;
+        modalIndex = idx;
+        const currentMedia = modalMediaWrap.firstElementChild;
+        if (currentMedia) currentMedia.classList && currentMedia.classList.add('fading');
+        setTimeout(() => {
+          renderModalMediaForIndex(idx);
+          updateThumbsActive();
+          try { thumbsEl.children[idx] && thumbsEl.children[idx].scrollIntoView({ inline: 'center', block: 'nearest', behavior: 'smooth' }); } catch (e) {}
+          requestAnimationFrame(() => {
+            setTimeout(() => {
+              const newMedia = modalMediaWrap.firstElementChild;
+              if (newMedia) newMedia.classList && newMedia.classList.remove('fading');
+              modalSwitching = false;
+              updateThumbsNavVisibility();
+            }, 60);
+          });
+        }, 140);
+      }
+
+      function updateThumbsActive() {
+        Array.from(thumbsEl.querySelectorAll('img')).forEach((im, j) => {
+          im.classList.toggle('active', j === modalIndex);
+        });
+      }
+
+      function safeScrollBy(dx) {
+        const max = thumbsEl.scrollWidth - thumbsEl.clientWidth;
+        let t = Math.round(thumbsEl.scrollLeft + dx);
+        t = Math.max(0, Math.min(max, t));
+        thumbsEl.scrollTo({ left: t, behavior: 'smooth' });
+        setTimeout(updateThumbsNavVisibility, 260);
+      }
+
+      thumbsPrev.addEventListener('click', (e) => { e.stopPropagation(); safeScrollBy(-getScrollStep()); });
+      thumbsNext.addEventListener('click', (e) => { e.stopPropagation(); safeScrollBy(getScrollStep()); });
+
+      leftBtn.addEventListener('click', (e) => { e.stopPropagation(); modalShowImage(modalIndex - 1); });
+      rightBtn.addEventListener('click', (e) => { e.stopPropagation(); modalShowImage(modalIndex + 1); });
+
+      function closeHandler() { closeModal(); }
+      closeBtn.addEventListener('click', closeHandler);
+      modal.addEventListener('click', (e) => { if (e.target === modal) closeHandler(); });
+
+      function onKey(e) {
+        if (!modal.classList.contains('open')) return;
+        if (e.key === 'Escape') closeModal();
+        if (e.key === 'ArrowLeft') modalShowImage(modalIndex - 1);
+        if (e.key === 'ArrowRight') modalShowImage(modalIndex + 1);
+      }
+      window.addEventListener('keydown', onKey);
+
+      function updateThumbsNavVisibility() {
+        const total = thumbnails.length;
+        if (total <= VISIBLE_THUMBS) {
+          thumbsPrev.style.display = 'none'; thumbsNext.style.display = 'none'; return;
+        } else { thumbsPrev.style.display = ''; thumbsNext.style.display = ''; }
+        const maxScroll = thumbsEl.scrollWidth - thumbsEl.clientWidth;
+        const atStart = thumbsEl.scrollLeft <= 1;
+        const atEnd = thumbsEl.scrollLeft >= maxScroll - 1;
+        thumbsPrev.classList.toggle('inactive', atStart);
+        thumbsNext.classList.toggle('inactive', atEnd);
+      }
+      thumbsEl.addEventListener('scroll', () => { updateThumbsNavVisibility(); }, { passive: true });
+      window.addEventListener('resize', () => { updateThumbsNavVisibility(); });
+
+      modal._modalShowImage = modalShowImage;
+      modal._rebuildThumbs = rebuildThumbs;
+
+      return modal;
+    } 
+
+    function openModal(idx) {
+      const total = thumbnails.length;
+      if (total === 0) return;
+      modalIndex = (typeof idx === 'number' ? idx : (typeof currentIndex !== 'undefined' ? currentIndex : 0)) || 0;
+      const m = createModal();
+      m.classList.add('open');
+      if (typeof lockBodyScroll === 'function') lockBodyScroll();
+      m._rebuildThumbs && m._rebuildThumbs();
+      m._modalShowImage && m._modalShowImage(modalIndex);
+      setTimeout(() => {
+        try { m.querySelector('.modal-thumbs').dispatchEvent(new Event('scroll')); } catch (e) {}
+      }, 120);
+    }
+
+    function closeModal() {
+      if (!modal) return;
+      modal.classList.remove('open');
+      if (typeof unlockBodyScroll === 'function') unlockBodyScroll();
+    }
+
+    if (typeof mainImgContainer !== 'undefined' && mainImgContainer) {
+      mainImgContainer.style.cursor = 'zoom-in';
+      mainImgContainer.addEventListener('click', (e) => {
+        openModal(typeof currentIndex !== 'undefined' ? currentIndex : 0);
+      });
+    }
+
+    window.__productGalleryModal = { open: openModal, close: closeModal };
+  })();
+
 })();
