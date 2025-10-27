@@ -3721,7 +3721,7 @@ if (shareModal) {
 
   const thumbnails = Array.from(thumbnailsContainer.children).filter(el => {
     const tag = el.tagName && el.tagName.toLowerCase();
-    return tag === 'img' || el.classList.contains('view-3D');
+    return tag === 'img' || (el.classList && el.classList.contains('view-3D'));
   });
 
   const topBtn = root.querySelector('.top-btn');
@@ -3735,23 +3735,25 @@ if (shareModal) {
     return item && item.classList && item.classList.contains('view-3D');
   }
   function getItemThumbSrc(item) {
+    if (!item) return '';
     if (is3DItem(item)) {
       const b = item.querySelector('.banner-3D');
-      return (b && b.src) || (b && b.getAttribute('src')) || 'images/3D.svg';
+      return (b && (b.src || b.getAttribute('src'))) || (item.dataset && item.dataset.thumb) || 'images/3D.svg';
     } else {
-      return item.dataset && (item.dataset.thumb || item.dataset.large) || item.src;
+      return item.dataset && (item.dataset.thumb || item.dataset.large) || item.src || '';
     }
   }
   function getItemLargeSrc(item) {
+    if (!item) return '';
     if (is3DItem(item)) {
       const b = item.querySelector('.banner-3D');
-      return (b && b.src) || item.dataset && (item.dataset.large) || item.src || 'images/3D.svg';
+      return (item.dataset && item.dataset.large) || (b && (b.src || b.getAttribute('src'))) || item.src || 'images/3D.svg';
     } else {
-      return item.dataset && (item.dataset.large) || item.src;
+      return item.dataset && (item.dataset.large) || item.src || '';
     }
   }
   function getItemModelPath(item) {
-    return is3DItem(item) ? (item.dataset && item.dataset.model) : null;
+    return is3DItem(item) ? (item.dataset && item.dataset.model || null) : null;
   }
 
   function buildProgress(n, container) {
@@ -3783,20 +3785,17 @@ if (shareModal) {
         t.classList.remove('product-img-active');
       }
     });
-
     ticks.forEach(t => t.classList.remove('active'));
 
     const thumb = thumbnails[idx];
     if (!thumb) return;
-
     if (is3DItem(thumb)) {
       const b = thumb.querySelector('.banner-3D');
       if (b) b.classList.add('product-img-active');
-      else thumb.classList.add('product-img-active'); 
+      else thumb.classList.add('product-img-active');
     } else {
       thumb.classList.add('product-img-active');
     }
-
     if (ticks[idx]) ticks[idx].classList.add('active');
   }
 
@@ -3820,10 +3819,8 @@ if (shareModal) {
     const containerH = thumbnailsContainer.clientHeight;
     const thumbTop = thumb.offsetTop;
     const thumbH = thumb.clientHeight;
-    const topBtnEl = topBtn;
-    const bottomBtnEl = bottomBtn;
-    const topBtnH = topBtnEl ? topBtnEl.getBoundingClientRect().height : 0;
-    const bottomBtnH = bottomBtnEl ? bottomBtnEl.getBoundingClientRect().height : 0;
+    const topBtnH = topBtn ? topBtn.getBoundingClientRect().height : 0;
+    const bottomBtnH = bottomBtn ? bottomBtn.getBoundingClientRect().height : 0;
     const visibleTop = scrollTop + topBtnH;
     const visibleBottom = scrollTop + containerH - bottomBtnH;
     if (thumbTop < visibleTop) {
@@ -3835,6 +3832,7 @@ if (shareModal) {
 
   let switching = false;
   function showImage(idx) {
+    if (thumbnails.length === 0) return;
     idx = ((idx % thumbnails.length) + thumbnails.length) % thumbnails.length;
     if (idx === currentIndex) return;
     if (switching) return;
@@ -3858,7 +3856,8 @@ if (shareModal) {
 
   thumbnails.forEach((t, i) => {
     t.style.cursor = 'pointer';
-    t.addEventListener('click', () => {
+    t.addEventListener('click', (ev) => {
+      ev.stopPropagation();
       showImage(i);
     });
   });
@@ -3868,118 +3867,87 @@ if (shareModal) {
   setTimeout(() => scrollThumbIntoView(thumbnails[currentIndex]), 100);
 
   const swipeArea = mainImgContainer;
-  let startX = 0, startY = 0;
-  let isDown = false;
-  let isMousePointer = false;
-  let bodyLocked = false;
+  const HORIZONTAL_DETECT_THRESHOLD = 8; 
   const SWIPE_THRESHOLD = 40;
   const MAX_VERTICAL_DELTA = 120;
-  let bodyScrollY = 0;
+  let startX = 0, startY = 0;
+  let isDown = false;
+  let maybeSwiping = false;
+  let isSwiping = false;
 
-  function lockBodyScroll() {
-    if (bodyLocked) return;
-    bodyScrollY = window.scrollY || window.pageYOffset || 0;
-    document.body.style.position = 'fixed';
-    document.body.style.top = -bodyScrollY + 'px';
-    document.body.style.left = '0';
-    document.body.style.right = '0';
-    document.body.style.overflow = 'hidden';
-    document.documentElement.style.overflow = 'hidden';
-    bodyLocked = true;
+  function resetTouch() {
+    isDown = false; maybeSwiping = false; isSwiping = false;
   }
-  function unlockBodyScroll() {
-    if (!bodyLocked) return;
-    document.body.style.position = '';
-    document.body.style.top = '';
-    document.body.style.left = '';
-    document.body.style.right = '';
-    document.body.style.overflow = '';
-    document.documentElement.style.overflow = '';
-    window.scrollTo(0, bodyScrollY);
-    bodyScrollY = 0;
-    bodyLocked = false;
-  }
-  function preventWhileDown(e) { if (isDown && e.cancelable) e.preventDefault(); }
-  function onSelectStart(e) { e.preventDefault(); }
-  function addSelectionLock() { document.addEventListener('selectstart', onSelectStart, true); }
-  function removeSelectionLock() { document.removeEventListener('selectstart', onSelectStart, true); }
 
-  function isModalOpen() {
-    const m = document.querySelector('.product-gallery-modal');
-    return m && m.classList.contains('open');
+  function decideIfSwiping(dx, dy) {
+    if (maybeSwiping) return;
+    if (Math.abs(dx) > HORIZONTAL_DETECT_THRESHOLD || Math.abs(dy) > HORIZONTAL_DETECT_THRESHOLD) {
+      maybeSwiping = true;
+      isSwiping = Math.abs(dx) > Math.abs(dy);
+    }
   }
 
   swipeArea.addEventListener('pointerdown', (e) => {
-    if (isModalOpen()) return;
+    if (typeof isModalOpen === 'function' && isModalOpen()) return;
     isDown = true;
-    startX = e.clientX;
-    startY = e.clientY;
-    isMousePointer = (e.pointerType === 'mouse');
-    if (isMousePointer) {
-      addSelectionLock();
-      document.documentElement.style.cursor = 'grabbing';
-      document.body.style.cursor = 'grabbing';
-    } else {
-      lockBodyScroll();
-    }
+    startX = e.clientX; startY = e.clientY;
+    maybeSwiping = false; isSwiping = false;
     try { swipeArea.setPointerCapture && swipeArea.setPointerCapture(e.pointerId); } catch (err) {}
-  }, { passive: false });
+  }, { passive: true });
 
-  swipeArea.addEventListener('pointermove', (e) => { preventWhileDown(e); }, { passive: false });
+  swipeArea.addEventListener('pointermove', (e) => {
+    if (!isDown) return;
+    const dx = e.clientX - startX, dy = e.clientY - startY;
+    decideIfSwiping(dx, dy);
+    if (maybeSwiping && isSwiping) {
+      if (e.cancelable) e.preventDefault();
+    }
+  }, { passive: false });
 
   swipeArea.addEventListener('pointerup', (e) => {
     if (!isDown) return;
-    isDown = false;
-    if (isMousePointer) { removeSelectionLock(); document.documentElement.style.cursor = ''; document.body.style.cursor = ''; } else { unlockBodyScroll(); }
-    const dx = e.clientX - startX;
-    const dy = e.clientY - startY;
-    if (Math.abs(dx) > SWIPE_THRESHOLD && Math.abs(dy) < MAX_VERTICAL_DELTA) {
+    const dx = e.clientX - startX, dy = e.clientY - startY;
+    if (maybeSwiping && isSwiping && Math.abs(dx) > SWIPE_THRESHOLD && Math.abs(dy) < MAX_VERTICAL_DELTA) {
       if (dx < 0) showImage(currentIndex + 1); else showImage(currentIndex - 1);
     }
     try { swipeArea.releasePointerCapture && swipeArea.releasePointerCapture(e.pointerId); } catch (err) {}
-  }, { passive: false });
+    resetTouch();
+  }, { passive: true });
 
-  swipeArea.addEventListener('pointercancel', () => {
-    isDown = false;
-    if (isMousePointer) { removeSelectionLock(); document.documentElement.style.cursor = ''; document.body.style.cursor = ''; } else { unlockBodyScroll(); }
-  }, { passive: false });
+  swipeArea.addEventListener('pointercancel', () => { resetTouch(); }, { passive: true });
 
-  if (!window.PointerEvent) {
-    swipeArea.addEventListener('mousedown', (e) => {
-      if (isModalOpen()) return;
-      isDown = true; isMousePointer = true; startX = e.clientX; startY = e.clientY; addSelectionLock();
-      document.documentElement.style.cursor = 'grabbing'; document.body.style.cursor = 'grabbing';
-    });
-    document.addEventListener('mousemove', (e) => { if (!isDown) return; preventWhileDown(e); });
-    document.addEventListener('mouseup', (e) => {
-      if (!isDown) return; isDown = false; removeSelectionLock(); document.documentElement.style.cursor = ''; document.body.style.cursor = '';
-      const dx = e.clientX - startX; const dy = e.clientY - startY;
-      if (Math.abs(dx) > SWIPE_THRESHOLD && Math.abs(dy) < MAX_VERTICAL_DELTA) {
-        if (dx < 0) showImage(currentIndex + 1); else showImage(currentIndex - 1);
-      }
-    });
-  }
+  swipeArea.addEventListener('touchstart', (e) => {
+    if (typeof isModalOpen === 'function' && isModalOpen()) return;
+    if (!e.touches || !e.touches[0]) return;
+    startX = e.touches[0].clientX; startY = e.touches[0].clientY;
+    isDown = true; maybeSwiping = false; isSwiping = false;
+  }, { passive: true });
 
-  swipeArea.addEventListener('touchstart', function (e) {
-    if (isModalOpen()) return;
-    if (e.touches && e.touches[0]) {
-      startX = e.touches[0].clientX; startY = e.touches[0].clientY; isDown = true; isMousePointer = false; lockBodyScroll();
+  swipeArea.addEventListener('touchmove', (e) => {
+    if (!isDown) return;
+    const t = (e.touches && e.touches[0]) || null;
+    if (!t) return;
+    const dx = t.clientX - startX, dy = t.clientY - startY;
+    decideIfSwiping(dx, dy);
+    if (maybeSwiping && isSwiping) {
+      if (e.cancelable) e.preventDefault();
     }
   }, { passive: false });
 
-  swipeArea.addEventListener('touchmove', function (e) { preventWhileDown(e); }, { passive: false });
-  swipeArea.addEventListener('touchend', function (e) {
-    if (!isDown) return; isDown = false; unlockBodyScroll();
+  swipeArea.addEventListener('touchend', (e) => {
+    if (!isDown) return;
+    isDown = false;
     const t = (e.changedTouches && e.changedTouches[0]) || null;
-    if (!t) return;
-    const dx = t.clientX - startX; const dy = t.clientY - startY;
-    if (Math.abs(dx) > SWIPE_THRESHOLD && Math.abs(dy) < MAX_VERTICAL_DELTA) {
+    if (!t) { resetTouch(); return; }
+    const dx = t.clientX - startX, dy = t.clientY - startY;
+    if (maybeSwiping && isSwiping && Math.abs(dx) > SWIPE_THRESHOLD && Math.abs(dy) < MAX_VERTICAL_DELTA) {
       if (dx < 0) showImage(currentIndex + 1); else showImage(currentIndex - 1);
     }
-  }, { passive: false });
+    resetTouch();
+  }, { passive: true });
 
   window.addEventListener('keydown', (e) => {
-    if (isModalOpen()) return;
+    if (typeof isModalOpen === 'function' && isModalOpen()) return;
     if (e.key === 'ArrowRight') showImage(currentIndex + 1);
     if (e.key === 'ArrowLeft') showImage(currentIndex - 1);
   });
@@ -4014,124 +3982,81 @@ if (shareModal) {
   window.addEventListener('resize', updateButtonsVisibility);
   updateButtonsVisibility();
 
+  // Модальное окно для просмотра товаров
   (function () {
     const VISIBLE_THUMBS = 7;
     let modal = null;
-    let modalIndex = (typeof currentIndex !== 'undefined' ? currentIndex : 0) || 0;
+    let modalIndex = currentIndex || 0;
     let modalSwitching = false;
-    let modelViewerScriptLoaded = false;
 
     function ensureModelViewerScript() {
       if (window.customElements && window.customElements.get && window.customElements.get('model-viewer')) {
         return Promise.resolve();
       }
-
-      if (window._modelViewerPromise) {
-        return window._modelViewerPromise;
-      }
-
+      if (window._modelViewerPromise) return window._modelViewerPromise;
       const existing = Array.from(document.querySelectorAll('script[type="module"]'))
         .find(s => {
           const src = s.getAttribute('src') || '';
           return src.includes('model-viewer') || src.includes('@google/model-viewer');
         });
-
       if (existing) {
         window._modelViewerPromise = new Promise((resolve, reject) => {
           if (existing.__modelViewerLoaded) {
             if (window.customElements && customElements.whenDefined) {
-              customElements.whenDefined('model-viewer').then(() => resolve()).catch(reject);
-            } else {
-              setTimeout(resolve, 50);
-            }
+              customElements.whenDefined('model-viewer').then(resolve).catch(reject);
+            } else setTimeout(resolve, 50);
             return;
           }
-
           existing.addEventListener('load', () => {
-            if (window.customElements && customElements.whenDefined) {
-              customElements.whenDefined('model-viewer').then(() => {
-                existing.__modelViewerLoaded = true;
-                resolve();
-              }).catch(reject);
-            } else {
-              existing.__modelViewerLoaded = true;
-              setTimeout(resolve, 50);
-            }
+            existing.__modelViewerLoaded = true;
+            if (window.customElements && customElements.whenDefined) customElements.whenDefined('model-viewer').then(resolve).catch(reject);
+            else resolve();
           });
-          existing.addEventListener('error', (e) => reject(e));
+          existing.addEventListener('error', reject);
         });
         return window._modelViewerPromise;
       }
-
       window._modelViewerPromise = new Promise((resolve, reject) => {
         try {
           const script = document.createElement('script');
           script.type = 'module';
           script.src = 'js/libs/model-viewer.min.js';
           script.addEventListener('load', () => {
-            if (window.customElements && customElements.whenDefined) {
-              customElements.whenDefined('model-viewer').then(() => resolve()).catch(reject);
-            } else {
-              setTimeout(resolve, 50);
-            }
+            if (window.customElements && customElements.whenDefined) customElements.whenDefined('model-viewer').then(resolve).catch(reject);
+            else resolve();
           });
-          script.addEventListener('error', (e) => reject(e));
+          script.addEventListener('error', reject);
           document.head.appendChild(script);
-        } catch (err) {
-          reject(err);
-        }
+        } catch (err) { reject(err); }
       });
-
       return window._modelViewerPromise;
     }
 
     function createModal() {
       if (modal) return modal;
       modal = document.querySelector('.product-gallery-modal');
-      if (!modal) {
-        console.error('Modal HTML not found in document!');
-        return null;
-      }
+      if (!modal) return null;
 
       const closeBtn = modal.querySelector('.modal-close');
       const leftBtn = modal.querySelector('.modal-nav.left');
       const rightBtn = modal.querySelector('.modal-nav.right');
       const modalMediaWrap = modal.querySelector('.modal-media');
-      const imgEl = modalMediaWrap.querySelector('.modal-img');
       const thumbsEl = modal.querySelector('.modal-thumbs');
       const thumbsPrev = modal.querySelector('.thumbs-nav.left');
       const thumbsNext = modal.querySelector('.thumbs-nav.right');
 
       function rebuildThumbs() {
         thumbsEl.innerHTML = '';
-        const srcList = thumbnails;
-        srcList.forEach((t, i) => {
-          const thumbImg = document.createElement('img');
-          thumbImg.src = getItemThumbSrc(t);
-          thumbImg.dataset.idx = i;
-          thumbImg.alt = t.alt || '';
-          thumbImg.addEventListener('click', (ev) => {
-            ev.stopPropagation();
-            modalShowImage(i);
-            try { thumbImg.scrollIntoView({ inline: 'center', block: 'nearest', behavior: 'smooth' }); } catch (e) {}
-          });
-          thumbsEl.appendChild(thumbImg);
+        thumbnails.forEach((t, i) => {
+          const el = document.createElement('img');
+          el.src = getItemThumbSrc(t);
+          el.dataset.idx = i;
+          el.alt = t.alt || '';
+          el.addEventListener('click', (ev) => { ev.stopPropagation(); modalShowImage(i); });
+          thumbsEl.appendChild(el);
         });
-        updateThumbsNavVisibility();
         updateThumbsActive();
-      }
-
-      function getThumbMetrics() {
-        const first = thumbsEl.querySelector('img');
-        const cs = getComputedStyle(thumbsEl);
-        const gap = parseFloat(cs.gap || cs.columnGap || 8) || 8;
-        const thumbW = first ? Math.round(first.getBoundingClientRect().width) : 64;
-        return { thumbW, gap };
-      }
-      function getScrollStep() {
-        const { thumbW, gap } = getThumbMetrics();
-        const visible = Math.min(VISIBLE_THUMBS, thumbnails.length);
-        return Math.round((thumbW + gap) * visible);
+        updateThumbsNavVisibility();
       }
 
       function renderModalMediaForIndex(idx) {
@@ -4143,7 +4068,6 @@ if (shareModal) {
         if (is3DItem(item)) {
           const modelPath = getItemModelPath(item) || '';
           const poster = getItemThumbSrc(item) || 'images/3D.svg';
-
           modalMediaWrap.innerHTML = '';
           const mv = document.createElement('model-viewer');
           mv.tabIndex = 0;
@@ -4155,45 +4079,18 @@ if (shareModal) {
           mv.style.maxHeight = 'calc(100vh - 160px)';
           mv.style.aspectRatio = '16/9';
           mv.style.display = 'block';
-
           modalMediaWrap.appendChild(mv);
 
-          ensureModelViewerScript()
-            .then(() => {
-              let loaded = false;
-              const cleanup = () => {
-                mv.removeEventListener('load', onLoad);
-                mv.removeEventListener('error', onError);
-                clearTimeout(fallbackTimer);
-              };
-              function onLoad() {
-                loaded = true;
-                cleanup();
-              }
-              function onError() {
-                cleanup();
-                const img = document.createElement('img');
-                img.className = 'modal-img';
-                img.src = poster;
-                img.alt = '3D модель (заглушка)';
-                modalMediaWrap.innerHTML = '';
-                modalMediaWrap.appendChild(img);
-              }
-
-              mv.addEventListener('load', onLoad, { once: true });
-              mv.addEventListener('error', onError, { once: true });
-
-              const fallbackTimer = setTimeout(() => {
-                if (!loaded) onError();
-              }, 5000);
-            })
-            .catch(() => {
-              modalMediaWrap.innerHTML = `<img class="modal-img" src="${poster}" alt="3D модель (заглушка)">`;
-            });
-
+          ensureModelViewerScript().catch(() => {
+            modalMediaWrap.innerHTML = `<img class="modal-img" src="${poster}" alt="3D (заглушка)">`;
+          });
         } else {
           const src = getItemLargeSrc(item) || '';
-          modalMediaWrap.innerHTML = `<img class="modal-img" src="${src}" alt="${item.alt || 'Фото товара'}">`;
+          modalMediaWrap.innerHTML = `<img class="modal-img fading" src="${src}" alt="${item.alt || 'Фото'}">`;
+          setTimeout(() => {
+            const img = modalMediaWrap.querySelector('.modal-img');
+            if (img) img.classList.remove('fading');
+          }, 80);
         }
       }
 
@@ -4201,7 +4098,7 @@ if (shareModal) {
         if (modalSwitching) return;
         modalSwitching = true;
         const total = thumbnails.length;
-        if (total === 0) { modalSwitching = false; return; }
+        if (!total) { modalSwitching = false; return; }
         idx = ((idx % total) + total) % total;
         modalIndex = idx;
         const currentMedia = modalMediaWrap.firstElementChild;
@@ -4209,15 +4106,8 @@ if (shareModal) {
         setTimeout(() => {
           renderModalMediaForIndex(idx);
           updateThumbsActive();
-          try { thumbsEl.children[idx] && thumbsEl.children[idx].scrollIntoView({ inline: 'center', block: 'nearest', behavior: 'smooth' }); } catch (e) {}
-          requestAnimationFrame(() => {
-            setTimeout(() => {
-              const newMedia = modalMediaWrap.firstElementChild;
-              if (newMedia) newMedia.classList && newMedia.classList.remove('fading');
-              modalSwitching = false;
-              updateThumbsNavVisibility();
-            }, 60);
-          });
+          try { thumbsEl.children[idx] && thumbsEl.children[idx].scrollIntoView({ inline: 'center', block: 'nearest', behavior: 'smooth' }); } catch(e) {}
+          setTimeout(() => { modalSwitching = false; updateThumbsNavVisibility(); }, 160);
         }, 140);
       }
 
@@ -4235,14 +4125,14 @@ if (shareModal) {
         setTimeout(updateThumbsNavVisibility, 260);
       }
 
-      thumbsPrev.addEventListener('click', (e) => { e.stopPropagation(); safeScrollBy(-getScrollStep()); });
-      thumbsNext.addEventListener('click', (e) => { e.stopPropagation(); safeScrollBy(getScrollStep()); });
+      thumbsPrev && thumbsPrev.addEventListener('click', (e) => { e.stopPropagation(); safeScrollBy(-getScrollStep()); });
+      thumbsNext && thumbsNext.addEventListener('click', (e) => { e.stopPropagation(); safeScrollBy(getScrollStep()); });
 
-      leftBtn.addEventListener('click', (e) => { e.stopPropagation(); modalShowImage(modalIndex - 1); });
-      rightBtn.addEventListener('click', (e) => { e.stopPropagation(); modalShowImage(modalIndex + 1); });
+      leftBtn && leftBtn.addEventListener('click', (e) => { e.stopPropagation(); modalShowImage(modalIndex - 1); });
+      rightBtn && rightBtn.addEventListener('click', (e) => { e.stopPropagation(); modalShowImage(modalIndex + 1); });
 
       function closeHandler() { closeModal(); }
-      closeBtn.addEventListener('click', closeHandler);
+      closeBtn && closeBtn.addEventListener('click', closeHandler);
       modal.addEventListener('click', (e) => { if (e.target === modal) closeHandler(); });
 
       function onKey(e) {
@@ -4255,31 +4145,37 @@ if (shareModal) {
 
       function updateThumbsNavVisibility() {
         const total = thumbnails.length;
+        if (!thumbsEl) return;
         if (total <= VISIBLE_THUMBS) {
-          thumbsPrev.style.display = 'none'; thumbsNext.style.display = 'none'; return;
-        } else { thumbsPrev.style.display = ''; thumbsNext.style.display = ''; }
+          thumbsPrev && (thumbsPrev.style.display = 'none');
+          thumbsNext && (thumbsNext.style.display = 'none');
+          return;
+        } else {
+          thumbsPrev && (thumbsPrev.style.display = '');
+          thumbsNext && (thumbsNext.style.display = '');
+        }
         const maxScroll = thumbsEl.scrollWidth - thumbsEl.clientWidth;
         const atStart = thumbsEl.scrollLeft <= 1;
         const atEnd = thumbsEl.scrollLeft >= maxScroll - 1;
-        thumbsPrev.classList.toggle('inactive', atStart);
-        thumbsNext.classList.toggle('inactive', atEnd);
+        thumbsPrev && thumbsPrev.classList.toggle('inactive', atStart);
+        thumbsNext && thumbsNext.classList.toggle('inactive', atEnd);
       }
-      thumbsEl.addEventListener('scroll', () => { updateThumbsNavVisibility(); }, { passive: true });
-      window.addEventListener('resize', () => { updateThumbsNavVisibility(); });
+      thumbsEl && thumbsEl.addEventListener('scroll', updateThumbsNavVisibility, { passive: true });
+      window.addEventListener('resize', updateThumbsNavVisibility);
 
       modal._modalShowImage = modalShowImage;
       modal._rebuildThumbs = rebuildThumbs;
-
       return modal;
-    } 
+    }
 
     function openModal(idx) {
       const total = thumbnails.length;
       if (total === 0) return;
-      modalIndex = (typeof idx === 'number' ? idx : (typeof currentIndex !== 'undefined' ? currentIndex : 0)) || 0;
+      modalIndex = (typeof idx === 'number' ? idx : currentIndex) || 0;
       const m = createModal();
+      if (!m) return;
       m.classList.add('open');
-      if (typeof lockBodyScroll === 'function') lockBodyScroll();
+      lockBodyScrollCompensated();
       m._rebuildThumbs && m._rebuildThumbs();
       m._modalShowImage && m._modalShowImage(modalIndex);
       setTimeout(() => {
@@ -4288,19 +4184,40 @@ if (shareModal) {
     }
 
     function closeModal() {
-      if (!modal) return;
-      modal.classList.remove('open');
-      if (typeof unlockBodyScroll === 'function') unlockBodyScroll();
+      const m = document.querySelector('.product-gallery-modal');
+      if (!m) return;
+      m.classList.remove('open');
+      unlockBodyScrollCompensated();
     }
 
-    if (typeof mainImgContainer !== 'undefined' && mainImgContainer) {
+    let bodyLocked = false;
+    let bodyScrollY = 0;
+    function lockBodyScrollCompensated() {
+      if (bodyLocked) return;
+      bodyScrollY = window.scrollY || window.pageYOffset || 0;
+      const scrollbarComp = window.innerWidth - document.documentElement.clientWidth;
+      document.body.style.position = 'fixed';
+      document.body.style.top = -bodyScrollY + 'px';
+      if (scrollbarComp > 0) document.body.style.paddingRight = scrollbarComp + 'px';
+      bodyLocked = true;
+    }
+    function unlockBodyScrollCompensated() {
+      if (!bodyLocked) return;
+      document.body.style.position = '';
+      document.body.style.top = '';
+      document.body.style.paddingRight = '';
+      window.scrollTo(0, bodyScrollY);
+      bodyScrollY = 0;
+      bodyLocked = false;
+    }
+
+    if (mainImgContainer) {
       mainImgContainer.style.cursor = 'zoom-in';
       mainImgContainer.addEventListener('click', (e) => {
-        openModal(typeof currentIndex !== 'undefined' ? currentIndex : 0);
+        openModal(currentIndex);
       });
     }
 
     window.__productGalleryModal = { open: openModal, close: closeModal };
   })();
-
 })();

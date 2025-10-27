@@ -11691,7 +11691,10 @@ section {
   position: relative;
   background-color: #f5f5f5;
   border: 1px solid var(--stroke-gray);
-  touch-action: none; 
+  /* заменяем touch-action:none на pan-y — позволяет вертикальную прокрутку системы,
+     но даёт возможность отлавливать горизонтальные свайпы */
+  touch-action: pan-y;
+  -webkit-user-drag: none;
 }
 
 .product-main-image img {
