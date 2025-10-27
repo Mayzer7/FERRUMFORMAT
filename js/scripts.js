@@ -1774,6 +1774,16 @@ if (deliveryMap) {
   (async function () {
     const container = document.getElementById('svgContainer');
     const tooltip = document.getElementById('mapTooltip');
+
+    if (tooltip && tooltip.parentElement !== document.body) {
+      document.body.appendChild(tooltip);
+
+      tooltip.style.position = 'fixed';
+      tooltip.style.zIndex = '9999';
+      tooltip.style.pointerEvents = 'none'; 
+      tooltip.style.transition = ''; 
+    }
+
     const wrap = document.getElementById('svgWrap');
 
     const svgPath = wrap.dataset.svg; // <-- путь из data-svg
@@ -3743,10 +3753,29 @@ if (shareModal) {
   if (currentIndex === -1) currentIndex = 0;
 
   function updateActiveClasses(idx) {
-    thumbnails.forEach(t => t.classList && t.classList.remove('product-img-active'));
+    thumbnails.forEach(t => {
+      if (is3DItem(t)) {
+        const b = t.querySelector('.banner-3D');
+        if (b) b.classList.remove('product-img-active');
+        t.classList.remove('product-img-active');
+      } else {
+        t.classList.remove('product-img-active');
+      }
+    });
+
     ticks.forEach(t => t.classList.remove('active'));
+
     const thumb = thumbnails[idx];
-    if (thumb) thumb.classList.add('product-img-active');
+    if (!thumb) return;
+
+    if (is3DItem(thumb)) {
+      const b = thumb.querySelector('.banner-3D');
+      if (b) b.classList.add('product-img-active');
+      else thumb.classList.add('product-img-active'); 
+    } else {
+      thumb.classList.add('product-img-active');
+    }
+
     if (ticks[idx]) ticks[idx].classList.add('active');
   }
 

@@ -9557,13 +9557,11 @@ model-viewer::part(default-progress-bar) {
   content: "";
   order: 2;
   flex: 1;
-  height: 1px;          
+  height: 1px;
   display: block;
-  align-self: flex-end;            
-  background-image: linear-gradient(to right, var(--gray), var(--gray));
-  background-size: 100% 1px;
-  background-repeat: no-repeat;
-
+  align-self: flex-end;
+  background-color: #e9e9e9; 
+  
   transform: translateZ(0);
   backface-visibility: hidden;
   -webkit-transform: translateZ(0);
@@ -9571,6 +9569,7 @@ model-viewer::part(default-progress-bar) {
   will-change: transform, opacity;
   pointer-events: none;
 }
+
 
 .news-card-info-setting-title {
      order: 1; 
@@ -11437,6 +11436,7 @@ section {
     font-family: 'Helvetica Neue Regular', sans-serif;
     display: grid;
     grid-template-columns: 3fr 1fr;
+    align-items: flex-end;
     gap: 56px;
 }
 
@@ -11975,7 +11975,11 @@ section {
 .adaptive-table th,
 .adaptive-table td {
     border: 1px solid var(--stroke-gray);
-    padding: 20px 12px;
+    padding: 20px 8px;
+}
+
+.adaptive-table td:first-child {
+    min-width: 280px;
 }
 
 
@@ -12308,6 +12312,10 @@ section {
     .reviews-open-tag-container {
         margin-top: 20px;
     }
+
+    .adaptive-table td:first-child {
+        min-width: 250px;
+    }
 }
 
 @media (max-width: 1270px) {
@@ -12359,6 +12367,10 @@ section {
     .table-container {
         overflow-y: hidden; 
     }   
+
+    .adaptive-table td:first-child {
+        min-width: 0px;
+    }
 }
 
 @media (max-width: 1000px) {
@@ -12467,7 +12479,7 @@ section {
 }
 
 .share-modal {
-    position: relative;
+    position: fixed;
   background: #F5F5F5;
   width: 100%;
   border: 1px solid var(--stroke-gray);
@@ -12475,6 +12487,7 @@ section {
   box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.2);
   transform: translateY(100%);
   transition: transform 0.3s ease;
+  z-index: 50;
 }
 
 .share-modal h3 {

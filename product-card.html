@@ -5484,6 +5484,26 @@
         </div>
     </div>
 
+    <!-- Модальное окно для просмотра отзыва -->
+    <div id="review-modal" class="review-modal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="review-modal-title">
+        <div class="review-modal-overlay" data-close></div>
+
+        <div class="review-modal-panel" role="document" aria-describedby="review-modal-desc">
+            <button class="review-modal-close">
+                <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M17.942 1.94246L16.0566 0.0571289L8.99931 7.11446L1.94197 0.0571289L0.0566406 1.94246L7.11397 8.9998L0.0566406 16.0571L1.94197 17.9425L8.99931 10.8851L16.0566 17.9425L17.942 16.0571L10.8846 8.9998L17.942 1.94246Z" fill="white"/>
+                </svg>
+            </button>
+
+            <div class="review-modal-body">
+                <div class="review-modal-content">
+                    <h3 id="review-modal-title" class="review-modal-author"></h3>
+                    <div id="review-modal-desc" class="review-modal-text"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Модальное окно для просмотра фотографий отзывов -->
     <div id="image-modal" class="image-modal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="image-modal-title">
         <div class="image-modal-overlay" data-close></div>
