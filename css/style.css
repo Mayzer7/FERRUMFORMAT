@@ -12153,6 +12153,8 @@ section {
     }
 
     .product-miniature-images img {
+        min-width: 56px;
+        min-height: 56px;
         width: 56px;
         height: 56px;
     }
@@ -12168,7 +12170,7 @@ section {
 
     .product-main-image img {
         width: 405px;
-        height: 357px;
+        height: 340px;
     }
 
     .thumbs-scroll-area {
@@ -12274,6 +12276,22 @@ section {
 
     .product-buy-card {
         padding: 16px 20px;
+    }
+
+    .product-miniature-images {
+        width: 56px;
+    }
+
+    .product-miniature-images .top-btn,
+    .product-miniature-images .bottom-btn {
+        width: 56px;
+        height: 56px;
+    }
+
+    .product-miniature-images .top-btn svg,
+    .product-miniature-images .bottom-btn svg {
+        width: 56px;
+        height: 56px;
     }
 }
 

@@ -3180,14 +3180,25 @@ const kpCloseBtn = document.querySelector('.kp-popup-close');
 
 const isMenuOpen = () => !!menu && menu.classList.contains('is-open');
 
+let scrollPosition = 0;
+
 function openKpPopup(event) {
-  // Останавливаем всплытие и действие по умолчанию
   if (event) {
     event.stopPropagation();
     event.preventDefault();
   }
 
   if (!kpPopup) return;
+
+  scrollPosition = window.scrollY;
+  document.body.style.position = 'fixed';
+  document.body.style.top = `-${scrollPosition}px`;
+  document.body.style.left = '0';
+  document.body.style.right = '0';
+  document.body.style.overflow = 'hidden';
+  document.body.style.width = '100%';
+
+  document.querySelector('.kp-popup').classList.add('show');
 
   kpPopup.dataset.menuWasOpen = isMenuOpen() ? '1' : '0';
   document.body.style.overflow = 'hidden';
@@ -3201,6 +3212,16 @@ function openKpPopup(event) {
 
 function closeKpPopup() {
   if (!kpPopup || !kpPopup.classList.contains('show')) return;
+
+  document.querySelector('.kp-popup').classList.remove('show');
+  document.body.style.position = '';
+  document.body.style.top = '';
+  document.body.style.left = '';
+  document.body.style.right = '';
+  document.body.style.overflow = '';
+  document.body.style.width = '';
+
+  window.scrollTo(0, scrollPosition);
 
   kpPopup.classList.add('closing');
   kpPopup.classList.remove('show');
