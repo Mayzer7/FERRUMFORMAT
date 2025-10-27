@@ -11691,8 +11691,6 @@ section {
   position: relative;
   background-color: #f5f5f5;
   border: 1px solid var(--stroke-gray);
-  /* заменяем touch-action:none на pan-y — позволяет вертикальную прокрутку системы,
-     но даёт возможность отлавливать горизонтальные свайпы */
   touch-action: pan-y;
   -webkit-user-drag: none;
 }
@@ -13010,6 +13008,13 @@ section {
 
     .product-gallery-modal .modal-thumbs-viewport {
         width: calc((var(--thumb-size) * var(--visible-thumbs)) + (var(--thumb-gap) * (var(--visible-thumbs) - 1)));
+    }
+}
+
+@media (max-width: 700px) {
+    .product-gallery-modal .modal-nav {
+        width: 40px;
+        height: 40px;
     }
 }
 
