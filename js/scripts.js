@@ -2733,77 +2733,65 @@ if (modalVideo) {
 
 // Валидация номера телефона в форме
 
-const phoneInputs = document.querySelectorAll('.phone');
+const phoneInputs = document.querySelectorAll('[data-field="phone"]');
 
-if (phoneInputs) {
-  phoneInputs.forEach(input => {
-    input.addEventListener('input', handlePhoneInput);
-  });
-
-  function handlePhoneInput(e) {
-    const input = e.target;
-    const prevValue = input.value;
-    let value = prevValue.replace(/\D/g, '');
-
-    if (e.inputType === 'deleteContentBackward' && value.length <= 1) {
-      input.value = '';
-      return;
-    }
-
-    let prefix = '+7 ';
-    if (value.startsWith('7')) {
-      prefix = '+7 ';
-      value = value.slice(1);
-    }
-
-    value = value.slice(0, 10);
-
-    let formatted = '';
-    if (value.length > 0) formatted += `(${value.slice(0, 3)}`;
-    if (value.length >= 4) formatted += `) ${value.slice(3, 6)}`;
-    if (value.length >= 7) formatted += `-${value.slice(6, 8)}`;
-    if (value.length >= 9) formatted += `-${value.slice(8, 10)}`;
-
-    const cursorPos = input.selectionStart || 0;
-    const oldLen = prevValue.length;
-
-    input.value = prefix + formatted;
-
-    const newLen = input.value.length;
-    const shift = newLen - oldLen;
-    const newPos = Math.max(0, Math.min(input.value.length, cursorPos + shift));
-    input.setSelectionRange(newPos, newPos);
-  }
+if (phoneInputs && phoneInputs.length) {
+  phoneInputs.forEach(input => input.addEventListener('input', handlePhoneInput));
 }
 
+function handlePhoneInput(e) {
+  const input = e.target;
+  const prevValue = input.value;
+  let value = prevValue.replace(/\D/g, '');
 
+  if (value.startsWith('8')) value = '7' + value.slice(1);
+  if (value.startsWith('7')) value = value.slice(1);
+
+  value = value.slice(0, 10);
+
+  let formatted = '';
+  if (value.length > 0) formatted += `(${value.slice(0, Math.min(3, value.length))}`;
+  if (value.length >= 4) formatted += `) ${value.slice(3, Math.min(6, value.length))}`;
+  if (value.length >= 7) formatted += `-${value.slice(6, Math.min(8, value.length))}`;
+  if (value.length >= 9) formatted += `-${value.slice(8, 10)}`;
+
+  const prefix = '+7 ';
+  const cursorPos = input.selectionStart || 0;
+  const oldLen = prevValue.length;
+
+  input.value = prefix + formatted;
+
+  const newLen = input.value.length;
+  const shift = newLen - oldLen;
+  const newPos = Math.max(0, Math.min(input.value.length, cursorPos + shift));
+  input.setSelectionRange(newPos, newPos);
+}
 
 
 
 // Сброс формы 
 function resetForm(form) {
   if (!form) return;
-
-  try { form.reset(); } catch (e) { }
+  try { form.reset(); } catch (e) {}
 
   form.querySelectorAll('.error').forEach(el => el.classList.remove('error'));
 
-  form.querySelectorAll('input[type="text"], input[type="email"], input[type="tel"], input[type="phone"], textarea')
-    .forEach(i => { i.value = ''; });
-
-  form.querySelectorAll('input[type="checkbox"]').forEach(cb => {
-    cb.checked = false;
-    cb.classList.remove('error');
+  form.querySelectorAll('input, textarea').forEach(i => {
+    if (i.type === 'file') return;
+    if (i.type === 'checkbox' || i.type === 'radio') {
+      i.checked = false;
+    } else {
+      i.value = '';
+    }
   });
 
-  const fileInput = form.querySelector('.file-input');
+  const fileInput = form.querySelector('[data-field="file"], .file-input');
   const attachedFiles = form.querySelector('.attached-files');
 
   if (attachedFiles) {
     attachedFiles.querySelectorAll('.remove-file').forEach(btn => {
-      try { btn.click(); } catch (e) { }
+      try { btn.click(); } catch (e) {}
     });
-
     attachedFiles.innerHTML = '';
   }
 
@@ -2866,15 +2854,14 @@ function formatDisplayName(filename) {
 
 // Валидация форм 
 document.querySelectorAll('.get-contact-form').forEach((form) => {
-  const fileInput = form.querySelector('.file-input');
-  const attachArea = form.querySelector('.get-contact-attach-file');
+  const fileInput = form.querySelector('[data-field="file"], .file-input');
+  const attachArea = form.querySelector('#attachArea') || form.querySelector('.get-contact-attach-file');
   const attachedFiles = form.querySelector('.attached-files');
 
   if (fileInput && attachArea && attachedFiles) {
     (function () {
       const MAX_FILES = 3;
       const MAX_BYTES = 5 * 1024 * 1024; // 5 MB
-
       let selectedFiles = [];
 
       attachArea.addEventListener('click', () => fileInput.click());
@@ -2885,94 +2872,81 @@ document.querySelectorAll('.get-contact-form').forEach((form) => {
       fileInput.addEventListener('change', (e) => {
         const files = e.target.files ? Array.from(e.target.files) : [];
         if (!files.length) return;
-
         fileInput.value = '';
-
         addFiles(files);
       });
 
       function addFiles(files) {
+        const available = MAX_FILES - selectedFiles.length;
+
+        if (available <= 0) {
+          return;
+        }
+
+        const toAdd = files.slice(0, available);
+
         let hasValid = false;
-
-        for (const file of files) {
-          if (selectedFiles.length >= MAX_FILES) {
-            showTempError(`Максимум ${MAX_FILES} файла(ов).`);
-            break;
-          }
-
+        for (const file of toAdd) {
           if (file.size > MAX_BYTES) {
-            renderErrorFile(file.name); 
+            renderErrorFile(file.name);
             continue;
           }
-
           selectedFiles.push(file);
           hasValid = true;
         }
 
         if (hasValid) {
-          renderAttachedFiles();   
+          renderAttachedFiles();
           updateInputFiles();
         }
       }
 
       function renderErrorFile(fileName) {
-        const item = document.createElement('div');
-        item.className = 'attached-file visible error-file';
-
-        item.innerHTML = `
-          <div class="upload-file-content">
-            <div class="upload-file-left">
-              <div class="file-name error-text">Выбранный файл превышает 5 МБ</div>
-            </div>
-          </div>
-        `;
-
-        attachedFiles.appendChild(item);
+        showTempError('Выбранный файл превышает 5 МБ');
       }
 
-        function showFileSizeError() {
-          const existing = attachedFiles.querySelector('.file-error');
-          if (existing) {
-            existing.classList.remove('flash');
-            void existing.offsetWidth;
-            existing.classList.add('flash');
-            if (existing._removeTimeout) clearTimeout(existing._removeTimeout);
-            existing._removeTimeout = setTimeout(() => existing.remove(), 5000);
-            return;
+      function showTempError(msg) {
+        if (!attachedFiles) return;
+
+        const prevPosition = attachedFiles.style.position;
+        if (!prevPosition || prevPosition === '') attachedFiles.style.position = 'relative';
+
+        const el = document.createElement('div');
+        el.className = 'attached-file file-error temp-file-error';
+        el.setAttribute('role', 'alert');
+        el.textContent = msg;
+
+        el.style.position = 'absolute';
+        el.style.left = '0';
+        el.style.right = '0';
+        el.style.top = '0';
+        el.style.boxSizing = 'border-box';
+        el.style.padding = '8px';
+        el.style.zIndex = '999';
+        el.style.pointerEvents = 'none';
+
+        attachedFiles.appendChild(el);
+
+        requestAnimationFrame(() => el.classList.add('visible', 'flash'));
+
+        setTimeout(() => {
+          try { el.remove(); } catch (e) {}
+          const stillTemp = attachedFiles.querySelector('.temp-file-error');
+          if (!stillTemp) {
+            const hasAttached = attachedFiles.querySelector('.attached-file') !== null;
+            if (!hasAttached) attachedFiles.style.position = '';
           }
-
-          const el = document.createElement('div');
-          el.className = 'attached-file file-error';
-          el.setAttribute('role', 'alert');
-          el.textContent = 'Выбранный файл превышает 5 МБ';
-          attachedFiles.prepend(el);
-
-          requestAnimationFrame(() => el.classList.add('visible', 'flash'));
-
-          el._removeTimeout = setTimeout(() => {
-            try { el.remove(); } catch (e) {}
-          }, 5000);
-        }
-
-        function showTempError(msg) {
-          const el = document.createElement('div');
-          el.className = 'attached-file error';
-          el.style.padding = '8px';
-          el.textContent = msg;
-          attachedFiles.prepend(el);
-          setTimeout(() => el.remove(), 4000);
-        }
+        }, 3000);
+      }
 
       function renderAttachedFiles() {
         attachedFiles.innerHTML = '';
-
         if (selectedFiles.length === 0) return;
 
         const title = document.createElement('p');
         title.className = 'attached-file-title';
         title.textContent = 'Загруженные файлы:';
         attachedFiles.appendChild(title);
-
         requestAnimationFrame(() => title.classList.add('visible'));
 
         selectedFiles.forEach((file, idx) => {
@@ -2990,26 +2964,30 @@ document.querySelectorAll('.get-contact-form').forEach((form) => {
               <div class="upload-file-right">
                 <div class="file-size" aria-label="Размер файла">${formatFileSize(file.size)}</div>
                 <button type="button" class="remove-file" data-idx="${idx}" aria-label="Удалить файл" title="Удалить файл">
-                  <svg width="20" height="21" viewBox="0 0 20 21" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M15.5885 6.08849L14.4102 4.91016L9.99932 9.32099L5.58849 4.91016L4.41016 6.08849L8.82099 10.4993L4.41016 14.9102L5.58849 16.0885L9.99932 11.6777L14.4102 16.0885L15.5885 14.9102L11.1777 10.4993L15.5885 6.08849Z" fill="currentColor"/>
-                  </svg>
+                  <svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><path d="M11 1L1 11M1 1l10 10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
                 </button>
               </div>
             </div>
           `;
-
           attachedFiles.appendChild(item);
-
           requestAnimationFrame(() => item.classList.add('visible'));
         });
-
-        attachedFiles.querySelectorAll('.remove-file').forEach(btn => {
-          btn.addEventListener('click', () => {
-            const idx = Number(btn.getAttribute('data-idx'));
-            fadeOutAndRemove(idx);
-          });
-        });
       }
+
+      attachedFiles.addEventListener('click', (e) => {
+        const btn = e.target.closest && e.target.closest('.remove-file');
+        if (!btn) return;
+        e.preventDefault();
+
+        const parent = btn.closest('.attached-file');
+        if (!parent || parent.classList.contains('removing')) return;
+
+        const idxAttr = btn.getAttribute('data-idx');
+        const idx = idxAttr !== null ? Number(idxAttr) : NaN;
+        if (Number.isNaN(idx)) return;
+
+        fadeOutAndRemove(idx);
+      });
 
       function fadeOutAndRemove(index) {
         const el = attachedFiles.querySelector(`.attached-file[data-idx="${index}"]`);
@@ -3034,7 +3012,7 @@ document.querySelectorAll('.get-contact-form').forEach((form) => {
             el.removeEventListener('transitionend', onTransitionEnd);
             removeFileImmediate(index);
           }
-        }, 350);
+        }, 400);
       }
 
       function removeFileImmediate(index) {
@@ -3053,22 +3031,13 @@ document.querySelectorAll('.get-contact-form').forEach((form) => {
           console.warn('DataTransfer не поддерживается в этом браузере, поле fileInput не обновлено.');
         }
       }
-
-      function showTempError(msg) {
-        const el = document.createElement('div');
-        el.className = 'attached-file error';
-        el.style.padding = '8px';
-        el.textContent = msg;
-        attachedFiles.prepend(el);
-        setTimeout(() => el.remove(), 4000);
-      }
     })();
   } 
 
-  const acceptInput = form.querySelector('input[name="accept"]');
+  const acceptInput = form.querySelector('[data-field="accept"]');
   const acceptError = form.querySelector('.accept-politics-error');
   const visualCheckbox = form.querySelector('.custom-checkbox .checkbox-img');
-  const emailInput = form.querySelector('input[name="email"]');
+  const emailInput = form.querySelector('[data-field="email"]');
 
   if (acceptError) {
     acceptError.setAttribute('aria-hidden', 'true');
@@ -3093,65 +3062,58 @@ document.querySelectorAll('.get-contact-form').forEach((form) => {
   form.addEventListener('submit', function (e) {
     e.preventDefault();
 
-    const nameInput = form.querySelector('input[name="name"]');
-    const phoneInput = form.querySelector('input[name="phone"]');
+    const nameInput = form.querySelector('[data-field="name"]');
+    const phoneInput = form.querySelector('[data-field="phone"]');
 
     let valid = true;
 
     // имя
-    if (!nameInput || !nameInput.value.trim()) {
-      nameInput && nameInput.classList.add('error');
+    if (nameInput && nameInput.dataset.required === "true" && !nameInput.value.trim()) {
+      nameInput.classList.add('error');
       valid = false;
     } else {
       nameInput && nameInput.classList.remove('error');
     }
 
     // телефон
-    if (!phoneInput || !phoneInput.value.trim()) {
-      phoneInput && phoneInput.classList.add('error');
+    if (phoneInput && phoneInput.dataset.required === "true" && !phoneInput.value.trim()) {
+      phoneInput.classList.add('error');
       valid = false;
     } else {
       phoneInput && phoneInput.classList.remove('error');
     }
 
     // email
-    if (!emailInput || !emailInput.value.trim()) {
-      if (emailInput) {
-        emailInput.classList.add('error');
-        emailInput.setAttribute('aria-invalid', 'true');
-        try { emailInput.focus({ preventScroll: true }); } catch (e) {}
-      }
+    if (emailInput && emailInput.dataset.required === "true" && !emailInput.value.trim()) {
+      emailInput.classList.add('error');
+      emailInput.setAttribute('aria-invalid', 'true');
+      try { emailInput.focus({ preventScroll: true }); } catch (e) {}
       valid = false;
-    } else {
+    } else if (emailInput) {
       emailInput.classList.remove('error');
       emailInput.removeAttribute('aria-invalid');
     }
 
     // чекбокс
-    if (!acceptInput || !acceptInput.checked) {
-      if (acceptInput) acceptInput.classList.add('error');
-
+    if (acceptInput && acceptInput.dataset.required === "true" && !acceptInput.checked) {
+      acceptInput.classList.add('error');
       if (acceptError) {
         acceptError.classList.add('visible');
         acceptError.setAttribute('aria-hidden', 'false');
       }
-
       if (visualCheckbox) {
         visualCheckbox.classList.add('animate');
         setTimeout(() => visualCheckbox && visualCheckbox.classList.remove('animate'), 350);
-        visualCheckbox.focus({ preventScroll: true });
+        try { visualCheckbox.focus({ preventScroll: true }); } catch (e) {}
       }
-
       valid = false;
-    } else {
+    } else if (acceptInput) {
       acceptInput.classList.remove('error');
       acceptError && acceptError.classList.remove('visible');
       acceptError && acceptError.setAttribute('aria-hidden', 'true');
     }
 
-    if (!valid) {
-      return;
-    }
+    if (!valid) return;
 
     const formData = new FormData(form);
     const data = {};
@@ -3551,112 +3513,117 @@ document.addEventListener('keydown', (e) => {
 
 // Попап "Поделиться"
 
-(function(){
-  const btn = document.getElementById('shareBtn');
-  const menu = document.getElementById('shareMenu');
-  const originalParent = menu.parentNode;
-  let isFloating = false;
-  let cleanupListeners = null;
+const shareBtn = document.getElementById('shareBtn');
 
-  function getButtonRect() {
-    return btn.getBoundingClientRect();
-  }
+if (shareBtn) {
+  (function(){
+    const btn = document.getElementById('shareBtn');
+    const menu = document.getElementById('shareMenu');
+    const originalParent = menu.parentNode;
+    let isFloating = false;
+    let cleanupListeners = null;
 
-  function openFloatingMenu() {
-    if(isFloating) return;
-    menu.classList.add('floating');
-    menu.classList.add('open');
-
-    document.body.appendChild(menu);
-
-    const rect = getButtonRect();
-    const top = window.pageYOffset + rect.bottom + 8; // 8px отступ
-    const left = window.pageXOffset + rect.left + rect.width / 2;
-
-    menu.style.position = 'absolute';
-    menu.style.top = top + 'px';
-    menu.style.left = left + 'px';
-
-    const onScrollResize = () => {
-      const r = getButtonRect();
-      const t = window.pageYOffset + r.bottom + 8;
-      const l = window.pageXOffset + r.left + r.width / 2;
-      menu.style.top = t + 'px';
-      menu.style.left = l + 'px';
-    };
-    window.addEventListener('scroll', onScrollResize, {passive: true});
-    window.addEventListener('resize', onScrollResize);
-
-    cleanupListeners = () => {
-      window.removeEventListener('scroll', onScrollResize);
-      window.removeEventListener('resize', onScrollResize);
-    };
-
-    isFloating = true;
-    btn.setAttribute('aria-expanded', 'true');
-    menu.setAttribute('aria-hidden', 'false');
-  }
-
-  function closeFloatingMenu() {
-    if(!isFloating) return;
-    menu.classList.remove('open');
-
-    const onTransitionEnd = () => {
-      originalParent.appendChild(menu);
-      menu.style.position = '';
-      menu.style.top = '';
-      menu.style.left = '';
-      menu.classList.remove('floating');
-      menu.removeEventListener('transitionend', onTransitionEnd);
-    };
-    menu.addEventListener('transitionend', onTransitionEnd);
-
-    if(typeof cleanupListeners === 'function') cleanupListeners();
-    isFloating = false;
-    btn.setAttribute('aria-expanded', 'false');
-    menu.setAttribute('aria-hidden', 'true');
-  }
-
-  btn.addEventListener('click', (e) => {
-    e.stopPropagation();
-    if(menu.classList.contains('open')) {
-      closeFloatingMenu();
-    } else {
-      openFloatingMenu();
-      const first = menu.querySelector('[role="menuitem"]');
-      if(first) first.focus();
+    function getButtonRect() {
+      return btn.getBoundingClientRect();
     }
-  });
 
-  document.addEventListener('click', (e) => {
-    if(!menu.classList.contains('open')) return;
-    if(e.target === btn || menu.contains(e.target)) return;
-    closeFloatingMenu();
-  });
+    function openFloatingMenu() {
+      if(isFloating) return;
+      menu.classList.add('floating');
+      menu.classList.add('open');
 
-  document.addEventListener('keydown', (ev) => {
-    if(ev.key === 'Escape' && menu.classList.contains('open')) {
+      document.body.appendChild(menu);
+
+      const rect = getButtonRect();
+      const top = window.pageYOffset + rect.bottom + 8; // 8px отступ
+      const left = window.pageXOffset + rect.left + rect.width / 2;
+
+      menu.style.position = 'absolute';
+      menu.style.top = top + 'px';
+      menu.style.left = left + 'px';
+
+      const onScrollResize = () => {
+        const r = getButtonRect();
+        const t = window.pageYOffset + r.bottom + 8;
+        const l = window.pageXOffset + r.left + r.width / 2;
+        menu.style.top = t + 'px';
+        menu.style.left = l + 'px';
+      };
+      window.addEventListener('scroll', onScrollResize, {passive: true});
+      window.addEventListener('resize', onScrollResize);
+
+      cleanupListeners = () => {
+        window.removeEventListener('scroll', onScrollResize);
+        window.removeEventListener('resize', onScrollResize);
+      };
+
+      isFloating = true;
+      btn.setAttribute('aria-expanded', 'true');
+      menu.setAttribute('aria-hidden', 'false');
+    }
+
+    function closeFloatingMenu() {
+      if(!isFloating) return;
+      menu.classList.remove('open');
+
+      const onTransitionEnd = () => {
+        originalParent.appendChild(menu);
+        menu.style.position = '';
+        menu.style.top = '';
+        menu.style.left = '';
+        menu.classList.remove('floating');
+        menu.removeEventListener('transitionend', onTransitionEnd);
+      };
+      menu.addEventListener('transitionend', onTransitionEnd);
+
+      if(typeof cleanupListeners === 'function') cleanupListeners();
+      isFloating = false;
+      btn.setAttribute('aria-expanded', 'false');
+      menu.setAttribute('aria-hidden', 'true');
+    }
+
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      if(menu.classList.contains('open')) {
+        closeFloatingMenu();
+      } else {
+        openFloatingMenu();
+        const first = menu.querySelector('[role="menuitem"]');
+        if(first) first.focus();
+      }
+    });
+
+    document.addEventListener('click', (e) => {
+      if(!menu.classList.contains('open')) return;
+      if(e.target === btn || menu.contains(e.target)) return;
       closeFloatingMenu();
+    });
+
+    document.addEventListener('keydown', (ev) => {
+      if(ev.key === 'Escape' && menu.classList.contains('open')) {
+        closeFloatingMenu();
+        btn.focus();
+      }
+      if(menu.classList.contains('open') && (ev.key === 'ArrowDown' || ev.key === 'ArrowUp')) {
+        ev.preventDefault();
+        const items = Array.from(menu.querySelectorAll('[role="menuitem"]'));
+        const idx = items.indexOf(document.activeElement);
+        let next;
+        if(ev.key === 'ArrowDown') next = items[(idx + 1) % items.length];
+        else next = items[(idx - 1 + items.length) % items.length];
+        if(next) next.focus();
+      }
+    });
+
+    menu.addEventListener('click', (e) => {
+      const li = e.target.closest('[role="menuitem"]');
+      if(!li) return;
       btn.focus();
-    }
-    if(menu.classList.contains('open') && (ev.key === 'ArrowDown' || ev.key === 'ArrowUp')) {
-      ev.preventDefault();
-      const items = Array.from(menu.querySelectorAll('[role="menuitem"]'));
-      const idx = items.indexOf(document.activeElement);
-      let next;
-      if(ev.key === 'ArrowDown') next = items[(idx + 1) % items.length];
-      else next = items[(idx - 1 + items.length) % items.length];
-      if(next) next.focus();
-    }
-  });
+    });
 
-  menu.addEventListener('click', (e) => {
-    const li = e.target.closest('[role="menuitem"]');
-    if(!li) return;
-    btn.focus();
-  });
+  })();
+}
 
-})();
 
 // Модальное окно "Поделиться" на мобилке
 

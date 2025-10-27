@@ -3130,13 +3130,13 @@
             <div class="kp-popup-left">
                 <form class="get-contact-form">
                         <div class="get-contact-form-first-line">
-                            <input type="text" name="name" placeholder="Ваше имя">
+                            <input type="text" name="name" data-field="name" data-required="true" placeholder="Ваше имя">
                         </div>
 
                         <div class="get-contact-form-second-line">
-                            <input type="phone" class="phone" name="phone" placeholder="+7 (___) ___-__-__">
+                            <input type="phone" class="phone" name="phone" data-field="phone" data-required="true" placeholder="+7 (___) ___-__-__">
 
-                            <input type="email" name="email" placeholder="E-mail">
+                            <input type="email" name="email" data-field="email" data-required="true" placeholder="E-mail">
                         </div>
 
                         <div class="get-contact-form-last-line">
@@ -3166,6 +3166,7 @@
                                     type="checkbox" 
                                     name="accept"
                                     data-field="accept" 
+                                    data-required="true"
                                 />
                                 <div class="checkbox-img"></div>
                             </label>

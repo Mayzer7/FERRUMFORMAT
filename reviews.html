@@ -3255,20 +3255,20 @@
                 <div class="contacts-content-left-side">
                     <form class="get-contact-form">
                         <div class="get-contact-form-first-line">
-                            <input type="text" name="name" placeholder="Ваше имя">
+                            <input type="text" name="name" data-field="name" data-required="true" placeholder="Ваше имя">
                         </div>
 
                         <div class="get-contact-form-second-line">
-                            <input type="phone" class="phone" name="phone" placeholder="+7 (___) ___-__-__">
+                            <input type="tel" class="phone" name="phone" data-field="phone" data-required="true" placeholder="+7 (___) ___-__-__">
 
-                            <input type="email" name="email" placeholder="E-mail">
+                            <input type="email" name="email" data-field="email" data-required="true" placeholder="E-mail">
                         </div>
 
                         <div class="get-contact-form-last-line">
-                             <textarea name="message" placeholder="Сообщение"></textarea>
+                             <textarea name="message" data-field="message" placeholder="Сообщение"></textarea>
                         </div>
 
-                        <input class="file-input" name="file" type="file" accept=".pdf,image/jpeg,image/png" multiple style="display:none" />
+                        <input class="file-input" name="file" type="file" data-field accept=".pdf,image/jpeg,image/png" multiple style="display:none" />
 
                         <div class="get-contact-attach-file" id="attachArea" role="button" tabindex="0" aria-label="Прикрепить файл">
                             <svg width="20" height="21" viewBox="0 0 20 21" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -3291,6 +3291,7 @@
                                     type="checkbox" 
                                     name="accept"
                                     data-field="accept" 
+                                    data-required="true"
                                 />
                                 <div class="checkbox-img"></div>
                             </label>
@@ -3652,13 +3653,13 @@
             <div class="kp-popup-left">
                 <form class="get-contact-form">
                         <div class="get-contact-form-first-line">
-                            <input type="text" name="name" placeholder="Ваше имя">
+                            <input type="text" name="name" data-field="name" data-required="true" placeholder="Ваше имя">
                         </div>
 
                         <div class="get-contact-form-second-line">
-                            <input type="phone" class="phone" name="phone" placeholder="+7 (___) ___-__-__">
+                            <input type="phone" class="phone" name="phone" data-field="phone" data-required="true" placeholder="+7 (___) ___-__-__">
 
-                            <input type="email" name="email" placeholder="E-mail">
+                            <input type="email" name="email" data-field="email" data-required="true" placeholder="E-mail">
                         </div>
 
                         <div class="get-contact-form-last-line">
@@ -3688,6 +3689,7 @@
                                     type="checkbox" 
                                     name="accept"
                                     data-field="accept" 
+                                    data-required="true"
                                 />
                                 <div class="checkbox-img"></div>
                             </label>
