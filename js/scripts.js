@@ -1104,58 +1104,67 @@ document.addEventListener('DOMContentLoaded', () => {
 
 const maps = document.querySelectorAll(".maps");
 
-let center = [55.01313106967953, 60.096861499999896];
+if (maps) {
+  function getZoom() {
+    return window.innerWidth <= 500 ? 17 : 16.5;
+  }
 
-function getZoom() {
-  return window.innerWidth <= 500 ? 17 : 16.5;
-}
+  function createMap(mapDiv) {
+    const coords = mapDiv.dataset.coords.split(",").map(Number);
+    const url = mapDiv.dataset.url;
 
-function createMap(mapId) {
-  const mapInstance = new ymaps.Map(mapId, {
-    center: center,
-    zoom: getZoom(),
-    controls: [],
-    type: "yandex#map",
-  });
+    const mapInstance = new ymaps.Map(mapDiv.id, {
+      center: coords,
+      zoom: getZoom(),
+      controls: [],
+      type: "yandex#map",
+    });
 
-  mapInstance.options.set('preset', 'islands#dark');
+    mapInstance.options.set("preset", "islands#dark");
 
-  let placemark = new ymaps.Placemark(center, {}, {
-    iconLayout: "default#image",
-    iconImageHref: "/images/marker.svg",
-    iconImageSize: [40, 40],
-    iconImageOffset: [-19, -44],
-  });
-
-  placemark.events.add("click", function () {
-    const url = "https://yandex.ru/maps/11212/miass/house/ulitsa_60_let_oktyabrya_13a_2/YkkYdg5mQUMGQFtvfXxwcn1gZQ==/?ll=60.096861%2C55.013131&z=17.13";
-    window.open(url, "_blank");
-  });
-
-  
-
-  mapInstance.geoObjects.add(placemark);
-  mapInstance.container.fitToViewport();
-
-  return mapInstance;
-}
-
-ymaps.ready(() => {
-  const mapInstances = {};
-
-  maps.forEach(mapDiv => {
-    mapInstances[mapDiv.id] = createMap(mapDiv.id);
-  });
-
-  window.addEventListener("resize", () => {
-    Object.values(mapInstances).forEach(mapObj => {
-      if (mapObj && mapObj.container) {
-        mapObj.setZoom(getZoom());
-        mapObj.container.fitToViewport();
+    const placemark = new ymaps.Placemark(
+      coords,
+      {},
+      {
+        iconLayout: "default#image",
+        iconImageHref: "/images/marker.svg",
+        iconImageSize: [40, 40],
+        iconImageOffset: [-19, -44],
       }
+    );
+
+    if (url) {
+      placemark.events.add("click", function () {
+        window.open(url, "_blank");
+      });
+    }
+
+    mapInstance.geoObjects.add(placemark);
+    mapInstance.container.fitToViewport();
+
+    return mapInstance;
+  }
+
+  // Инициализация всех карт
+  ymaps.ready(() => {
+    const mapInstances = {};
+
+    maps.forEach((mapDiv) => {
+      mapInstances[mapDiv.id] = createMap(mapDiv);
+    });
+
+    window.addEventListener("resize", () => {
+      Object.values(mapInstances).forEach((mapObj) => {
+        if (mapObj && mapObj.container) {
+          mapObj.setZoom(getZoom());
+          mapObj.container.fitToViewport();
+        }
+      });
     });
   });
-});
+}
+
+
 
 
 
@@ -2665,99 +2674,102 @@ if (newsInfoCards) {
 
 
 // Модальное окно для видео
-(function () {
-  const modal = document.querySelector('.modal-video-about');
-  const modalWrap = modal?.querySelector('.modal-media-wrap');
-  const closeBtn = modal?.querySelector('.close-video');
-  const playButtons = document.querySelectorAll('[data-video]');
-  let lastFocused = null;
 
-  function isRutube(url) {
-    return /rutube\.ru/.test(url);
-  }
-  function isMp4(url) {
-    return /\.(mp4|webm|ogg)(\?|$)/i.test(url);
-  }
+const modalVideo = document.querySelector('.modal-video-about');
 
-  function buildRutubeIframe(src) {
-    const url = new URL(src, window.location.href);
-    url.searchParams.set('autoplay', '1');
-    const iframe = document.createElement('iframe');
-    iframe.src = url.toString();
-    iframe.setAttribute('frameborder', '0');
-    iframe.setAttribute('allow', 'autoplay; encrypted-media; fullscreen');
-    iframe.allowFullscreen = true;
-    return iframe;
-  }
+if (modalVideo) {
+  (function () {
+    const modal = document.querySelector('.modal-video-about');
+    const modalWrap = modal?.querySelector('.modal-media-wrap');
+    const closeBtn = modal?.querySelector('.close-video');
+    const playButtons = document.querySelectorAll('[data-video]');
+    let lastFocused = null;
 
-  function buildHtml5Video(src) {
-    const video = document.createElement('video');
-    video.controls = true;
-    video.autoplay = true;
-    video.preload = 'metadata';
-    const source = document.createElement('source');
-    source.src = src;
-    video.appendChild(source);
-    return video;
-  }
-
-  function clearMedia() {
-    if (!modalWrap) return;
-    const child = modalWrap.firstElementChild;
-    if (child) {
-      if (child.tagName === 'VIDEO') child.pause();
-      modalWrap.innerHTML = '';
+    function isRutube(url) {
+      return /rutube\.ru/.test(url);
     }
-  }
-
-  function openModalWith(url, typeHint) {
-    lastFocused = document.activeElement;
-    clearMedia();
-
-    let node;
-    if (typeHint === 'rutube' || (!typeHint && isRutube(url))) {
-      node = buildRutubeIframe(url);
-    } else {
-      node = buildHtml5Video(url);
+    function isMp4(url) {
+      return /\.(mp4|webm|ogg)(\?|$)/i.test(url);
     }
 
-    modalWrap.appendChild(node);
-    modal.style.display = 'flex';
-    requestAnimationFrame(() => modal.classList.add('show'));
+    function buildRutubeIframe(src) {
+      const url = new URL(src, window.location.href);
+      url.searchParams.set('autoplay', '1');
+      const iframe = document.createElement('iframe');
+      iframe.src = url.toString();
+      iframe.setAttribute('frameborder', '0');
+      iframe.setAttribute('allow', 'autoplay; encrypted-media; fullscreen');
+      iframe.allowFullscreen = true;
+      return iframe;
+    }
 
-    document.documentElement.classList.add('no-scroll-modal');
-    document.body.classList.add('no-scroll-modal');
-  }
+    function buildHtml5Video(src) {
+      const video = document.createElement('video');
+      video.controls = true;
+      video.autoplay = true;
+      video.preload = 'metadata';
+      const source = document.createElement('source');
+      source.src = src;
+      video.appendChild(source);
+      return video;
+    }
 
-  function closeModal() {
-    modal.classList.remove('show');
-    clearMedia();
+    function clearMedia() {
+      if (!modalWrap) return;
+      const child = modalWrap.firstElementChild;
+      if (child) {
+        if (child.tagName === 'VIDEO') child.pause();
+        modalWrap.innerHTML = '';
+      }
+    }
 
-    setTimeout(() => {
-      modal.style.display = 'none';
-      document.documentElement.classList.remove('no-scroll-modal');
-      document.body.classList.remove('no-scroll-modal');
-    }, 300); 
-  }
+    function openModalWith(url, typeHint) {
+      lastFocused = document.activeElement;
+      clearMedia();
 
-  playButtons.forEach(btn => {
-    btn.addEventListener('click', e => {
-      const url = btn.getAttribute('data-video');
-      const typeHint = btn.getAttribute('data-type');
-      if (url) openModalWith(url, typeHint);
+      let node;
+      if (typeHint === 'rutube' || (!typeHint && isRutube(url))) {
+        node = buildRutubeIframe(url);
+      } else {
+        node = buildHtml5Video(url);
+      }
+
+      modalWrap.appendChild(node);
+      modal.style.display = 'flex';
+      requestAnimationFrame(() => modal.classList.add('show'));
+
+      document.documentElement.classList.add('no-scroll-modal');
+      document.body.classList.add('no-scroll-modal');
+    }
+
+    function closeModal() {
+      modal.classList.remove('show');
+      clearMedia();
+
+      setTimeout(() => {
+        modal.style.display = 'none';
+        document.documentElement.classList.remove('no-scroll-modal');
+        document.body.classList.remove('no-scroll-modal');
+      }, 300); 
+    }
+
+    playButtons.forEach(btn => {
+      btn.addEventListener('click', e => {
+        const url = btn.getAttribute('data-video');
+        const typeHint = btn.getAttribute('data-type');
+        if (url) openModalWith(url, typeHint);
+      });
     });
-  });
 
-  closeBtn?.addEventListener('click', closeModal);
-  modal.addEventListener('click', e => {
-    if (!e.target.closest('.modal-content-video-about')) closeModal();
-  });
-  document.addEventListener('keydown', e => {
-    if (e.key === 'Escape' && modal.classList.contains('show')) closeModal();
-  });
-})();
-
-         
+    closeBtn?.addEventListener('click', closeModal);
+    modal.addEventListener('click', e => {
+      if (!e.target.closest('.modal-content-video-about')) closeModal();
+    });
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape' && modal.classList.contains('show')) closeModal();
+    });
+  })();
+}
 
 
 // Валидация номера телефона в форме
