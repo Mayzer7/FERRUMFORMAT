@@ -1173,6 +1173,20 @@ if (maps) {
 
 // Яндекс карта поставок
 
+
+// Метки на карте поставок
+
+const points = [
+  { coords: [69.3498, 88.2026], count: 50, name: 'Норильск' },
+  { coords: [67.4971, 64.0419], count: 9,  name: 'Воркута' },
+  { coords: [55.7558, 37.6173], count: 12143, name: 'Москва' },
+  { coords: [55.7903, 49.1347], count: 111, name: 'Казань' },
+  { coords: [55.1644, 61.4368], count: 50583, name: 'Челябинск' },
+  { coords: [54.9885, 73.3242], count: 345, name: 'Омск' },
+  { coords: [56.0106, 92.8526], count: 345, name: 'Красноярск' },
+  { coords: [62.0355,129.6755], count: 17, name: 'Якутск' },
+];
+
 const supplyMaps = document.querySelector('.supply-maps')
 
 if (supplyMaps) {
@@ -1290,19 +1304,8 @@ if (supplyMaps) {
         type: "yandex#map",
       });
 
-       mapInstance.options.set('balloonPanelMaxMapArea', 0);
+      mapInstance.options.set('balloonPanelMaxMapArea', 0);
       mapInstance.options.set('preset', 'islands#dark');
-
-      const points = [
-        { coords: [69.3498, 88.2026], count: 50, name: 'Норильск' },
-        { coords: [67.4971, 64.0419], count: 9,  name: 'Воркута' },
-        { coords: [55.7558, 37.6173], count: 12143, name: 'Москва' },
-        { coords: [55.7903, 49.1347], count: 111, name: 'Казань' },
-        { coords: [55.1644, 61.4368], count: 50583, name: 'Челябинск' },
-        { coords: [54.9885, 73.3242], count: 345, name: 'Омск' },
-        { coords: [56.0106, 92.8526], count: 345, name: 'Красноярск' },
-        { coords: [62.0355,129.6755], count: 17, name: 'Якутск' },
-      ];
 
       const balloonHtml = `
         <div class="custom-hint">
@@ -1777,6 +1780,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // Загрузка карты
 
+const DELIVERY_MAP = {
+  'zone-1': 'Доставка от 5-7 дней', // синяя зона
+  'zone-2': 'Доставка от 7–9 дней', // желтая зона
+  'zone-3': 'Доставка от 9–11 дней', // красная зона
+  'zone-4': 'Доставка от 12–15 дней', // фиолетовая зона
+  'zone-5': 'Доставка от 2–4 дней', // отдельная зеленая зона
+  'zone-6': 'Доставка от 19–21 дня', // отдельная зеленая зона
+  'zone-7': 'Доставка от 28–30 дней', // отдельная зеленая зона
+  'zone-8': 'Доставка от 33–35 дней', // отдельная зеленая зона
+  'zone-9': 'Доставка от 42–44 дней', // отдельная зеленая зона
+  'zone-10': 'Доставка от 44–46 дней', // отдельная зеленая зона
+};
+
 const deliveryMap = document.querySelector('.delivery-map');
 
 if (deliveryMap) {
@@ -1868,6 +1884,17 @@ if (deliveryMap) {
       const svgText = await res.text();
       container.innerHTML = svgText;
       const svgEl = container.querySelector('svg');
+
+      svgEl.querySelectorAll('[data-zone]').forEach(el => {
+        const zone = (el.getAttribute('data-zone') || '').trim();
+        if (!zone) return;
+        if (el.dataset && el.dataset.delivery) return;
+        if (DELIVERY_MAP[zone]) {
+          try { el.dataset.delivery = DELIVERY_MAP[zone]; }
+          catch(e) { }
+        }
+      });
+
       if (!svgEl) throw new Error('Вставленный файл не содержит <svg>');
       svgEl.setAttribute('role', 'img');
       svgEl.setAttribute('aria-hidden', 'false');
