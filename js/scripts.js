@@ -2655,78 +2655,97 @@ if (newsInfoCards) {
 
 
 // Модальное окно для видео
-
-const modalVideo = document.querySelector('.modal-video');
-
-if (modalVideo) {
-  const header = document.querySelector('.header');
-  const playButtons = document.querySelectorAll('.video-play');
+(function () {
   const modal = document.querySelector('.modal-video-about');
-  const closeBtn = modal.querySelector('.close-video');
-  const video = document.getElementById('modalVideo');
+  const modalWrap = modal?.querySelector('.modal-media-wrap');
+  const closeBtn = modal?.querySelector('.close-video');
+  const playButtons = document.querySelectorAll('[data-video]');
   let lastFocused = null;
 
-  function openModal(event) {
-    lastFocused = event?.currentTarget || document.activeElement;
+  function isRutube(url) {
+    return /rutube\.ru/.test(url);
+  }
+  function isMp4(url) {
+    return /\.(mp4|webm|ogg)(\?|$)/i.test(url);
+  }
 
+  function buildRutubeIframe(src) {
+    const url = new URL(src, window.location.href);
+    url.searchParams.set('autoplay', '1');
+    const iframe = document.createElement('iframe');
+    iframe.src = url.toString();
+    iframe.setAttribute('frameborder', '0');
+    iframe.setAttribute('allow', 'autoplay; encrypted-media; fullscreen');
+    iframe.allowFullscreen = true;
+    return iframe;
+  }
+
+  function buildHtml5Video(src) {
+    const video = document.createElement('video');
+    video.controls = true;
+    video.autoplay = true;
+    video.preload = 'metadata';
+    const source = document.createElement('source');
+    source.src = src;
+    video.appendChild(source);
+    return video;
+  }
+
+  function clearMedia() {
+    if (!modalWrap) return;
+    const child = modalWrap.firstElementChild;
+    if (child) {
+      if (child.tagName === 'VIDEO') child.pause();
+      modalWrap.innerHTML = '';
+    }
+  }
+
+  function openModalWith(url, typeHint) {
+    lastFocused = document.activeElement;
+    clearMedia();
+
+    let node;
+    if (typeHint === 'rutube' || (!typeHint && isRutube(url))) {
+      node = buildRutubeIframe(url);
+    } else {
+      node = buildHtml5Video(url);
+    }
+
+    modalWrap.appendChild(node);
     modal.style.display = 'flex';
     requestAnimationFrame(() => modal.classList.add('show'));
 
     document.documentElement.classList.add('no-scroll-modal');
     document.body.classList.add('no-scroll-modal');
-
-    try {
-      const p = video.play();
-      if (p && typeof p.then === 'function') p.catch(() => {});
-    } catch (err) {}
-
-    if (closeBtn) closeBtn.focus();
-      modal.setAttribute('aria-hidden', 'false');
   }
 
   function closeModal() {
     modal.classList.remove('show');
-    modal.setAttribute('aria-hidden', 'true');
+    clearMedia();
 
-    function onTransitionEnd(e) {
-      if (e.target === modal && e.propertyName === 'opacity') {
-        modal.style.display = 'none';
-        modal.removeEventListener('transitionend', onTransitionEnd);
-      }
-    }
-    modal.addEventListener('transitionend', onTransitionEnd);
-
-    document.documentElement.classList.remove('no-scroll-modal');
-    document.body.classList.remove('no-scroll-modal');
-    header.classList.add('header--visible');
-    header.classList.remove('header--hidden');
-    
-
-    try { video.pause(); video.currentTime = 0; } catch (err) {}
-
-    if (lastFocused && typeof lastFocused.focus === 'function') lastFocused.focus();
+    setTimeout(() => {
+      modal.style.display = 'none';
+      document.documentElement.classList.remove('no-scroll-modal');
+      document.body.classList.remove('no-scroll-modal');
+    }, 300); 
   }
 
-  playButtons.forEach(btn => btn.addEventListener('click', openModal));
-
-  const anotherBtn = document.querySelector('.video-about-production');
-
-  if (anotherBtn) {
-    anotherBtn.addEventListener('click', (e) => {
-      openModal(e); 
+  playButtons.forEach(btn => {
+    btn.addEventListener('click', e => {
+      const url = btn.getAttribute('data-video');
+      const typeHint = btn.getAttribute('data-type');
+      if (url) openModalWith(url, typeHint);
     });
-  }
-
-  if (closeBtn) closeBtn.addEventListener('click', closeModal);
-
-  modal.addEventListener('click', (e) => {
-    if (e.target === modal) closeModal();
   });
 
-  document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape' && modal.style.display === 'flex') closeModal();
+  closeBtn?.addEventListener('click', closeModal);
+  modal.addEventListener('click', e => {
+    if (!e.target.closest('.modal-content-video-about')) closeModal();
   });
-}
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape' && modal.classList.contains('show')) closeModal();
+  });
+})();
 
          
 
