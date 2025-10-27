@@ -11022,6 +11022,7 @@ section {
 
 
 
+/* Модальное окно для просмотра видео */
 
  .close-video {
   position: absolute;
@@ -11070,6 +11071,13 @@ section {
   height: auto;
   object-fit: contain;
   background-color: #000;
+}
+
+.modal-content-video-about iframe {
+    width: 70vw;
+    height: 75vh;
+    object-fit: contain;
+    background-color: #000;
 }
 
 .modal-video-about {
