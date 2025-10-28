@@ -10,62 +10,69 @@
 <body>
   <div class="pdf-content">
 
-    <!-- 1. Шапка -->
-    <table class="header" width="100%" cellspacing="0" cellpadding="0" role="presentation">
-      <tr>
-        <td class="logo" width="40%">
-          <!-- замените src на реальный путь или на data-uri -->
-          <img src="images/logo-png.png" alt="Логотип компании" width="180" />
-        </td>
-        <td class="contacts" width="60%" align="right">
-          <div><a href="tel:+73513250524">+7 351 325-05-24</a></div>
-          <div><a href="mailto:zakaz1.polistroy@yandex.ru">zakaz1.polistroy@yandex.ru</a></div>
-        </td>
-      </tr>
+    <!-- Шапка -->
+    <table class="header" width="100%" cellspacing="0" cellpadding="0" role="presentation"
+        style="border-collapse: collapse; border-bottom: 1px solid #ddd; font-family: Arial, sans-serif;">
+        <tr>
+            <td width="50%" align="left" valign="middle" style="padding: 10px 0;">
+                <img src="images/logo-png.png" alt="Логотип компании" width="200" style="vertical-align: middle;" />
+            </td>
+
+            <td width="50%" align="right" valign="middle" style="padding: 10px 0;">
+                <table cellspacing="0" cellpadding="0" role="presentation" style="border-collapse: collapse;">
+                    <tr>
+                    <td valign="middle" style="text-align: right;"><a href="tel:+73513250524" class="contact-item">+7 (351) 325-05-24</a><a href="mailto:zakaz1.polistroy@yandex.ru" class="contact-item">zakaz1.polistroy@yandex.ru</a>
+                    </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+
+        <tr>
+            <td colspan="2" height="10" style="line-height:10px;">&nbsp;</td>
+        </tr>
     </table>
 
-    <!-- 2. Название товара -->
     <h1 class="product-title">Почтовый ящик серии «Гарант»</h1>
 
-    <!-- 3. Фото (первое) -->
     <div class="main-photo">
       <img src="images/tovar.png" alt="Фото товара" width="380" />
     </div>
 
-    <!-- 4. Преимущества -->
+    <div class="price">Рекомендуемая розничная цена: от 7 756 рублей</div>
+
     <div class="content-container">
         <div class="advantages-container">
             <h2>Преимущества</h2>
         
             <table class="advantages" width="100%" cellspacing="0" cellpadding="6" role="presentation">
-                <tr class="adv-row" style="border:none;">
-                    <td class="adv-key">✔ Количество секций: от 2 до 12</td>
+                <tr >
+                    <td>✔ Количество секций: от 2 до 12</td>
                 </tr>
                 
-                <tr class="adv-row">
-                    <td class="adv-key">✔ На каждую секцию по 2 ключа в комплекте</td>
+                <tr >
+                    <td >✔ На каждую секцию по 2 ключа в комплекте</td>
                 </tr>
                 
-                <tr class="adv-row">
-                    <td class="adv-key">✔ Надежность конструкции и четкость форм</td>
+                <tr >
+                    <td >✔ Надежность конструкции и четкость форм</td>
                 </tr>
 
-                <tr class="adv-row">
-                    <td class="adv-key">✔ Усиленные дверцы с горизонтальным открытием</td>
+                <tr >
+                    <td >✔ Усиленные дверцы с горизонтальным открытием</td>
                 </tr>
 
-                <tr class="adv-row">
-                    <td class="adv-key">✔ Удобство монтажа за счет улучшенной конструкции корпуса почтового ящика</td>
+                <tr >
+                    <td >✔ Удобство монтажа за счет улучшенной конструкции корпуса почтового ящика</td>
                 </tr>
 
-                <tr class="adv-row">
-                    <td class="adv-key">✔ Качественная упаковка (4 х клапанная коробка с маркировкой)</td>
+                <tr >
+                    <td >✔ Качественная упаковка (4 х клапанная коробка с маркировкой)</td>
                 </tr>
             </table>
         </div>
     </div>
 
-    <!-- 5. Коммерческие данные -->
     <div class="content-container">
         <h2>Коммерческие данные</h2>
         
@@ -75,12 +82,10 @@
             <li>Фиксированные цены при предоплате, в среднем на 30% ниже рынка</li>
             <li>Изготовим почтовые ящики под любой запрос: размер, толщина металла, любой цвет в палитре RAL</li>
             <li>Усиленные замковые системы и петли, антивандальная конструкция, любые декоративные элементы</li>
-            <div class="price">Рекомендуемая розничная цена: от 7 756 рублей</div>
         </ul>
         
     </div>
 
-    <!-- 6. Что компания представляет из себя на рынке -->
     <div class="content-container">
         <h2>О компании</h2>
         <table class="stats" width="100%" cellspacing="0" cellpadding="6" role="presentation">
@@ -96,7 +101,6 @@
         </table>
     </div>
 
-    <!-- 7. Варианты исполнения -->
     <div class="content-container">
         <h2>Варианты исполнения</h2>
 
@@ -167,20 +171,18 @@
             </tbody>
         </table>
 
-
-
         <p class="variants-note">
-        Внешний вид товара может незначительно отличаться от фотографий на сайте.
+            Внешний вид товара может незначительно отличаться от фотографий на сайте.
         </p>
         <p class="variants-strong">
-        <strong>Поставляем оптом секционные почтовые ящики «Гарант» собственного производства.</strong>
+            <strong>Поставляем оптом секционные почтовые ящики «Гарант» собственного производства.</strong>
         </p>
     </div>
 
-    <!-- 8. Характеристики -->
     <div class="content-container">
         <h2>Характеристики</h2>
-            <ul class="commercial">
+
+        <ul class="commercial">
             <li>Количество секций</li>
             <li>Габариты: 380х223х180</li>
             <li>Вес: 2,50</li>
@@ -200,20 +202,17 @@
         </ul>
     </div>
 
-    <!-- 9. Доставка и оплата -->
     <div class="content-container">
         <h2>Доставка и оплата</h2>
         <p>Доставка: курьерские службы, самовывоз. Оплата: банковская карта, безналичный расчёт.</p>
     </div>
 
-    <!-- 10. Гарантия -->
     <div class="content-container">
         <h2>Гарантия</h2>
 
         <ul>
             <li>Заменим брак в течении 12 месяцев за наш счёт</li>
-            <li>
-                Сделаем замену в следующих случаях:
+            <li>Сделаем замену в следующих случаях:
                 <ol class="guarantee-list">
                     <li>Заводской брак;</li>
                     <li>Поломка или выход из строя;</li>
@@ -224,7 +223,6 @@
         </ul>
     </div>
 
-    <!-- 11. Контакты -->
     <div class="content-container">
         <h2>Контакты</h2>
 
@@ -232,9 +230,7 @@
             <tbody>
                 <tr>
                 <td class="contact-label">Телефон</td>
-                <td class="contact-value">
-                    <a href="tel:+73513250524">+7 351 325-05-24</a>
-                </td>
+                <td class="contact-value"><a href="tel:+73513250524">+7 351 325-05-24</a></td>
                 </tr>
                 <tr>
                 <td class="contact-label">E-mail</td>
@@ -242,8 +238,7 @@
                 </tr>
                 <tr>
                 <td class="contact-label">Адрес производства/офиса</td>
-                <td class="contact-value">
-                    <a href="https://yandex.ru/maps/-/CLUt6Jkr" target="_blank">г. Миасс, ул. 60 лет Октября 13А/2</a>
+                <td class="contact-value"><a href="https://yandex.ru/maps/-/CLUt6Jkr" target="_blank">г. Миасс, ул. 60 лет Октября 13А/2</a>
                 </td>
                 </tr>
                 <tr>
@@ -256,18 +251,12 @@
                 </tr>
                 <tr>
                 <td class="contact-label">Реквизиты</td>
-                <td class="contact-value">
-                    <a href="/files/rekvizity.pdf" download="rekvizity.pdf" style="vertical-align:middle">Скачать реквизиты (PDF 35 Mb)</a>
+                <td class="contact-value"><a href="/files/rekvizity.pdf" download="rekvizity.pdf" style="vertical-align:middle">Скачать реквизиты (PDF 35 Mb)</a>
                 </td>
                 </tr>
                 <tr>
                 <td class="contact-label">Социальные сети</td>
-                <td class="contact-value">
-                    <a href="https://wa.me/79123456789" target="_blank">WhatsApp</a> |
-                        <a href="https://t.me/ferrumformat" target="_blank">Telegram</a> |
-                        <a href="https://vk.com/ferrumformat" target="_blank">VK</a> |
-                        <a href="https://zen.yandex.ru/ferrumformat" target="_blank">Я.Дзен</a> |
-                        <a href="https://www.youtube.com/@ferrumformat" target="_blank">Youtube</a>
+                <td class="contact-value"><a href="https://wa.me/79123456789" target="_blank">WhatsApp</a> | <a href="https://t.me/ferrumformat" target="_blank">Telegram</a> | <a href="https://vk.com/ferrumformat" target="_blank">VK</a> | <a href="https://zen.yandex.ru/ferrumformat" target="_blank">Я.Дзен</a> | <a href="https://www.youtube.com/@ferrumformat" target="_blank">Youtube</a>
                 </td>
                 </tr>
             </tbody>

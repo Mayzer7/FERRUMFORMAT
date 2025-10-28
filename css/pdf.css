@@ -25,24 +25,33 @@ a:hover {
   text-decoration: underline;
 }
 
-.header img { display: block; max-width: 100%; height: auto; }
+
 .header .contacts a { color: #000; text-decoration: none; }
 .header .contacts a:hover { text-decoration: underline; }
 
-.header {
-  border-bottom: 1px solid #ddd;
-  padding-bottom: 10px;
-}
+
 
 h1, h2 {
   margin: 8px 0;
   padding: 0;
   font-weight: bold;
 }
-h1 { font-size: 20px; }
-h2 { font-size: 14px; margin-top: 14px; }
 
-.main-photo img { max-width: 100%; height: auto; border: 1px solid #ddd; padding: 4px; }
+h1 { 
+  font-size: 20px; 
+}
+
+h2 { 
+  font-size: 14px; 
+  margin-top: 14px; 
+}
+
+.main-photo img { 
+  max-width: 100%; 
+  height: auto; 
+  border: 1px solid #ddd; 
+  padding: 4px; 
+}
 
 .advantages { border-collapse: collapse; margin-bottom: 8px; }
 .advantages .adv-row td {
@@ -52,17 +61,30 @@ h2 { font-size: 14px; margin-top: 14px; }
   padding: 4px 8px;
 }
 
+.contact-item {
+  display:inline-block; 
+  font-size:15px; 
+  color:#000; 
+  text-decoration:none; 
+  margin-right:12px; 
+  line-height:1.2;
+}
+
 .product-title {
   margin-top: 20px;
 }
 
-.price { margin-top: 8px; font-size: 12px; font-weight: bold; }
+.price { 
+  margin-top: 8px; 
+  font-size: 12px; 
+  font-weight: bold; 
+}
 
-/* .content-container  {
-  padding-bottom: 5px;
-} */
+.stats { 
+  border-collapse: collapse; 
+  margin-bottom: 8px; 
+}
 
-.stats { border-collapse: collapse; margin-bottom: 8px; }
 .stat-item {
   padding: 6px;
   border-top: 1px solid #e6e6e6;
@@ -157,11 +179,11 @@ ul li {
 .contacts-table {
   border-collapse: collapse;
   width: 100%;
-  border: 1px solid #ccc; /* внешняя рамка таблицы */
+  border: 1px solid #ccc; 
 }
 
 .contacts-table tr td {
-  border: 1px solid #ccc; /* каждая ячейка */
+  border: 1px solid #ccc; 
 }
 
 .contacts-table td {
@@ -172,20 +194,20 @@ ul li {
 
 .contact-label {
   width: 34%;
-  color: #111;
+  color: rgb(138, 138, 138) !important;
   font-weight: normal;
   padding-left: 6px;
 }
 
 .contact-value {
   width: 66%;
-  color: #111 !important;
+  color: rgb(0, 0, 0) !important;
   font-weight: normal;
   text-align: left;
 }
 
 .contact-value a {
-  color: #000 !important;
+  color: rgb(0, 0, 0) !important;
 }
 
 .contact-value.phone {
@@ -295,10 +317,8 @@ html {
   }
 }
 
-
-/* === Правильный стиль ссылок для PDF === */
 a, a:link, a:visited {
-  color: #000 !important;
+  color: rgb(0, 0, 0) !important;
   text-decoration: none !important;
   background: none !important;
 }
@@ -309,16 +329,83 @@ a:hover, a:active {
 }
 
 
-
-
-
-.advantages {
-  border-collapse: collapse;
-  border: 1px solid #ccc; /* одна тонкая рамка вокруг всей таблицы */
+@page {
+  size: A4;
+  margin: 0mm; 
 }
-.advantages td {
-  border: none;            /* убрать рамки у ячеек, чтобы не было наложения */
-  padding: 6px 8px;
+
+body {
+  margin: 0;
+  font-family: DejaVu Sans, Arial, sans-serif;
+  font-size: 12px;
+  color: #000;
+  min-width: 340px;
+}
+
+h1 {
+  margin: 6px 0 8px;
+  font-size: 20px;
+}
+
+h2 {
+  margin: 8px 0;
+  font-size: 14px;
+}
+.product-title { margin-top: 8px; }
+
+p { margin: 0 0 6px 0; }
+ul { margin: 0 0 6px 30px; padding: 0; }
+.content-container { margin: 6px 0; }
+
+table, thead, tbody, tr, td, th {
+  page-break-inside: auto;
+  break-inside: auto;
+}
+
+tr {
+  page-break-inside: avoid;
+  break-inside: avoid;
+}
+
+thead { display: table-header-group; }
+tbody { display: table-row-group; }
+
+img { display: block; max-width: 100%; height: auto; }
+
+body, td, th, p, li {
+  line-height: 1.25;
+}
+
+td, th {
+  padding: 2px 4px !important;
+}
+
+ul li {
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+.advantages td,
+.stats td,
+.variants td {
+  padding: 2px 4px !important;
+}
+
+.contacts-table td {
+  padding: 3px 4px !important;
+}
+
+h1, h2 {
+  margin: 4px 0 !important;
+}
+
+.content-container {
+  margin: 4px 0 !important;
+  padding: 0 !important;
+}
+
+p, ul, ol {
+  margin: 0 0 4px 0 !important;
 }
 
 
