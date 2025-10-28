@@ -1,0 +1,324 @@
+body {
+  font-family: DejaVu Sans, Arial, sans-serif;
+  font-size: 12px;
+  color: #000;
+  margin: 10mm;
+  min-width: 340px;
+}
+
+.pdf-content {
+  width: 100%;
+}
+
+p {
+  margin: 0;
+  padding: 0;
+}
+
+ul {
+  padding-top: 0px;
+  margin-top: 0px;
+  padding-left: 30px;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+.header img { display: block; max-width: 100%; height: auto; }
+.header .contacts a { color: #000; text-decoration: none; }
+.header .contacts a:hover { text-decoration: underline; }
+
+.header {
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 10px;
+}
+
+h1, h2 {
+  margin: 8px 0;
+  padding: 0;
+  font-weight: bold;
+}
+h1 { font-size: 20px; }
+h2 { font-size: 14px; margin-top: 14px; }
+
+.main-photo img { max-width: 100%; height: auto; border: 1px solid #ddd; padding: 4px; }
+
+.advantages { border-collapse: collapse; margin-bottom: 8px; }
+.advantages .adv-row td {
+  border: 0;
+  vertical-align: top;
+  font-size: 12px;
+  padding: 4px 8px;
+}
+
+.product-title {
+  margin-top: 20px;
+}
+
+.price { margin-top: 8px; font-size: 12px; font-weight: bold; }
+
+/* .content-container  {
+  padding-bottom: 5px;
+} */
+
+.stats { border-collapse: collapse; margin-bottom: 8px; }
+.stat-item {
+  padding: 6px;
+  border-top: 1px solid #e6e6e6;
+  border-bottom: 1px solid #e6e6e6;
+}
+
+.variants {
+  border-collapse: collapse;
+  width: auto;
+  max-width: 140mm;
+  font-size: 10px;
+  table-layout: fixed;
+  margin-bottom: 10px;
+}
+
+.variants thead th {
+  text-align: left;
+  font-weight: bold;
+  padding: 6px 8px;
+  border: 1px solid #999;
+  background: transparent;
+  font-size: 10px;
+}
+
+.variants tbody td {
+  padding: 6px 8px;
+  border: 1px solid #ccc;
+  vertical-align: middle;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+.variants .v-name { width: 48%; }
+.variants .v-dim  { width: 32%; }
+.variants .v-num  { width: 10%; text-align: center; padding-right: 6px; }
+.variants thead th.v-num,
+.variants tbody td.v-num { text-align: center; }
+
+.variants, .variants thead, .variants tbody, .variants tr, .variants th, .variants td {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+.variants th, .variants td {
+  border: 1px solid #ccc !important;
+  padding: 6px 8px !important;
+  vertical-align: middle;
+}
+
+.company-contacts { font-size: 11px; margin-top: 6px; }
+.footer-note { font-size: 10px; color: #333; margin-top: 12px; }
+
+.page-break { display: block; page-break-after: always; }
+
+ul li {
+  padding: 2px 0px;
+}
+
+.guarantee-list {
+  margin-top: 5px;
+}
+
+.guarantee-list {
+  margin: 5px 0 0 5px;
+  padding-left: 0;
+  counter-reset: num;
+  list-style: none;
+}
+
+.guarantee-list li {
+  counter-increment: num;
+  padding-left: 20px;
+  position: relative;
+  line-height: 1.4;
+}
+
+.guarantee-list li::before {
+  content: counter(num) ".";
+  position: absolute;
+  left: 0;
+  font-weight: bold;
+  color: #000;
+}
+
+.contacts-table {
+  border-collapse: collapse;
+  width: 100%;
+  margin-top: 6px;
+  font-size: 12px;
+}
+
+.contacts-table {
+  border-collapse: collapse;
+  width: 100%;
+  border: 1px solid #ccc; /* внешняя рамка таблицы */
+}
+
+.contacts-table tr td {
+  border: 1px solid #ccc; /* каждая ячейка */
+}
+
+.contacts-table td {
+  padding: 10px 6px;
+  vertical-align: middle;
+  border-top: 1px solid #e0e0e0;
+}
+
+.contact-label {
+  width: 34%;
+  color: #111;
+  font-weight: normal;
+  padding-left: 6px;
+}
+
+.contact-value {
+  width: 66%;
+  color: #111 !important;
+  font-weight: normal;
+  text-align: left;
+}
+
+.contact-value a {
+  color: #000 !important;
+}
+
+.contact-value.phone {
+  font-weight: bold;
+}
+
+.contacts-table a {
+  color: #000;
+  text-decoration: none;
+}
+
+.contacts-table img {
+  display: inline-block;
+  vertical-align: middle;
+}
+
+@media print {
+  .contacts-table td { padding: 6px 4px; }
+}
+
+.contact-value a:hover,
+.social a:hover {
+  text-decoration: underline;
+}
+
+html {
+  font-size: clamp(11px, 1.2vw, 14px);
+}
+
+@media (max-width: 480px) {
+  body {
+    margin: 8px;
+    font-size: 11px;
+    line-height: 1.4;
+  }
+
+  h1 {
+    font-size: 16px;
+  }
+
+  h2 {
+    font-size: 13px;
+    margin-top: 10px;
+  }
+
+  .price {
+    font-size: 14px;
+  }
+
+  .variants,
+  .contacts-table {
+    font-size: 10px;
+  }
+
+  .main-photo img {
+    width: 100%;
+    height: auto;
+  }
+
+  .header img {
+    max-width: 140px;
+  }
+
+  .contact-label {
+    width: 45%;
+  }
+
+  .contact-value {
+    width: 55%;
+  }
+}
+
+@media (min-width: 481px) and (max-width: 768px) {
+  body {
+    margin: 12px;
+    font-size: 12px;
+  }
+
+  h1 {
+    font-size: 18px;
+  }
+
+  h2 {
+    font-size: 14px;
+  }
+
+  .price {
+    font-size: 15px;
+  }
+
+  .variants {
+    font-size: 11px;
+  }
+}
+
+@media (min-width: 769px) {
+  body {
+    font-size: 12px;
+  }
+
+  h1 {
+    font-size: 20px;
+  }
+
+  h2 {
+    font-size: 14px;
+  }
+}
+
+
+/* === Правильный стиль ссылок для PDF === */
+a, a:link, a:visited {
+  color: #000 !important;
+  text-decoration: none !important;
+  background: none !important;
+}
+
+a:hover, a:active {
+  color: #000 !important;
+  text-decoration: underline !important;
+}
+
+
+
+
+
+.advantages {
+  border-collapse: collapse;
+  border: 1px solid #ccc; /* одна тонкая рамка вокруг всей таблицы */
+}
+.advantages td {
+  border: none;            /* убрать рамки у ячеек, чтобы не было наложения */
+  padding: 6px 8px;
+}
+
+
