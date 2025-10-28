@@ -3899,19 +3899,21 @@ if (shareModal) {
     t.addEventListener('click', (ev) => {
       ev.stopPropagation();
 
-      showImage(i);
-
-      const tryOpenModal = () => {
-        if (window.__productGalleryModal && typeof window.__productGalleryModal.open === 'function') {
-          window.__productGalleryModal.open(i);
-          return true;
+      if (is3DItem(t)) {
+        const tryOpenModal = () => {
+          if (window.__productGalleryModal && typeof window.__productGalleryModal.open === 'function') {
+            window.__productGalleryModal.open(i);
+            return true;
+          }
+          return false;
+        };
+        if (!tryOpenModal()) {
+          setTimeout(() => tryOpenModal(), 50);
         }
-        return false;
-      };
-
-      if (!tryOpenModal()) {
-        setTimeout(() => { tryOpenModal(); }, 50);
+        return;
       }
+
+      showImage(i);
     });
   });
 
