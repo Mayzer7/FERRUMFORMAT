@@ -2970,7 +2970,8 @@ document.querySelectorAll('.get-contact-form').forEach((form) => {
       }
 
       function renderErrorFile(fileName) {
-        showTempError('Выбранный файл превышает 5 МБ');
+        // showTempError('Выбранный файл превышает 5 МБ');
+        return
       }
 
       function showTempError(msg) {
