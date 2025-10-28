@@ -2166,6 +2166,77 @@ if (modelModal) {
       }
     };
 
+    window.__open3DModal = openModal;
+
+    (function robustOpen3DCapture() {
+      if (window.__robustOpen3DCaptureInstalled) return;
+      window.__robustOpen3DCaptureInstalled = true;
+
+      let lock = false; 
+      const LOCK_TTL = 400; // ms
+
+      function tryOpen3DFromPoint(clientX, clientY, originalEvent) {
+        try {
+          if (lock) return false;
+          const el = document.elementFromPoint(clientX, clientY);
+          if (!el) return false;
+          const btn = el.closest && el.closest('.open-3d-model');
+          if (!btn) return false;
+
+          const gallery = document.querySelector('.product-gallery-modal');
+          if (gallery && gallery.classList.contains('open')) return false;
+
+          const src = btn.getAttribute('model-src') || btn.dataset.modelSrc || btn.getAttribute('data-model-src') || null;
+          if (!src) {
+            console.warn('open-3d-model: не найден model-src у', btn);
+            return false;
+          }
+          const name = btn.getAttribute('aria-label') || btn.dataset.modelName || document.querySelector('.product-main-image img')?.alt || '';
+
+          lock = true;
+          setTimeout(() => lock = false, LOCK_TTL);
+
+          // открываем 3D-модалку
+          if (typeof window.__open3DModal === 'function') {
+            window.__open3DModal({ src, name });
+          } else {
+            console.warn('open-3d-model: __open3DModal не определён');
+          }
+
+          try {
+            if (originalEvent) {
+              originalEvent.preventDefault && originalEvent.preventDefault();
+              originalEvent.stopPropagation && originalEvent.stopPropagation();
+              originalEvent.stopImmediatePropagation && originalEvent.stopImmediatePropagation();
+            }
+          } catch(e){ }
+
+          return true;
+        } catch (err) {
+          console.error('tryOpen3DFromPoint error', err);
+          return false;
+        }
+      }
+
+      function handlerCapture(ev) {
+        try {
+          if (ev.button !== undefined && ev.button !== 0) return;
+
+          const cx = ev.clientX, cy = ev.clientY;
+          if (typeof cx !== 'number' || typeof cy !== 'number') return;
+
+          tryOpen3DFromPoint(cx, cy, ev);
+        } catch (err) {
+          console.error('handlerCapture error', err);
+        }
+      }
+
+      document.addEventListener('pointerdown', handlerCapture, { capture: true, passive: false });
+      document.addEventListener('mousedown', handlerCapture, { capture: true, passive: false });
+      document.addEventListener('click', handlerCapture, { capture: true, passive: false });
+
+    })();
+
     const closeModal = () => {
       modal.classList.remove('open');
       document.body.classList.remove('modal-open');
@@ -2177,14 +2248,60 @@ if (modelModal) {
       }
     };
 
-    closeBtn.addEventListener('click', closeModal);
-    backdrop.addEventListener('click', closeModal);
+    if (closeBtn) closeBtn.addEventListener('click', closeModal);
+    if (backdrop) backdrop.addEventListener('click', closeModal);
+    
     document.addEventListener('keydown', (e) => {
       if (e.key === 'Escape' && modal.classList.contains('open')) closeModal();
     });
 
-    let dragging = false;
+    (function bindOpen3DButtons(){
+      const buttons = Array.from(document.querySelectorAll('.open-3d-model'));
+      if (!buttons.length) {
+        console.log('open-3d-model: нет кнопок для привязки');
+        return;
+      }
+      console.log('open-3d-model: привязываю слушатели, найдено', buttons.length);
 
+      buttons.forEach(btn => {
+        btn.addEventListener('click', (ev) => {
+          ev.preventDefault();
+          ev.stopPropagation();
+          console.log('open-3d-model: click on', btn);
+
+          const src = btn.getAttribute('model-src') || btn.dataset.modelSrc || null;
+          if (!src) {
+            console.warn('open-3d-model: model src не найден в', btn);
+            return;
+          }
+
+          const name = btn.getAttribute('aria-label') 
+                    || btn.dataset.modelName 
+                    || document.querySelector('.product-main-image img')?.alt 
+                    || '';
+
+          if (!window.customElements || !customElements.get || !customElements.get('model-viewer')) {
+            if (!window._modelViewerPromise) {
+              window._modelViewerPromise = new Promise((resolve, reject) => {
+                try {
+                  const s = document.createElement('script');
+                  s.type = 'module';
+                  s.src = 'js/libs/model-viewer.min.js';
+                  s.addEventListener('load', resolve);
+                  s.addEventListener('error', reject);
+                  document.head.appendChild(s);
+                } catch (err) { reject(err); }
+              });
+            }
+            window._modelViewerPromise.catch(()=>{});
+          }
+
+          openModal({ src, name });
+        });
+      });
+    })();
+
+    let dragging = false;
     let touchMoved = false;
     document.addEventListener('touchmove', () => { touchMoved = true; }, {passive: true});
     document.addEventListener('touchend', () => { setTimeout(()=> touchMoved = false, 50); });
@@ -2218,7 +2335,6 @@ if (modelModal) {
       imageEl.addEventListener('pointermove', () => dragging = true);
       imageEl.addEventListener('pointerup', () => setTimeout(()=> dragging = false, 50));
     });
-    
   })();
 }
 
@@ -3893,25 +4009,47 @@ if (shareModal) {
   let switching = false;
   function showImage(idx) {
     if (thumbnails.length === 0) return;
-    idx = ((idx % thumbnails.length) + thumbnails.length) % thumbnails.length;
+
+    idx = Math.max(0, Math.min(thumbnails.length - 1, idx));
+
     if (idx === currentIndex) return;
     if (switching) return;
     switching = true;
+
     const thumb = thumbnails[idx];
     const large = getItemLargeSrc(thumb);
     mainImg.classList.add('fading');
+
     setTimeout(() => {
       mainImg.src = large;
       updateActiveClasses(idx);
-      scrollThumbIntoView(thumb);
       requestAnimationFrame(() => {
         setTimeout(() => {
           mainImg.classList.remove('fading');
           currentIndex = idx;
           switching = false;
+
+          scrollThumbIntoView(thumb);
+          updateArrowsState();
         }, 60);
       });
     }, 180);
+  }
+
+  function updateArrowsState() {
+    if (!topBtn || !bottomBtn) return;
+    const atFirst = currentIndex <= 0;
+    const atLast = currentIndex >= thumbnails.length - 1;
+
+    topBtn.classList.toggle('inactive', atFirst);
+    bottomBtn.classList.toggle('inactive', atLast);
+
+    const topArrow = topBtn.querySelector('path.unvisible');
+    const bottomArrow = bottomBtn.querySelector('path.unvisible');
+    const activeColor = '#1A1A1A';
+    const inactiveColor = '#BDBDBD';
+    if (topArrow) topArrow.setAttribute('fill', atFirst ? inactiveColor : activeColor);
+    if (bottomArrow) bottomArrow.setAttribute('fill', atLast ? inactiveColor : activeColor);
   }
 
   thumbnails.forEach((t, i) => {
@@ -3920,6 +4058,25 @@ if (shareModal) {
       ev.stopPropagation();
 
       if (is3DItem(t)) {
+        const modelPath = getItemModelPath(t) || t.dataset && (t.dataset.model || t.dataset.modelSrc) || null;
+
+        const clickedOpen3D = !!(
+          ev.target && (
+            ev.target.closest && ev.target.closest('.open-3d-model')
+            || ev.target.closest && ev.target.closest('.banner-3D')
+            || ev.target.closest && ev.target.closest('.view-3D')
+          )
+        );
+
+        if (modelPath && clickedOpen3D && typeof window.__open3DModal === 'function') {
+          ev.preventDefault();
+          ev.stopPropagation();
+          // опционально имя:
+          const name = t.dataset.modelName || t.getAttribute('alt') || '';
+          window.__open3DModal({ src: modelPath, name });
+          return;
+        }
+
         const tryOpenModal = () => {
           if (window.__productGalleryModal && typeof window.__productGalleryModal.open === 'function') {
             window.__productGalleryModal.open(i);
@@ -3942,16 +4099,19 @@ if (shareModal) {
   setTimeout(() => scrollThumbIntoView(thumbnails[currentIndex]), 100);
 
   const swipeArea = mainImgContainer;
-  const HORIZONTAL_DETECT_THRESHOLD = 8; 
+  const HORIZONTAL_DETECT_THRESHOLD = 8;
   const SWIPE_THRESHOLD = 40;
   const MAX_VERTICAL_DELTA = 120;
+
   let startX = 0, startY = 0;
   let isDown = false;
   let maybeSwiping = false;
   let isSwiping = false;
+  let didSwipe = false;
+  let activePointerId = null;
 
   function resetTouch() {
-    isDown = false; maybeSwiping = false; isSwiping = false;
+    isDown = false; maybeSwiping = false; isSwiping = false; activePointerId = null;
   }
 
   function decideIfSwiping(dx, dy) {
@@ -3962,40 +4122,74 @@ if (shareModal) {
     }
   }
 
+  function setGrabbing(on) {
+    try {
+      if (!swipeArea) return;
+      swipeArea.style.cursor = on ? 'grabbing' : (window.matchMedia && window.matchMedia('(hover: hover)').matches ? 'grab' : '');
+    } catch (e) {}
+  }
+
   swipeArea.addEventListener('pointerdown', (e) => {
     if (typeof isModalOpen === 'function' && isModalOpen()) return;
+    if (e.button !== undefined && e.button !== 0) return; 
+
+    if (activePointerId && activePointerId !== e.pointerId) return;
+
+    activePointerId = e.pointerId;
     isDown = true;
-    startX = e.clientX; startY = e.clientY;
-    maybeSwiping = false; isSwiping = false;
-    try { swipeArea.setPointerCapture && swipeArea.setPointerCapture(e.pointerId); } catch (err) {}
-  }, { passive: true });
+    maybeSwiping = false;
+    isSwiping = false;
+    startX = e.clientX;
+    startY = e.clientY;
+    didSwipe = false;
+
+    try { e.preventDefault(); } catch (err) {}
+
+    setGrabbing(true);
+    try { swipeArea.setPointerCapture && swipeArea.setPointerCapture(activePointerId); } catch (err) {}
+  }, { capture: false, passive: false });
 
   swipeArea.addEventListener('pointermove', (e) => {
-    if (!isDown) return;
+    if (!isDown || e.pointerId !== activePointerId) return;
     const dx = e.clientX - startX, dy = e.clientY - startY;
     decideIfSwiping(dx, dy);
     if (maybeSwiping && isSwiping) {
-      if (e.cancelable) e.preventDefault();
+      if (e.cancelable) try { e.preventDefault(); } catch (_) {}
     }
   }, { passive: false });
 
   swipeArea.addEventListener('pointerup', (e) => {
-    if (!isDown) return;
-    const dx = e.clientX - startX, dy = e.clientY - startY;
-    if (maybeSwiping && isSwiping && Math.abs(dx) > SWIPE_THRESHOLD && Math.abs(dy) < MAX_VERTICAL_DELTA) {
-      if (dx < 0) showImage(currentIndex + 1); else showImage(currentIndex - 1);
+    if (!isDown || e.pointerId !== activePointerId) {
+      setGrabbing(false);
+      return;
     }
-    try { swipeArea.releasePointerCapture && swipeArea.releasePointerCapture(e.pointerId); } catch (err) {}
+    const dx = e.clientX - startX, dy = e.clientY - startY;
+    const swiped = (maybeSwiping && isSwiping && Math.abs(dx) > SWIPE_THRESHOLD && Math.abs(dy) < MAX_VERTICAL_DELTA);
+
+    if (swiped) {
+      if (dx < 0) showImage(currentIndex + 1); else showImage(currentIndex - 1);
+      didSwipe = true;
+      setTimeout(() => { didSwipe = false; }, 350);
+    }
+
+    try { swipeArea.releasePointerCapture && swipeArea.releasePointerCapture(activePointerId); } catch (err) {}
     resetTouch();
+    setGrabbing(false);
   }, { passive: true });
 
-  swipeArea.addEventListener('pointercancel', () => { resetTouch(); }, { passive: true });
+  swipeArea.addEventListener('pointercancel', (e) => {
+    if (activePointerId && e && e.pointerId === activePointerId) {
+      try { swipeArea.releasePointerCapture && swipeArea.releasePointerCapture(activePointerId); } catch (err) {}
+    }
+    resetTouch(); setGrabbing(false);
+  }, { passive: true });
 
   swipeArea.addEventListener('touchstart', (e) => {
     if (typeof isModalOpen === 'function' && isModalOpen()) return;
     if (!e.touches || !e.touches[0]) return;
-    startX = e.touches[0].clientX; startY = e.touches[0].clientY;
-    isDown = true; maybeSwiping = false; isSwiping = false;
+    const t = e.touches[0];
+    startX = t.clientX; startY = t.clientY;
+    isDown = true; maybeSwiping = false; isSwiping = false; didSwipe = false;
   }, { passive: true });
 
   swipeArea.addEventListener('touchmove', (e) => {
@@ -4005,7 +4199,7 @@ if (shareModal) {
     const dx = t.clientX - startX, dy = t.clientY - startY;
     decideIfSwiping(dx, dy);
     if (maybeSwiping && isSwiping) {
-      if (e.cancelable) e.preventDefault();
+      if (e.cancelable) try { e.preventDefault(); } catch (_) {}
     }
   }, { passive: false });
 
@@ -4015,8 +4209,11 @@ if (shareModal) {
     const t = (e.changedTouches && e.changedTouches[0]) || null;
     if (!t) { resetTouch(); return; }
     const dx = t.clientX - startX, dy = t.clientY - startY;
-    if (maybeSwiping && isSwiping && Math.abs(dx) > SWIPE_THRESHOLD && Math.abs(dy) < MAX_VERTICAL_DELTA) {
+    const swiped = (maybeSwiping && isSwiping && Math.abs(dx) > SWIPE_THRESHOLD && Math.abs(dy) < MAX_VERTICAL_DELTA);
+    if (swiped) {
       if (dx < 0) showImage(currentIndex + 1); else showImage(currentIndex - 1);
+      didSwipe = true;
+      setTimeout(() => { didSwipe = false; }, 350);
     }
     resetTouch();
   }, { passive: true });
@@ -4027,32 +4224,39 @@ if (shareModal) {
     if (e.key === 'ArrowLeft') showImage(currentIndex - 1);
   });
 
+
   if (topBtn) {
-    topBtn.addEventListener('click', (e) => { e.preventDefault(); const step = getScrollStep(); safeScrollTo(thumbnailsContainer.scrollTop - step); });
+    topBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      if (switching) return;
+      if (currentIndex <= 0) return; 
+      showImage(currentIndex - 1);
+    });
   }
+
   if (bottomBtn) {
-    bottomBtn.addEventListener('click', (e) => { e.preventDefault(); const step = getScrollStep(); safeScrollTo(thumbnailsContainer.scrollTop + step); });
+    bottomBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      if (switching) return;
+      if (currentIndex >= thumbnails.length - 1) return; 
+      showImage(currentIndex + 1);
+    });
   }
 
   function updateButtonsVisibility() {
     if (!topBtn || !bottomBtn) return;
-    const maxScroll = thumbnailsContainer.scrollHeight - thumbnailsContainer.clientHeight;
-    const atTop = thumbnailsContainer.scrollTop <= 1;
-    const atBottom = thumbnailsContainer.scrollTop >= maxScroll - 1;
-    const topArrow = topBtn.querySelector('path.unvisible');
-    const bottomArrow = bottomBtn.querySelector('path.unvisible');
-    const activeColor = '#1A1A1A';
-    const inactiveColor = '#BDBDBD';
-    topBtn.classList.toggle('inactive', atTop);
-    bottomBtn.classList.toggle('inactive', atBottom);
-    if (topArrow) topArrow.setAttribute('fill', atTop ? inactiveColor : activeColor);
-    if (bottomArrow) bottomArrow.setAttribute('fill', atBottom ? inactiveColor : activeColor);
     const totalBtnsHeight = (topBtn?.offsetHeight || 0) + (bottomBtn?.offsetHeight || 0);
     const needScroll = thumbnailsContainer.scrollHeight > thumbnailsContainer.clientHeight + totalBtnsHeight - 2;
+
     topBtn.style.display = needScroll ? 'block' : 'none';
     bottomBtn.style.display = needScroll ? 'block' : 'none';
     if (progressContainer) { progressContainer.style.display = needScroll ? 'flex' : 'none'; }
+
+    updateArrowsState();
   }
+  
   thumbnailsContainer.addEventListener('scroll', updateButtonsVisibility, { passive: true });
   window.addEventListener('resize', updateButtonsVisibility);
   updateButtonsVisibility();
@@ -4120,6 +4324,107 @@ if (shareModal) {
       const thumbsPrev = modal.querySelector('.thumbs-nav.left');
       const thumbsNext = modal.querySelector('.thumbs-nav.right');
 
+      (function setupModalSwipe() {
+        if (!modalMediaWrap) return;
+
+        const HORIZONTAL_DETECT_THRESHOLD = 8;
+        const SWIPE_THRESHOLD = 40;
+        const MAX_VERTICAL_DELTA = 120;
+
+        let startX = 0, startY = 0;
+        let isDown = false;
+        let maybeSwiping = false;
+        let isSwiping = false;
+        let activePointerId = null;
+
+        function decideIfSwiping(dx, dy) {
+          if (maybeSwiping) return;
+          if (Math.abs(dx) > HORIZONTAL_DETECT_THRESHOLD || Math.abs(dy) > HORIZONTAL_DETECT_THRESHOLD) {
+            maybeSwiping = true;
+            isSwiping = Math.abs(dx) > Math.abs(dy);
+          }
+        }
+
+        function reset() {
+          isDown = false; maybeSwiping = false; isSwiping = false; activePointerId = null;
+        }
+
+        modalMediaWrap.addEventListener('pointerdown', (e) => {
+          if (!modal.classList.contains('open')) return;
+          if (e.button !== undefined && e.button !== 0) return; 
+          if (modalSwitching) return;
+
+          activePointerId = e.pointerId;
+          isDown = true;
+          maybeSwiping = false;
+          isSwiping = false;
+          startX = e.clientX;
+          startY = e.clientY;
+
+          try { e.preventDefault(); } catch (err) {}
+
+          try { modalMediaWrap.setPointerCapture && modalMediaWrap.setPointerCapture(activePointerId); } catch (_) {}
+        }, { passive: false });
+
+        modalMediaWrap.addEventListener('pointermove', (e) => {
+          if (!isDown || e.pointerId !== activePointerId) return;
+          const dx = e.clientX - startX, dy = e.clientY - startY;
+          decideIfSwiping(dx, dy);
+          if (maybeSwiping && isSwiping && e.cancelable) {
+            try { e.preventDefault(); } catch (_) {}
+          }
+        }, { passive: false });
+
+        modalMediaWrap.addEventListener('pointerup', (e) => {
+          if (!isDown || e.pointerId !== activePointerId) { reset(); return; }
+          const dx = e.clientX - startX, dy = e.clientY - startY;
+          const swiped = (maybeSwiping && isSwiping && Math.abs(dx) > SWIPE_THRESHOLD && Math.abs(dy) < MAX_VERTICAL_DELTA);
+          if (swiped) {
+            if (!modalSwitching) {
+              if (dx < 0) modalShowImage(modalIndex + 1);
+              else modalShowImage(modalIndex - 1);
+            }
+          }
+          try { modalMediaWrap.releasePointerCapture && modalMediaWrap.releasePointerCapture(activePointerId); } catch (_) {}
+          reset();
+        }, { passive: true });
+
+        modalMediaWrap.addEventListener('pointercancel', () => { reset(); }, { passive: true });
+
+        modalMediaWrap.addEventListener('touchstart', (e) => {
+          if (!modal.classList.contains('open')) return;
+          if (!e.touches || !e.touches[0]) return;
+          if (modalSwitching) return;
+          startX = e.touches[0].clientX; startY = e.touches[0].clientY;
+          isDown = true; maybeSwiping = false; isSwiping = false;
+        }, { passive: true });
+
+        modalMediaWrap.addEventListener('touchmove', (e) => {
+          if (!isDown) return;
+          const t = e.touches && e.touches[0]; if (!t) return;
+          const dx = t.clientX - startX, dy = t.clientY - startY;
+          decideIfSwiping(dx, dy);
+          if (maybeSwiping && isSwiping && e.cancelable) {
+            try { e.preventDefault(); } catch (_) {}
+          }
+        }, { passive: false });
+
+        modalMediaWrap.addEventListener('touchend', (e) => {
+          if (!isDown) return;
+          isDown = false;
+          const t = e.changedTouches && e.changedTouches[0]; if (!t) return;
+          const dx = t.clientX - startX, dy = t.clientY - startY;
+          const swiped = (maybeSwiping && isSwiping && Math.abs(dx) > SWIPE_THRESHOLD && Math.abs(dy) < MAX_VERTICAL_DELTA);
+          if (swiped) {
+            if (!modalSwitching) {
+              if (dx < 0) modalShowImage(modalIndex + 1);
+              else modalShowImage(modalIndex - 1);
+            }
+          }
+          reset();
+        }, { passive: true });
+      })();
+
       function rebuildThumbs() {
         thumbsEl.innerHTML = '';
         thumbnails.forEach((t, i) => {
@@ -4171,18 +4476,29 @@ if (shareModal) {
 
       function modalShowImage(idx) {
         if (modalSwitching) return;
-        modalSwitching = true;
+
         const total = thumbnails.length;
-        if (!total) { modalSwitching = false; return; }
-        idx = ((idx % total) + total) % total;
+        if (!total) return;
+
+        if (typeof idx !== 'number' || idx < 0 || idx >= total) return;
+
+        modalSwitching = true;
         modalIndex = idx;
+
         const currentMedia = modalMediaWrap.firstElementChild;
-        if (currentMedia) currentMedia.classList && currentMedia.classList.add('fading');
+        if (currentMedia && currentMedia.classList) currentMedia.classList.add('fading');
+
         setTimeout(() => {
           renderModalMediaForIndex(idx);
           updateThumbsActive();
-          try { thumbsEl.children[idx] && thumbsEl.children[idx].scrollIntoView({ inline: 'center', block: 'nearest', behavior: 'smooth' }); } catch(e) {}
-          setTimeout(() => { modalSwitching = false; updateThumbsNavVisibility(); }, 160);
+          try {
+            thumbsEl.children[idx] && thumbsEl.children[idx].scrollIntoView({ inline: 'center', block: 'nearest', behavior: 'smooth' });
+          } catch (e) {}
+
+          setTimeout(() => {
+            modalSwitching = false;
+            updateThumbsNavVisibility();
+          }, 160);
         }, 140);
       }
 
@@ -4200,11 +4516,27 @@ if (shareModal) {
         setTimeout(updateThumbsNavVisibility, 260);
       }
 
-      thumbsPrev && thumbsPrev.addEventListener('click', (e) => { e.stopPropagation(); safeScrollBy(-getScrollStep()); });
-      thumbsNext && thumbsNext.addEventListener('click', (e) => { e.stopPropagation(); safeScrollBy(getScrollStep()); });
+      thumbsPrev && thumbsPrev.addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (modalSwitching) return;
+        if (modalIndex > 0) modalShowImage(modalIndex - 1);
+      });
+      thumbsNext && thumbsNext.addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (modalSwitching) return;
+        const total = thumbnails.length;
+        if (modalIndex < total - 1) modalShowImage(modalIndex + 1);
+      });
 
-      leftBtn && leftBtn.addEventListener('click', (e) => { e.stopPropagation(); modalShowImage(modalIndex - 1); });
-      rightBtn && rightBtn.addEventListener('click', (e) => { e.stopPropagation(); modalShowImage(modalIndex + 1); });
+      leftBtn && leftBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (modalIndex > 0) modalShowImage(modalIndex - 1);
+      });
+      rightBtn && rightBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const total = thumbnails.length;
+        if (modalIndex < total - 1) modalShowImage(modalIndex + 1);
+      });
 
       function closeHandler() { closeModal(); }
       closeBtn && closeBtn.addEventListener('click', closeHandler);
@@ -4221,20 +4553,43 @@ if (shareModal) {
       function updateThumbsNavVisibility() {
         const total = thumbnails.length;
         if (!thumbsEl) return;
-        if (total <= VISIBLE_THUMBS) {
+
+        const EPS = 2; 
+
+        const scrollLeft = thumbsEl.scrollLeft || 0;
+        const clientW = thumbsEl.clientWidth || 0;
+        const scrollW = thumbsEl.scrollWidth || 0;
+        const hasOverflow = (scrollW > clientW + EPS);
+
+        if (!hasOverflow || total <= VISIBLE_THUMBS) {
           thumbsPrev && (thumbsPrev.style.display = 'none');
           thumbsNext && (thumbsNext.style.display = 'none');
-          return;
         } else {
           thumbsPrev && (thumbsPrev.style.display = '');
           thumbsNext && (thumbsNext.style.display = '');
         }
-        const maxScroll = thumbsEl.scrollWidth - thumbsEl.clientWidth;
-        const atStart = thumbsEl.scrollLeft <= 1;
-        const atEnd = thumbsEl.scrollLeft >= maxScroll - 1;
-        thumbsPrev && thumbsPrev.classList.toggle('inactive', atStart);
-        thumbsNext && thumbsNext.classList.toggle('inactive', atEnd);
+
+        const atModalStart = (modalIndex === 0);
+        const atModalEnd = (modalIndex === Math.max(0, total - 1));
+
+        const prevDisabledForThumbs = hasOverflow ? atModalStart : false;
+        const nextDisabledForThumbs = hasOverflow ? atModalEnd : false;
+
+        const prevDisabledForModal = atModalStart;
+        const nextDisabledForModal = atModalEnd;
+
+        thumbsPrev && thumbsPrev.classList.toggle('inactive', prevDisabledForThumbs);
+        thumbsNext && thumbsNext.classList.toggle('inactive', nextDisabledForThumbs);
+
+        leftBtn && leftBtn.classList.toggle('inactive', prevDisabledForModal);
+        rightBtn && rightBtn.classList.toggle('inactive', nextDisabledForModal);
+
+        if (thumbsPrev) thumbsPrev.setAttribute('aria-disabled', prevDisabledForThumbs ? 'true' : 'false');
+        if (thumbsNext) thumbsNext.setAttribute('aria-disabled', nextDisabledForThumbs ? 'true' : 'false');
+        if (leftBtn) leftBtn.setAttribute('aria-disabled', prevDisabledForModal ? 'true' : 'false');
+        if (rightBtn) rightBtn.setAttribute('aria-disabled', nextDisabledForModal ? 'true' : 'false');
       }
+
       thumbsEl && thumbsEl.addEventListener('scroll', updateThumbsNavVisibility, { passive: true });
       window.addEventListener('resize', updateThumbsNavVisibility);
 
@@ -4287,8 +4642,24 @@ if (shareModal) {
     }
 
     if (mainImgContainer) {
-      mainImgContainer.style.cursor = 'zoom-in';
+      mainImgContainer.style.cursor = 'pointer';
       mainImgContainer.addEventListener('click', (e) => {
+        try {
+          const clickedOpen3D = !!(
+            e.target && (
+              (e.target.closest && e.target.closest('.open-3d-model'))
+              || (e.target.closest && e.target.closest('.banner-3D'))
+              || (e.target.closest && e.target.closest('.view-3D'))
+            )
+          );
+          if (clickedOpen3D) return;
+        } catch (err) {}
+
+        if (didSwipe) {
+          didSwipe = false;
+          return;
+        }
+
         openModal(currentIndex);
       });
     }
