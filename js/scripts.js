@@ -3329,9 +3329,7 @@ document.querySelectorAll('.get-contact-form').forEach((form) => {
 
 // Попап "Запросить коммерческое предложение"
 
-// Попап "Запросить коммерческое предложение" — единый корректный скрипт
 (function () {
-  // локальные переменные модуля
   let menu;
   let kpPopup;
   let kpContent;
@@ -3340,7 +3338,6 @@ document.querySelectorAll('.get-contact-form').forEach((form) => {
   let kpScrollPos = 0;
   let kpLastFocused = null;
 
-  // Открыть
   function openKpPopup(event) {
     if (!kpPopup) return;
 
@@ -3353,7 +3350,6 @@ document.querySelectorAll('.get-contact-form').forEach((form) => {
 
     kpScrollPos = window.scrollY || window.pageYOffset || 0;
 
-    // зафиксировать body
     document.body.style.position = 'fixed';
     document.body.style.top = `-${kpScrollPos}px`;
     document.body.style.left = '0';
@@ -3365,13 +3361,11 @@ document.querySelectorAll('.get-contact-form').forEach((form) => {
     kpPopup.classList.add('show');
     kpPopup.setAttribute('aria-hidden', 'false');
 
-    // фокус внутри модалки
     const firstFocusable = kpPopup.querySelector('button, a[href], input, textarea, select, [tabindex]:not([tabindex="-1"])');
     if (firstFocusable) {
       try { firstFocusable.focus({ preventScroll: true }); } catch (err) { firstFocusable.focus(); }
     }
 
-    // убрать параметр ?openkppopup из адресной строки (необяз.)
     try {
       const urlParams = new URLSearchParams(window.location.search);
       if (urlParams.has('openkppopup')) {
@@ -3393,7 +3387,6 @@ document.querySelectorAll('.get-contact-form').forEach((form) => {
     kpPopup.classList.add('closing');
     kpPopup.setAttribute('aria-hidden', 'true');
 
-    // удалить фиксацию body — но восстановить прокрутку аккуратно
     document.body.style.position = '';
     document.body.style.top = '';
     document.body.style.left = '';
@@ -3401,7 +3394,6 @@ document.querySelectorAll('.get-contact-form').forEach((form) => {
     document.body.style.width = '';
     document.body.style.overflow = '';
 
-    // восстановить прокрутку и фокус
     try {
       window.scrollTo(0, kpScrollPos || 0);
     } catch (e) {}
@@ -3415,7 +3407,6 @@ document.querySelectorAll('.get-contact-form').forEach((form) => {
     kpLastFocused = null;
     document.removeEventListener('keydown', onDocumentKeyDown);
 
-    // после окончания transition удаляем класс closing (если есть переходы)
     const onTransitionEnd = (e) => {
       if (e.target !== kpPopup) return;
       kpPopup.classList.remove('closing');
@@ -3424,7 +3415,6 @@ document.querySelectorAll('.get-contact-form').forEach((form) => {
     kpPopup.addEventListener('transitionend', onTransitionEnd);
   }
 
-  // клавиши: Esc и фокус-трап
   function onDocumentKeyDown(e) {
     if (!kpPopup || !kpPopup.classList.contains('show')) return;
 
@@ -3453,14 +3443,12 @@ document.querySelectorAll('.get-contact-form').forEach((form) => {
     }
   }
 
-  // клик по оверлею (закрыть если кликнули вне контента)
   function onPopupClick(e) {
     if (e.target === kpPopup) {
       closeKpPopup();
     }
   }
 
-  // инициализация — внутри DOMContentLoaded
   function init() {
     menu = document.querySelector('.header-menu-open-burger');
     kpPopup = document.querySelector('.kp-popup');
@@ -3473,30 +3461,22 @@ document.querySelectorAll('.get-contact-form').forEach((form) => {
       return;
     }
 
-    // крестик
     if (kpCloseBtn) {
       kpCloseBtn.addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation(); closeKpPopup(); });
     }
 
-    // клик по оверлею
     kpPopup.addEventListener('click', onPopupClick);
 
-    // если есть кнопки на странице — связать
     if (kpOpenBtns && kpOpenBtns.length) {
       kpOpenBtns.forEach(btn => btn.addEventListener('click', openKpPopup));
     }
 
-    // глобальный ESC (на случай, если ещё не навешан)
-    // (обработчик выше добавляется при открытии модалки)
-
-    // Проверяем URL: query, hash или часть пути
     const urlParams = new URLSearchParams(window.location.search);
     const hasQuery = urlParams.has('openkppopup');
     const hasHash = window.location.hash === '#openkppopup' || window.location.hash === '#openkp';
     const hasPath = window.location.pathname.includes('openkppopup');
 
     if (hasQuery || hasHash || hasPath) {
-      // небольшая задержка, чтобы всё точно инициализировалось
       setTimeout(openKpPopup, 10);
     }
   }
@@ -3507,7 +3487,6 @@ document.querySelectorAll('.get-contact-form').forEach((form) => {
     init();
   }
 
-  // экспорт для вызова вручную
   window.openKpPopup = openKpPopup;
   window.closeKpPopup = closeKpPopup;
 })();
