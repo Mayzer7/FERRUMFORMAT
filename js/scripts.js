@@ -206,7 +206,17 @@ document.addEventListener('DOMContentLoaded', function () {
     const offsetToHide = 60;
     const offsetToOpaque = 20;
 
+    const isKpPopupOpen = () => {
+      return !!document.querySelector('.kp-popup.show');
+    };
+
     function setOpaque(forceOpaque = null, currentY = window.scrollY || window.pageYOffset || 0) {
+      if (isKpPopupOpen()) {
+        header.classList.add('header--opaque');
+        header.classList.remove('header--top');
+        return;
+      }
+
       if (!canBeTransparent) {
         header.classList.add('header--opaque');
         header.classList.remove('header--top');
@@ -264,7 +274,7 @@ document.addEventListener('DOMContentLoaded', function () {
     function updateOnScroll() {
       const currentY = window.scrollY || window.pageYOffset || 0;
 
-      if (document.querySelector('.header-menu-open.is-open') || header.classList.contains('header--menu-open')) {
+      if (document.querySelector('.header-menu-open.is-open') || header.classList.contains('header--menu-open') || isKpPopupOpen()) {
         header.classList.remove('header--hidden');
         header.classList.add('header--visible');
         setOpaque(true);
@@ -304,7 +314,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }, { passive: true });
 
     window.addEventListener('wheel', function (e) {
-      if (document.querySelector('.header-menu-open.is-open') || (burgerMenu && burgerMenu.classList.contains('is-open'))) return;
+      if (document.querySelector('.header-menu-open.is-open') || (burgerMenu && burgerMenu.classList.contains('is-open')) || isKpPopupOpen()) return;
       if (Math.abs(e.deltaY) < 1) return;
       if (e.deltaY > 0 && window.scrollY > offsetToHide) hideHeader();
       else if (e.deltaY < 0) showHeader();
@@ -318,7 +328,7 @@ document.addEventListener('DOMContentLoaded', function () {
     window.addEventListener('touchmove', function (e) {
       if (!touchStartY) return;
 
-      if (document.querySelector('.header-menu-open.is-open') || (burgerMenu && burgerMenu.classList.contains('is-open'))) return;
+      if (document.querySelector('.header-menu-open.is-open') || (burgerMenu && burgerMenu.classList.contains('is-open')) || isKpPopupOpen()) return;
       const y = e.touches[0].clientY;
       const delta = touchStartY - y;
       if (Math.abs(delta) > tolerance) {
@@ -336,6 +346,7 @@ document.addEventListener('DOMContentLoaded', function () {
     setOpaque(null, window.scrollY || window.pageYOffset || 0);
     showHeader();
   })();
+
 
   positionBurgerMenu();
 
@@ -3327,167 +3338,128 @@ document.querySelectorAll('.get-contact-form').forEach((form) => {
 
 // Попап "Запросить коммерческое предложение"
 
-(function () {
-  let menu;
-  let kpPopup;
-  let kpContent;
-  let kpCloseBtn;
-  let kpOpenBtns;
-  let kpScrollPos = 0;
-  let kpLastFocused = null;
+const menu = document.querySelector('.header-menu-open-burger');
+const kpPopup = document.querySelector('.kp-popup');
+const kpContent = document.querySelector('.kp-popup-content');
+const kpCloseBtn = document.querySelector('.kp-popup-close');
 
-  function openKpPopup(event) {
-    if (!kpPopup) return;
+const isMenuOpen = () => !!menu && menu.classList.contains('is-open');
 
-    if (event) {
-      try { event.preventDefault(); event.stopPropagation(); } catch (e) {}
-      kpLastFocused = event.currentTarget || document.activeElement;
-    } else {
-      kpLastFocused = document.activeElement;
-    }
+let kpScrollPos = 0;
+let kpLastFocused = null;
 
-    kpScrollPos = window.scrollY || window.pageYOffset || 0;
-
-    document.body.style.position = 'fixed';
-    document.body.style.top = `-${kpScrollPos}px`;
-    document.body.style.left = '0';
-    document.body.style.right = '0';
-    document.body.style.width = '100%';
-    document.body.style.overflow = 'hidden';
-
-    kpPopup.classList.remove('closing');
-    kpPopup.classList.add('show');
-    kpPopup.setAttribute('aria-hidden', 'false');
-
-    const firstFocusable = kpPopup.querySelector('button, a[href], input, textarea, select, [tabindex]:not([tabindex="-1"])');
-    if (firstFocusable) {
-      try { firstFocusable.focus({ preventScroll: true }); } catch (err) { firstFocusable.focus(); }
-    }
-
-    try {
-      const urlParams = new URLSearchParams(window.location.search);
-      if (urlParams.has('openkppopup')) {
-        urlParams.delete('openkppopup');
-        const newSearch = urlParams.toString();
-        const newUrl = window.location.origin + window.location.pathname + (newSearch ? `?${newSearch}` : '') + window.location.hash;
-        window.history.replaceState({}, '', newUrl);
-      }
-    } catch (e) {}
-
-    document.addEventListener('keydown', onDocumentKeyDown);
-  }
-
-  // Закрыть
-  function closeKpPopup() {
-    if (!kpPopup || !kpPopup.classList.contains('show')) return;
-
-    kpPopup.classList.remove('show');
-    kpPopup.classList.add('closing');
-    kpPopup.setAttribute('aria-hidden', 'true');
-
-    document.body.style.position = '';
-    document.body.style.top = '';
-    document.body.style.left = '';
-    document.body.style.right = '';
-    document.body.style.width = '';
-    document.body.style.overflow = '';
-
-    try {
-      window.scrollTo(0, kpScrollPos || 0);
-    } catch (e) {}
-
-    try {
-      if (kpLastFocused && typeof kpLastFocused.focus === 'function') {
-        kpLastFocused.focus();
-      }
-    } catch (e) {}
-
-    kpLastFocused = null;
-    document.removeEventListener('keydown', onDocumentKeyDown);
-
-    const onTransitionEnd = (e) => {
-      if (e.target !== kpPopup) return;
-      kpPopup.classList.remove('closing');
-      kpPopup.removeEventListener('transitionend', onTransitionEnd);
-    };
-    kpPopup.addEventListener('transitionend', onTransitionEnd);
-  }
-
-  function onDocumentKeyDown(e) {
-    if (!kpPopup || !kpPopup.classList.contains('show')) return;
-
-    if (e.key === 'Escape' || e.key === 'Esc') {
-      e.preventDefault();
-      closeKpPopup();
-      return;
-    }
-
-    if (e.key === 'Tab') {
-      const focusable = kpPopup.querySelectorAll('button, a[href], input, textarea, select, [tabindex]:not([tabindex="-1"])');
-      const focusableArr = Array.prototype.slice.call(focusable).filter(el => !el.disabled && el.offsetParent !== null);
-      if (focusableArr.length === 0) {
-        e.preventDefault();
-        return;
-      }
-      const first = focusableArr[0];
-      const last = focusableArr[focusableArr.length - 1];
-      if (!e.shiftKey && document.activeElement === last) {
-        e.preventDefault();
-        first.focus();
-      } else if (e.shiftKey && document.activeElement === first) {
-        e.preventDefault();
-        last.focus();
-      }
-    }
-  }
-
-  function onPopupClick(e) {
-    if (e.target === kpPopup) {
-      closeKpPopup();
-    }
-  }
-
-  function init() {
-    menu = document.querySelector('.header-menu-open-burger');
-    kpPopup = document.querySelector('.kp-popup');
-    kpContent = document.querySelector('.kp-popup-content');
-    kpCloseBtn = document.querySelector('.kp-popup-close');
-    kpOpenBtns = document.querySelectorAll('[data-open-kp-popup], .js-open-kp-popup');
-
-    if (!kpPopup) {
-      console.warn('kpPopup not found — проверь селектор .kp-popup или место подключения скрипта');
-      return;
-    }
-
-    if (kpCloseBtn) {
-      kpCloseBtn.addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation(); closeKpPopup(); });
-    }
-
-    kpPopup.addEventListener('click', onPopupClick);
-
-    if (kpOpenBtns && kpOpenBtns.length) {
-      kpOpenBtns.forEach(btn => btn.addEventListener('click', openKpPopup));
-    }
-
-    const urlParams = new URLSearchParams(window.location.search);
-    const hasQuery = urlParams.has('openkppopup');
-    const hasHash = window.location.hash === '#openkppopup' || window.location.hash === '#openkp';
-    const hasPath = window.location.pathname.includes('openkppopup');
-
-    if (hasQuery || hasHash || hasPath) {
-      setTimeout(openKpPopup, 10);
-    }
-  }
-
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', init);
+function openKpPopup(event) {
+  if (event) {
+    event.preventDefault();
+    event.stopPropagation();
+    kpLastFocused = event.currentTarget || document.activeElement;
   } else {
-    init();
+    kpLastFocused = document.activeElement;
   }
 
-  window.openKpPopup = openKpPopup;
-  window.closeKpPopup = closeKpPopup;
-})();
+  if (!kpPopup) return;
+
+  kpScrollPos = window.scrollY || window.pageYOffset || 0;
+
+  document.body.style.position = 'fixed';
+  document.body.style.top = `-${kpScrollPos}px`;
+  document.body.style.left = '0';
+  document.body.style.right = '0';
+  document.body.style.width = '100%';
+  document.body.style.overflow = 'hidden';
+
+  kpPopup.classList.remove('closing');
+  kpPopup.classList.add('show');
+  kpPopup.setAttribute('aria-hidden', 'false');
+
+  const firstFocusable = kpPopup.querySelector('button, a[href], input, textarea, [tabindex]:not([tabindex="-1"])');
+  if (firstFocusable) {
+    try {
+      firstFocusable.focus({ preventScroll: true });
+    } catch (err) {
+      firstFocusable.focus();
+    }
+  }
+}
+
+function closeKpPopup() {
+  if (!kpPopup || !kpPopup.classList.contains('show')) return;
+
+  kpPopup.classList.remove('show');
+  kpPopup.classList.add('closing');
+  kpPopup.setAttribute('aria-hidden', 'true');
+
+  document.body.style.position = '';
+  document.body.style.top = '';
+  document.body.style.left = '';
+  document.body.style.right = '';
+  document.body.style.width = '';
+
+  const prevScrollBehavior = document.documentElement.style.scrollBehavior;
+  document.documentElement.style.scrollBehavior = 'auto';
+
+  requestAnimationFrame(() => {
+    window.scrollTo(0, kpScrollPos || 0);
+
+    if (kpLastFocused && typeof kpLastFocused.focus === 'function') {
+      try {
+        kpLastFocused.focus({ preventScroll: true });
+      } catch (e) {
+        try {
+          kpLastFocused.setAttribute('tabindex', '-1');
+          kpLastFocused.focus();
+          kpLastFocused.removeAttribute('tabindex');
+        } catch (ignore) {}
+      }
+    }
+    kpLastFocused = null;
+
+    setTimeout(() => {
+      document.documentElement.style.scrollBehavior = prevScrollBehavior || '';
+    }, 50);
+  });
+
+  const onTransitionEnd = (e) => {
+    if (e.target !== kpPopup || e.propertyName !== 'opacity') return;
+    kpPopup.classList.remove('closing');
+    document.body.style.overflow = '';
+    kpPopup.removeEventListener('transitionend', onTransitionEnd);
+    delete kpPopup.dataset.menuWasOpen;
+  };
+  kpPopup.addEventListener('transitionend', onTransitionEnd);
+}
+
+// кнопка крестик
+if (kpCloseBtn) {
+  kpCloseBtn.addEventListener('click', (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    closeKpPopup();
+  });
+}
+
+if (kpPopup) {
+  kpPopup.addEventListener('click', (e) => {
+    if (e.target === kpPopup) {
+      e.stopPropagation(); 
+      closeKpPopup();
+    }
+  });
+  if (kpContent) {
+    kpContent.addEventListener('click', (e) => {
+      e.stopPropagation();
+    });
+  }
+}
+
+// ESC
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape' || e.key === 'Esc') {
+    if (kpPopup && kpPopup.classList.contains('show')) {
+      closeKpPopup();
+    }
+  }
+});
 
 
 
