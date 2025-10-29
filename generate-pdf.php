@@ -5,7 +5,7 @@ require_once __DIR__ . '/TCPDF/tcpdf.php';
 
 $outDir = __DIR__ . '/output';
 @mkdir($outDir, 0777, true);
-$outFile = $outDir . '/result.pdf';
+$outFile = $outDir . '/tovar.pdf';
 $docRoot = __DIR__;
 
 /**

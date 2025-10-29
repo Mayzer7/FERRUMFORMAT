@@ -2261,13 +2261,11 @@ if (modelModal) {
         console.log('open-3d-model: нет кнопок для привязки');
         return;
       }
-      console.log('open-3d-model: привязываю слушатели, найдено', buttons.length);
 
       buttons.forEach(btn => {
         btn.addEventListener('click', (ev) => {
           ev.preventDefault();
           ev.stopPropagation();
-          console.log('open-3d-model: click on', btn);
 
           const src = btn.getAttribute('model-src') || btn.dataset.modelSrc || null;
           if (!src) {
@@ -4707,3 +4705,18 @@ if (shareModal) {
     window.__productGalleryModal = { open: openModal, close: closeModal };
   })();
 })();
+
+
+
+// Печать PDF файла
+function openAndPrintPdf(url) {
+  const win = window.open(url, '_blank');
+  if (!win) {
+    alert('Блокировщик всплывающих окон мешает открытию PDF. Разрешите всплывающие окна.');
+    return;
+  }
+  win.onload = function() {
+    try { win.print(); }
+    catch(e) {  }
+  };
+}
