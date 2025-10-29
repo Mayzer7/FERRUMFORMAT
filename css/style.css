@@ -11475,6 +11475,7 @@ section {
     align-items: center !important;
     gap: 40px;
     overflow-x: auto !important;
+    overflow-y: hidden !important;
     -webkit-overflow-scrolling: touch !important;
     flex-wrap: nowrap !important;
     width: 100% !important;
