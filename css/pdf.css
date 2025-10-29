@@ -409,3 +409,195 @@ p, ul, ol {
 }
 
 
+/* двухколоночная таблица-заглушка — колонки 50/50, с серыми рамками */
+.two-col-table {
+  width: 100%;
+  table-layout: fixed;
+  border-collapse: collapse;
+  margin-top: 8px;
+  border: 1px solid #999; /* внешняя рамка таблицы */
+}
+
+.two-col-table td {
+  width: 50%;
+  vertical-align: top;
+  padding: 6px 8px;
+  border: 1px solid #999; /* рамка между ячейками */
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+/* при печати рамки сохраняются */
+@media print {
+  .two-col-table td {
+    padding: 4px 6px;
+    border: 1px solid #999;
+  }
+  .two-col-table {
+    border: 1px solid #999;
+  }
+}
+
+
+/* ---- Delivery & Pickup block (PDF-friendly) ---- */
+.delivery-block h2 {
+  margin: 6px 0 6px;
+  font-size: 16px;
+}
+
+.delivery-block .delivery-lead {
+  margin: 6px 0 8px;
+  line-height: 1.25;
+}
+
+.delivery-block .delivery-cities {
+  margin: 4px 0 8px;
+  font-size: 11px;
+  color: #333;
+  line-height: 1.2;
+}
+
+/* тонкая серая разделительная линия */
+.delivery-sep {
+  border: none;
+  border-top: 1px solid #ddd;
+  margin: 8px 0;
+}
+
+/* Самовывоз */
+.pickup-heading {
+  margin: 6px 0 4px;
+  font-size: 14px;
+}
+
+.pickup-sub {
+  margin: 4px 0 8px;
+  color: #333;
+}
+
+/* таблица самовывоза — серые рамки и разделители */
+.pickup-table {
+  border-collapse: collapse;
+  width: 100%;
+  /* внешняя рамка (оставляем) */
+  border: 1px solid #ddd;
+  margin-bottom: 8px;
+  font-size: 12px;
+}
+
+
+.pickup-table td {
+  padding: 6px 8px;
+  vertical-align: middle;
+  /* внутренние горизонтальные линии (между строками) */
+  border-bottom: 1px solid #e6e6e6;
+}
+
+.pickup-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+/* вертикальная разделительная линия между колонками */
+.pickup-table td + td {
+  border-left: 1px solid #e6e6e6;
+}
+
+/* метки слева — серый текст */
+.pickup-label {
+  width: 40%;
+  color: #666;
+  font-size: 11.5px;
+  padding-left: 6px;
+}
+
+/* значения справа */
+.pickup-value {
+  width: 60%;
+  color: #000;
+}
+
+/* ссылка на карту */
+.map-link {
+  margin: 6px 0 10px;
+  font-size: 12px;
+}
+
+.map-link a {
+  text-decoration: underline;
+  text-decoration-color: #666;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 2px;
+}
+
+.map-link a:hover { text-decoration: underline; }
+
+/* двухколоночный список (как на фото) */
+.delivery-features {
+  border-collapse: collapse;
+  width: 100%;
+  margin-top: 6px;
+}
+
+.feature-list {
+  margin: 0 0 0 18px;
+  padding: 0;
+}
+
+.feature-list li {
+  margin: 0 0 6px 0;
+  line-height: 1.25;
+}
+
+/* упрощённая печатная оптимизация */
+@media print {
+  .delivery-block .delivery-cities { font-size: 10px; }
+  .pickup-table td { padding: 4px 6px; }
+  .feature-list { font-size: 11px; }
+}
+
+
+
+/* таблица с вариантами исполнения */
+.variants {
+  border-collapse: collapse;
+  width: 100%;
+  margin-top: 8px;
+  font-size: 2px;
+  border: 1px solid #ccc;
+  table-layout: fixed;
+}
+
+.variants th,
+.variants td {
+  border: 1px solid #ccc;
+  padding: 6px 8px;
+  text-align: center;
+  vertical-align: middle;
+  word-wrap: break-word;
+}
+
+.variants th {
+  background: #f8f8f8;
+  font-weight: bold;
+  color: #000;
+  text-transform: uppercase;
+}
+
+
+.discount {
+  background: #fff;
+  color: #c00;
+  font-weight: bold;
+  padding: 1px 4px;
+  margin-left: 4px;
+  border-radius: 2px;
+  font-size: 9px;
+}
+
+
+table.variants,
+table.variants td,
+table.variants th {
+  font-size: 8px !important;
+  line-height: 1.2;
+}

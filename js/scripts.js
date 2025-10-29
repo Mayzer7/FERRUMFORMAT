@@ -3329,128 +3329,189 @@ document.querySelectorAll('.get-contact-form').forEach((form) => {
 
 // Попап "Запросить коммерческое предложение"
 
-const menu = document.querySelector('.header-menu-open-burger');
-const kpPopup = document.querySelector('.kp-popup');
-const kpContent = document.querySelector('.kp-popup-content');
-const kpCloseBtn = document.querySelector('.kp-popup-close');
+// Попап "Запросить коммерческое предложение" — единый корректный скрипт
+(function () {
+  // локальные переменные модуля
+  let menu;
+  let kpPopup;
+  let kpContent;
+  let kpCloseBtn;
+  let kpOpenBtns;
+  let kpScrollPos = 0;
+  let kpLastFocused = null;
 
-const isMenuOpen = () => !!menu && menu.classList.contains('is-open');
+  // Открыть
+  function openKpPopup(event) {
+    if (!kpPopup) return;
 
-let kpScrollPos = 0;
-let kpLastFocused = null;
-
-function openKpPopup(event) {
-  if (event) {
-    event.preventDefault();
-    event.stopPropagation();
-    kpLastFocused = event.currentTarget || document.activeElement;
-  } else {
-    kpLastFocused = document.activeElement;
-  }
-
-  if (!kpPopup) return;
-
-  kpScrollPos = window.scrollY || window.pageYOffset || 0;
-
-  document.body.style.position = 'fixed';
-  document.body.style.top = `-${kpScrollPos}px`;
-  document.body.style.left = '0';
-  document.body.style.right = '0';
-  document.body.style.width = '100%';
-  document.body.style.overflow = 'hidden';
-
-  kpPopup.classList.remove('closing');
-  kpPopup.classList.add('show');
-  kpPopup.setAttribute('aria-hidden', 'false');
-
-  const firstFocusable = kpPopup.querySelector('button, a[href], input, textarea, [tabindex]:not([tabindex="-1"])');
-  if (firstFocusable) {
-    try {
-      firstFocusable.focus({ preventScroll: true });
-    } catch (err) {
-      firstFocusable.focus();
+    if (event) {
+      try { event.preventDefault(); event.stopPropagation(); } catch (e) {}
+      kpLastFocused = event.currentTarget || document.activeElement;
+    } else {
+      kpLastFocused = document.activeElement;
     }
+
+    kpScrollPos = window.scrollY || window.pageYOffset || 0;
+
+    // зафиксировать body
+    document.body.style.position = 'fixed';
+    document.body.style.top = `-${kpScrollPos}px`;
+    document.body.style.left = '0';
+    document.body.style.right = '0';
+    document.body.style.width = '100%';
+    document.body.style.overflow = 'hidden';
+
+    kpPopup.classList.remove('closing');
+    kpPopup.classList.add('show');
+    kpPopup.setAttribute('aria-hidden', 'false');
+
+    // фокус внутри модалки
+    const firstFocusable = kpPopup.querySelector('button, a[href], input, textarea, select, [tabindex]:not([tabindex="-1"])');
+    if (firstFocusable) {
+      try { firstFocusable.focus({ preventScroll: true }); } catch (err) { firstFocusable.focus(); }
+    }
+
+    // убрать параметр ?openkppopup из адресной строки (необяз.)
+    try {
+      const urlParams = new URLSearchParams(window.location.search);
+      if (urlParams.has('openkppopup')) {
+        urlParams.delete('openkppopup');
+        const newSearch = urlParams.toString();
+        const newUrl = window.location.origin + window.location.pathname + (newSearch ? `?${newSearch}` : '') + window.location.hash;
+        window.history.replaceState({}, '', newUrl);
+      }
+    } catch (e) {}
+
+    document.addEventListener('keydown', onDocumentKeyDown);
   }
-}
 
-function closeKpPopup() {
-  if (!kpPopup || !kpPopup.classList.contains('show')) return;
+  // Закрыть
+  function closeKpPopup() {
+    if (!kpPopup || !kpPopup.classList.contains('show')) return;
 
-  kpPopup.classList.remove('show');
-  kpPopup.classList.add('closing');
-  kpPopup.setAttribute('aria-hidden', 'true');
+    kpPopup.classList.remove('show');
+    kpPopup.classList.add('closing');
+    kpPopup.setAttribute('aria-hidden', 'true');
 
-  document.body.style.position = '';
-  document.body.style.top = '';
-  document.body.style.left = '';
-  document.body.style.right = '';
-  document.body.style.width = '';
+    // удалить фиксацию body — но восстановить прокрутку аккуратно
+    document.body.style.position = '';
+    document.body.style.top = '';
+    document.body.style.left = '';
+    document.body.style.right = '';
+    document.body.style.width = '';
+    document.body.style.overflow = '';
 
-  const prevScrollBehavior = document.documentElement.style.scrollBehavior;
-  document.documentElement.style.scrollBehavior = 'auto';
+    // восстановить прокрутку и фокус
+    try {
+      window.scrollTo(0, kpScrollPos || 0);
+    } catch (e) {}
 
-  requestAnimationFrame(() => {
-    window.scrollTo(0, kpScrollPos || 0);
+    try {
+      if (kpLastFocused && typeof kpLastFocused.focus === 'function') {
+        kpLastFocused.focus();
+      }
+    } catch (e) {}
 
-    if (kpLastFocused && typeof kpLastFocused.focus === 'function') {
-      try {
-        kpLastFocused.focus({ preventScroll: true });
-      } catch (e) {
-        try {
-          kpLastFocused.setAttribute('tabindex', '-1');
-          kpLastFocused.focus();
-          kpLastFocused.removeAttribute('tabindex');
-        } catch (ignore) {}
+    kpLastFocused = null;
+    document.removeEventListener('keydown', onDocumentKeyDown);
+
+    // после окончания transition удаляем класс closing (если есть переходы)
+    const onTransitionEnd = (e) => {
+      if (e.target !== kpPopup) return;
+      kpPopup.classList.remove('closing');
+      kpPopup.removeEventListener('transitionend', onTransitionEnd);
+    };
+    kpPopup.addEventListener('transitionend', onTransitionEnd);
+  }
+
+  // клавиши: Esc и фокус-трап
+  function onDocumentKeyDown(e) {
+    if (!kpPopup || !kpPopup.classList.contains('show')) return;
+
+    if (e.key === 'Escape' || e.key === 'Esc') {
+      e.preventDefault();
+      closeKpPopup();
+      return;
+    }
+
+    if (e.key === 'Tab') {
+      const focusable = kpPopup.querySelectorAll('button, a[href], input, textarea, select, [tabindex]:not([tabindex="-1"])');
+      const focusableArr = Array.prototype.slice.call(focusable).filter(el => !el.disabled && el.offsetParent !== null);
+      if (focusableArr.length === 0) {
+        e.preventDefault();
+        return;
+      }
+      const first = focusableArr[0];
+      const last = focusableArr[focusableArr.length - 1];
+      if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault();
+        first.focus();
+      } else if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault();
+        last.focus();
       }
     }
-    kpLastFocused = null;
+  }
 
-    setTimeout(() => {
-      document.documentElement.style.scrollBehavior = prevScrollBehavior || '';
-    }, 50);
-  });
-
-  const onTransitionEnd = (e) => {
-    if (e.target !== kpPopup || e.propertyName !== 'opacity') return;
-    kpPopup.classList.remove('closing');
-    document.body.style.overflow = '';
-    kpPopup.removeEventListener('transitionend', onTransitionEnd);
-    delete kpPopup.dataset.menuWasOpen;
-  };
-  kpPopup.addEventListener('transitionend', onTransitionEnd);
-}
-
-// кнопка крестик
-if (kpCloseBtn) {
-  kpCloseBtn.addEventListener('click', (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    closeKpPopup();
-  });
-}
-
-if (kpPopup) {
-  kpPopup.addEventListener('click', (e) => {
+  // клик по оверлею (закрыть если кликнули вне контента)
+  function onPopupClick(e) {
     if (e.target === kpPopup) {
-      e.stopPropagation(); 
       closeKpPopup();
     }
-  });
-  if (kpContent) {
-    kpContent.addEventListener('click', (e) => {
-      e.stopPropagation();
-    });
   }
-}
 
-// ESC
-document.addEventListener('keydown', (e) => {
-  if (e.key === 'Escape' || e.key === 'Esc') {
-    if (kpPopup && kpPopup.classList.contains('show')) {
-      closeKpPopup();
+  // инициализация — внутри DOMContentLoaded
+  function init() {
+    menu = document.querySelector('.header-menu-open-burger');
+    kpPopup = document.querySelector('.kp-popup');
+    kpContent = document.querySelector('.kp-popup-content');
+    kpCloseBtn = document.querySelector('.kp-popup-close');
+    kpOpenBtns = document.querySelectorAll('[data-open-kp-popup], .js-open-kp-popup');
+
+    if (!kpPopup) {
+      console.warn('kpPopup not found — проверь селектор .kp-popup или место подключения скрипта');
+      return;
+    }
+
+    // крестик
+    if (kpCloseBtn) {
+      kpCloseBtn.addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation(); closeKpPopup(); });
+    }
+
+    // клик по оверлею
+    kpPopup.addEventListener('click', onPopupClick);
+
+    // если есть кнопки на странице — связать
+    if (kpOpenBtns && kpOpenBtns.length) {
+      kpOpenBtns.forEach(btn => btn.addEventListener('click', openKpPopup));
+    }
+
+    // глобальный ESC (на случай, если ещё не навешан)
+    // (обработчик выше добавляется при открытии модалки)
+
+    // Проверяем URL: query, hash или часть пути
+    const urlParams = new URLSearchParams(window.location.search);
+    const hasQuery = urlParams.has('openkppopup');
+    const hasHash = window.location.hash === '#openkppopup' || window.location.hash === '#openkp';
+    const hasPath = window.location.pathname.includes('openkppopup');
+
+    if (hasQuery || hasHash || hasPath) {
+      // небольшая задержка, чтобы всё точно инициализировалось
+      setTimeout(openKpPopup, 10);
     }
   }
-});
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+
+  // экспорт для вызова вручную
+  window.openKpPopup = openKpPopup;
+  window.closeKpPopup = closeKpPopup;
+})();
+
 
 
 
