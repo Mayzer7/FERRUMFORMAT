@@ -3401,7 +3401,7 @@
                                         <td>Стандарт</td>
                                         <td>М2</td>
                                         <td>
-                                            <button class="mdk-main-contact-banner-link red-btn" onclick="openKpPopup();">
+                                            <button class="mdk-main-contact-banner-link red-btn" onclick="openKpPopup()">
                                                 узнать оптовую цену
                                                 
                                                 <div class="discount-banner">
@@ -3421,7 +3421,7 @@
                                         <td>Стандарт</td>
                                         <td>М2</td>
                                         <td>
-                                            <button class="mdk-main-contact-banner-link red-btn" onclick="openKpPopup();">
+                                            <button class="mdk-main-contact-banner-link red-btn" onclick="openKpPopup('Почтовый ящик серии «Гарант 2»', event)">
                                                 узнать оптовую цену
                                                 
                                                 <div class="discount-banner">
@@ -5332,6 +5332,7 @@
             <div class="kp-popup-left">
                 <form class="get-contact-form">
                         <div class="get-contact-form-first-line">
+                            <input type="hidden" class="js-Product" name="form_hidden_31" value="">
                             <input type="text" name="name" data-field="name" data-required="true" placeholder="Ваше имя">
                         </div>
 

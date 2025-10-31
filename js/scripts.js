@@ -2269,7 +2269,6 @@ if (modelModal) {
     (function bindOpen3DButtons(){
       const buttons = Array.from(document.querySelectorAll('.open-3d-model'));
       if (!buttons.length) {
-        console.log('open-3d-model: нет кнопок для привязки');
         return;
       }
 
@@ -3348,16 +3347,26 @@ const isMenuOpen = () => !!menu && menu.classList.contains('is-open');
 let kpScrollPos = 0;
 let kpLastFocused = null;
 
-function openKpPopup(event) {
-  if (event) {
+function setPopupProduct(value) {
+  const input = document.querySelector('.js-Product');
+  if (input) {
+    input.value = value || '';
+  }
+}
+
+function openKpPopup(productTitle, event) {
+  if (event && typeof event.preventDefault === 'function') {
     event.preventDefault();
     event.stopPropagation();
-    kpLastFocused = event.currentTarget || document.activeElement;
-  } else {
-    kpLastFocused = document.activeElement;
   }
 
+  kpLastFocused = event?.currentTarget || document.activeElement;
+
   if (!kpPopup) return;
+
+  if (typeof productTitle === 'string') {
+    setPopupProduct(productTitle);
+  }
 
   kpScrollPos = window.scrollY || window.pageYOffset || 0;
 
@@ -3388,6 +3397,8 @@ function closeKpPopup() {
   kpPopup.classList.remove('show');
   kpPopup.classList.add('closing');
   kpPopup.setAttribute('aria-hidden', 'true');
+
+  setPopupProduct('');
 
   document.body.style.position = '';
   document.body.style.top = '';
@@ -3424,10 +3435,10 @@ function closeKpPopup() {
     kpPopup.classList.remove('closing');
     document.body.style.overflow = '';
     kpPopup.removeEventListener('transitionend', onTransitionEnd);
-    delete kpPopup.dataset.menuWasOpen;
   };
   kpPopup.addEventListener('transitionend', onTransitionEnd);
 }
+
 
 // кнопка крестик
 if (kpCloseBtn) {

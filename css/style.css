@@ -4836,6 +4836,7 @@ input.error::placeholder {
 .mdk-main-contact-banner-link.transparent-btn {
     color: var(--black);
     border: 1px solid var(--black);
+    max-width: 100%;
 }
 
 .mdk-main-contact-banner-info {
