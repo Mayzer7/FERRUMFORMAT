@@ -3097,9 +3097,79 @@ document.querySelectorAll('.get-contact-form').forEach((form) => {
         }
       }
 
+      // Ошибка, если файл больше 5МБ
+      let tempAttachError = null;
+      let tempAttachErrorTimer = null;
+
       function renderErrorFile(fileName) {
-        // showTempError('Выбранный файл превышает 5 МБ');
-        return
+        const safeName = fileName ? fileName : 'Файл';
+        const msg = `Файл «${safeName}» превышает 5 МБ`;
+
+        if (tempAttachError) {
+          tempAttachError.textContent = msg;
+          tempAttachError.setAttribute('aria-hidden', 'false');
+          if (tempAttachErrorTimer) {
+            clearTimeout(tempAttachErrorTimer);
+          }
+          tempAttachErrorTimer = setTimeout(() => clearTempAttachError(), 3500);
+          return;
+        }
+
+        const el = document.createElement('p');
+        el.className = 'accept-politics-error';
+        el.setAttribute('role', 'alert');
+        el.setAttribute('aria-hidden', 'false');
+        el.style.marginTop = '12px';
+        el.textContent = msg;
+
+        try {
+          if (attachArea && attachArea.parentNode) {
+            attachArea.parentNode.insertBefore(el, attachArea.nextSibling);
+          } else if (attachedFiles) {
+            attachedFiles.insertBefore(el, attachedFiles.firstChild);
+          } else if (form) {
+            form.appendChild(el);
+          } else {
+            document.body.appendChild(el);
+          }
+        } catch (e) {
+          try { form && form.appendChild(el); } catch (err) {}
+        }
+
+        tempAttachError = el;
+
+        requestAnimationFrame(() => {
+          tempAttachError.classList.add('visible');
+        });
+
+        tempAttachErrorTimer = setTimeout(() => clearTempAttachError(), 3500);
+      }
+
+      function clearTempAttachError() {
+        if (!tempAttachError) return;
+
+        tempAttachError.classList.remove('visible');
+        tempAttachError.setAttribute('aria-hidden', 'true');
+
+        const elToRemove = tempAttachError;
+        const onTransitionEnd = (ev) => {
+          if (ev.propertyName === 'opacity' || ev.propertyName === 'max-height') {
+            elToRemove.removeEventListener('transitionend', onTransitionEnd);
+            try { elToRemove.remove(); } catch (e) {}
+          }
+        };
+        elToRemove.addEventListener('transitionend', onTransitionEnd);
+
+        setTimeout(() => {
+          try { elToRemove.removeEventListener('transitionend', onTransitionEnd); } catch(e) {}
+          try { elToRemove.remove(); } catch(e) {}
+        }, 500);
+
+        tempAttachError = null;
+        if (tempAttachErrorTimer) {
+          clearTimeout(tempAttachErrorTimer);
+          tempAttachErrorTimer = null;
+        }
       }
 
       function showTempError(msg) {
