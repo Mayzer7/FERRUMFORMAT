@@ -559,6 +559,14 @@ input {
     padding-bottom: 40px;
 }
 
+.header-menu-open-socials img {
+    width: 100%;
+    max-width: 370px;
+    aspect-ratio: 370 / 210;
+    object-fit: cover;
+    display: block;    
+}
+
 
 .header-menu-open-socials-links {
     margin-top: 20px;
