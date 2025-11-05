@@ -3257,8 +3257,6 @@ document.querySelectorAll('.get-contact-form').forEach((form) => {
   }
 
   form.addEventListener('submit', function (e) {
-    e.preventDefault();
-
     const nameInput = form.querySelector('[data-field="name"]');
     const phoneInput = form.querySelector('[data-field="phone"]');
 
@@ -3310,7 +3308,11 @@ document.querySelectorAll('.get-contact-form').forEach((form) => {
       acceptError && acceptError.setAttribute('aria-hidden', 'true');
     }
 
-    if (!valid) return;
+    if (!valid) {
+      e.preventDefault();
+      e.stopImmediatePropagation();
+      return;
+    }
 
     const formData = new FormData(form);
     const data = {};
