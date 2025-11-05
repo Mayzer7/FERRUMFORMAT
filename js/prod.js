@@ -3478,7 +3478,19 @@ document.addEventListener('keydown', (e) => {
   }
 });
 
+// Клик на кнопку "Получить КП"
+document.addEventListener('click', (e) => {
+  const btn = e.target.closest('.get-kp-btn');
+  if (!btn) return;
 
+  if (typeof e.preventDefault === 'function') e.preventDefault();
+  if (typeof e.stopImmediatePropagation === 'function') e.stopImmediatePropagation();
+  e.stopPropagation();
+
+  const scrollPos = window.scrollY || window.pageYOffset || 0;
+
+  openKpPopup(null, e, scrollPos);
+}, { capture: true });
 
 
 
