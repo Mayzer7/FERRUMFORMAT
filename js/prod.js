@@ -1356,74 +1356,76 @@ if (supplyMaps) {
       });
 
       // создаём метки
-      points.forEach(p => {
-        const fontSize = fontSizeFromCount(p.count);
-        const { uri, size } = svgDataUri(p.count, colorFromCount(p.count), fontSize);
+      if (typeof points !== 'undefined' && Array.isArray(points) && points.length) {
+          points.forEach(p => {
+          const fontSize = fontSizeFromCount(p.count);
+          const { uri, size } = svgDataUri(p.count, colorFromCount(p.count), fontSize);
 
-        const offsetY = 5; 
-        const balloonOffset = [0, -offsetY]; 
+          const offsetY = 5; 
+          const balloonOffset = [0, -offsetY]; 
 
-        const placemark = new ymaps.Placemark(p.coords, {
-          name: p.name,
-          count: p.count
-        }, {
-          iconLayout: "default#image",
-          iconImageHref: uri,
-          iconImageSize: [size, size],
-          iconImageOffset: [-(size / 2), -(size / 2)],
-          balloonOffset: balloonOffset,
-          balloonContentLayout: CustomBalloonLayout,
-          hideIconOnBalloonOpen: false,
-          hasHint: true
-        });
-
-        mapInstance.geoObjects.add(placemark);
-
-        if (isTouchDevice) {
-          placemark.events.add('click', function () {
-            if (placemark.balloon.isOpen()) {
-              placemark.balloon.close();
-            } else {
-              placemark.balloon.open();
-            }
-          });
-        } else {
-          let openTimer = null;
-          let closeTimer = null;
-
-          placemark.events.add('mouseenter', function () {
-            if (closeTimer) {
-              clearTimeout(closeTimer);
-              closeTimer = null;
-            }
-            if (placemark.balloon.isOpen()) return;
-
-            openTimer = setTimeout(() => {
-              placemark.balloon.open();
-              openTimer = null;
-            }, HOVER_OPEN_DELAY);
+          const placemark = new ymaps.Placemark(p.coords, {
+            name: p.name,
+            count: p.count
+          }, {
+            iconLayout: "default#image",
+            iconImageHref: uri,
+            iconImageSize: [size, size],
+            iconImageOffset: [-(size / 2), -(size / 2)],
+            balloonOffset: balloonOffset,
+            balloonContentLayout: CustomBalloonLayout,
+            hideIconOnBalloonOpen: false,
+            hasHint: true
           });
 
-          placemark.events.add('mouseleave', function () {
-            if (openTimer) {
-              clearTimeout(openTimer);
-              openTimer = null;
-            }
-            if (placemark.balloon.isOpen()) {
-              closeTimer = setTimeout(() => {
+          mapInstance.geoObjects.add(placemark);
+
+          if (isTouchDevice) {
+            placemark.events.add('click', function () {
+              if (placemark.balloon.isOpen()) {
                 placemark.balloon.close();
-                closeTimer = null;
-              }, HOVER_CLOSE_DELAY);
-            }
-          });
+              } else {
+                placemark.balloon.open();
+              }
+            });
+          } else {
+            let openTimer = null;
+            let closeTimer = null;
 
-          mapInstance.events.add('click', function () {
-            if (placemark.balloon.isOpen()) {
-              placemark.balloon.close();
-            }
-          });
-        }
-      });
+            placemark.events.add('mouseenter', function () {
+              if (closeTimer) {
+                clearTimeout(closeTimer);
+                closeTimer = null;
+              }
+              if (placemark.balloon.isOpen()) return;
+
+              openTimer = setTimeout(() => {
+                placemark.balloon.open();
+                openTimer = null;
+              }, HOVER_OPEN_DELAY);
+            });
+
+            placemark.events.add('mouseleave', function () {
+              if (openTimer) {
+                clearTimeout(openTimer);
+                openTimer = null;
+              }
+              if (placemark.balloon.isOpen()) {
+                closeTimer = setTimeout(() => {
+                  placemark.balloon.close();
+                  closeTimer = null;
+                }, HOVER_CLOSE_DELAY);
+              }
+            });
+
+            mapInstance.events.add('click', function () {
+              if (placemark.balloon.isOpen()) {
+                placemark.balloon.close();
+              }
+            });
+          }
+        });
+      }
 
       mapInstance.container.fitToViewport();
       return mapInstance;
@@ -1900,9 +1902,11 @@ if (deliveryMap) {
         const zone = (el.getAttribute('data-zone') || '').trim();
         if (!zone) return;
         if (el.dataset && el.dataset.delivery) return;
-        if (DELIVERY_MAP[zone]) {
-          try { el.dataset.delivery = DELIVERY_MAP[zone]; }
-          catch(e) { }
+
+        if (typeof DELIVERY_MAP !== 'undefined' && DELIVERY_MAP[zone]) {
+          try {
+            el.dataset.delivery = DELIVERY_MAP[zone];
+          } catch(e) { }
         }
       });
 
