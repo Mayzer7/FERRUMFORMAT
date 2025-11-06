@@ -3766,36 +3766,61 @@ if (shareBtn) {
 
 // Модальное окно "Поделиться" на мобилке
 
+const overlay = document.querySelector('.share-overlay');
 const shareModal = document.querySelector('.share-modal');
+let scrollPosition = 0;
 
-if (shareModal) {
-  function openShareModal() {
-    document.documentElement.classList.add('no-scroll-modal');
-    document.body.classList.add('no-scroll-modal');
-    const overlay = document.querySelector('.share-overlay');
-    overlay.classList.add('active');
+function isInsideModal(target) {
+  return target && target.closest && target.closest('.share-modal');
+}
+
+function preventTouchMove(e) {
+  if (!isInsideModal(e.target)) {
+    e.preventDefault();
   }
+}
 
-  function closeShareModal() {
-    document.documentElement.classList.remove('no-scroll-modal');
-    document.body.classList.remove('no-scroll-modal');
-    const overlay = document.querySelector('.share-overlay');
-    overlay.classList.remove('active');
+function openShareModal() {
+  scrollPosition = window.scrollY || window.pageYOffset || 0;
+
+  document.body.classList.add('modal-open');
+  document.body.style.top = `-${scrollPosition}px`;
+
+  overlay.classList.add('active');
+
+  document.addEventListener('touchmove', preventTouchMove, { passive: false });
+  document.addEventListener('wheel', preventTouchMove, { passive: false }); 
+}
+
+function closeShareModal() {
+  overlay.classList.remove('active');
+
+  document.removeEventListener('touchmove', preventTouchMove, { passive: false });
+  document.removeEventListener('wheel', preventTouchMove, { passive: false });
+
+  document.body.classList.remove('modal-open');
+  document.body.style.top = '';
+
+  window.scrollTo(0, scrollPosition);
+}
+
+document.addEventListener('click', (e) => {
+  if (e.target.classList && e.target.classList.contains('share-overlay')) {
+    closeShareModal();
   }
+});
 
-  // Закрытие при клике вне модалки
-  document.addEventListener('click', (e) => {
-    const overlay = document.querySelector('.share-overlay');
-    if (e.target.classList.contains('share-overlay')) {
-      closeShareModal();
-    }
-  });
+document.addEventListener('click', (e) => {
+  if (e.target.closest && e.target.closest('.close-share-modal')) {
+    closeShareModal();
+  }
+});
 
-  // Закрытие по кнопке "крестик"
-  document.addEventListener('click', (e) => {
-    if (e.target.closest('.close-share-modal')) {
-      closeShareModal();
-    }
+const shareButton = document.querySelector('.your-share-button-selector');
+if (shareButton) {
+  shareButton.addEventListener('click', (e) => {
+    e.preventDefault();
+    openShareModal();
   });
 }
 

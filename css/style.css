@@ -5687,7 +5687,9 @@ input.error::placeholder {
 }
 
 body.modal-open {
-  overflow: hidden;
+    position: fixed;
+    width: 100%;
+    overflow: hidden;
 }
 
 body.modal-open .news-info-cards.swiper {
@@ -12661,7 +12663,7 @@ section {
   display: flex;
   justify-content: center;
   align-items: flex-end;
-  z-index: 1000;
+  z-index: 1000; 
   opacity: 0;
   visibility: hidden;
   transition: opacity 0.3s ease, visibility 0.3s ease;
