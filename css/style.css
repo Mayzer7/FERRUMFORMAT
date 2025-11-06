@@ -7131,6 +7131,10 @@ model-viewer::part(default-progress-bar) {
     height: 100%;
 }
 
+.reviews-card-right-side:not(:has(img)) {
+  display: none;
+}
+
 .reviews-card-right-side img {
     width: 100%;
     height: 100%;

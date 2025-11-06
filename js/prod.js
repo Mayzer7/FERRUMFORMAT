@@ -2544,17 +2544,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
       let coordX = (e && typeof e.clientX === 'number' && e.clientX !== 0) ? e.clientX : null;
       let coordY = (e && typeof e.clientY === 'number' && e.clientY !== 0) ? e.clientY : null;
-
       if ((coordX === null || coordY === null) && lastPointer) {
-        coordX = lastPointer.x;
-        coordY = lastPointer.y;
+        coordX = coordX === null ? lastPointer.x : coordX;
+        coordY = coordY === null ? lastPointer.y : coordY;
       }
-
       const rect = btn.getBoundingClientRect();
       if (coordX === null || coordY === null) {
         coordX = rect.left + rect.width / 2;
         coordY = rect.top + rect.height / 2;
       }
+
+      // учитываем visualViewport (iOS)
+      const vv = window.visualViewport || {};
+      const viewportOffsetLeft = vv.offsetLeft || 0;
+      const viewportOffsetTop  = vv.offsetTop  || 0;
 
       popup.innerHTML = `
         <span class="popup-icon" aria-hidden="true">
@@ -2574,19 +2577,18 @@ document.addEventListener('DOMContentLoaded', () => {
           const vh = document.documentElement.clientHeight;
           const pad = 8;
 
-          let left = coordX - popupRect.width / 2;
-          let top = coordY - popupRect.height - 12;
+          let left = coordX - popupRect.width / 2 + viewportOffsetLeft;
+          let top  = coordY - popupRect.height - 12 + viewportOffsetTop;
 
           if (top < pad) {
-            top = coordX + 12;
+            top = coordY + 12 + viewportOffsetTop;
           }
 
-          left = Math.min(Math.max(pad, left), vw - popupRect.width - pad);
-          top = Math.min(Math.max(pad, top), vh - popupRect.height - pad);
+          left = Math.min(Math.max(pad, left), vw - popupRect.width - pad + viewportOffsetLeft);
+          top  = Math.min(Math.max(pad + viewportOffsetTop, top), vh - popupRect.height - pad + viewportOffsetTop);
 
           popup.style.left = `${Math.round(left)}px`;
           popup.style.top  = `${Math.round(top)}px`;
-
           requestAnimationFrame(() => popup.classList.add('show'));
         });
       });
