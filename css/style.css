@@ -13210,3 +13210,22 @@ button.inactive {
 }
 
 
+/* Убираем отступ на странице Каталога */
+
+.main-catalog .mdk-main {
+    padding-bottom: 1px;
+}
+
+.main-catalog .catalog {
+    padding-top: 10px;
+}
+
+.main-catalog .catalog-content .catalog-head {
+    padding-bottom: 16px;
+}
+
+@media (max-width: 700px) {
+    .main-catalog .catalog-content .catalog-head {
+        padding-bottom: 12px;
+    }
+}
