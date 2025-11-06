@@ -3383,29 +3383,6 @@ document.querySelectorAll('.get-contact-form').forEach((form) => {
       e.stopImmediatePropagation();
       return;
     }
-
-    const formData = new FormData(form);
-    const data = {};
-
-    for (const [key, value] of formData.entries()) {
-      if (value instanceof File) {
-        if (!value.name) continue;
-        if (!data[key]) data[key] = [];
-        data[key].push(value);
-      } else {
-        if (data[key] && !Array.isArray(data[key])) {
-          data[key] = [data[key]];
-        }
-        if (Array.isArray(data[key])) {
-          data[key].push(value);
-        } else {
-          data[key] = value;
-        }
-      }
-    }
-
-    console.log("Данные с формы:", data);
-    resetForm(form);
   });
 });
 
