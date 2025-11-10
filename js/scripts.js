@@ -2000,6 +2000,9 @@ if (modelModal) {
     const closeBtn = document.querySelector('.model-modal-close');
     const backdrop = document.querySelector('.model-modal-backdrop');
 
+    let scrollPos = 0;
+    let isModalOpen = false;
+
     const openModal = ({ src, name }) => {
       if (!src) return;
       modalViewer.removeAttribute('src');
@@ -2007,8 +2010,17 @@ if (modelModal) {
       modalViewer.setAttribute('alt', name || '3D модель');
       modalTitle.textContent = name || '';
 
+      scrollPos = window.pageYOffset || document.documentElement.scrollTop || 0;
+
+      document.body.style.position = 'fixed';
+      document.body.style.top = `-${scrollPos}px`;
+      document.body.style.left = '0';
+      document.body.style.right = '0';
+      document.body.style.width = '100%';
+
       document.body.classList.add('modal-open');
       modal.classList.add('open');
+      isModalOpen = true;
 
       if (window.newsSwiper && typeof window.newsSwiper.allowTouchMove === 'boolean') {
         window.newsSwiper.allowTouchMove = false;
@@ -2087,10 +2099,22 @@ if (modelModal) {
     })();
 
     const closeModal = () => {
+      if (!isModalOpen) return;
+
       modal.classList.remove('open');
       document.body.classList.remove('modal-open');
 
       modalViewer.removeAttribute('src');
+
+      document.body.style.position = '';
+      document.body.style.top = '';
+      document.body.style.left = '';
+      document.body.style.right = '';
+      document.body.style.width = '';
+
+      window.scrollTo(0, scrollPos);
+
+      isModalOpen = false;
 
       if (window.newsSwiper && typeof window.newsSwiper.allowTouchMove === 'boolean') {
         window.newsSwiper.allowTouchMove = true;
@@ -2154,9 +2178,16 @@ if (modelModal) {
 
     document.querySelectorAll('.our-work-card-image, .news-info-card-image').forEach(imageEl => {
       const card = imageEl.closest('.our-work-card');
+      if (!card) return;
 
       imageEl.addEventListener('click', (e) => {
-        if (e.target.closest('.get-kp-btn, a, button, input, .no-modal')) return;
+        if (!e.target.closest('.news-info-card-image-3d-icon')) return;
+
+        if (e.target.closest('.get-kp-btn, button, input, .no-modal')) return;
+
+        e.preventDefault();
+        e.stopPropagation();
+        e.stopImmediatePropagation && e.stopImmediatePropagation();
 
         if (dragging || touchMoved) return;
 
@@ -2176,6 +2207,7 @@ if (modelModal) {
           openModal({ src, name });
         }
       });
+
 
       imageEl.addEventListener('pointerdown', () => dragging = false);
       imageEl.addEventListener('pointermove', () => dragging = true);
