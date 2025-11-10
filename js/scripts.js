@@ -606,172 +606,10 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 
+
 // Отзывы
 
-let _lockedScrollPos = 0;
-let _scrollLockCount = 0;
-
-function lockScroll() {
-  if (_scrollLockCount++ > 0) return;
-
-  _lockedScrollPos = window.pageYOffset || document.documentElement.scrollTop || 0;
-
-  document.documentElement.style.scrollBehavior = 'auto';
-
-  document.documentElement.classList.add('no-scroll-modal');
-  document.body.classList.add('no-scroll-modal');
-  document.body.style.position = 'fixed';
-  document.body.style.top = `-${_lockedScrollPos}px`;
-  document.body.style.left = '0';
-  document.body.style.right = '0';
-  document.body.style.width = '100%';
-  document.body.style.overflow = 'hidden';
-}
-
-function unlockScroll() {
-  if (--_scrollLockCount > 0) return;
-
-  document.body.style.position = '';
-  document.body.style.top = '';
-  document.body.style.left = '';
-  document.body.style.right = '';
-  document.body.style.width = '';
-  document.body.style.overflow = '';
-
-  document.documentElement.classList.remove('no-scroll-modal');
-  document.body.classList.remove('no-scroll-modal');
-
-  window.scrollTo(0, _lockedScrollPos);
-
-  setTimeout(() => {
-    document.documentElement.style.scrollBehavior = '';
-  }, 0);
-}
-
-function safeFocus(el) {
-  if (!el || typeof el.focus !== 'function') return;
-  try {
-    el.focus({ preventScroll: true });
-  } catch (err) {
-    const cur = window.pageYOffset || document.documentElement.scrollTop || 0;
-    el.focus();
-    setTimeout(() => window.scrollTo(0, cur), 0);
-  }
-}
-
-document.addEventListener('DOMContentLoaded', () => {
-  const modal = document.getElementById('review-modal');
-  const overlay = modal?.querySelector('.review-modal-overlay');
-  const panel = modal?.querySelector('.review-modal-panel');
-  const closeBtn = modal?.querySelector('.review-modal-close');
-  const authorEl = modal?.querySelector('.review-modal-author');
-  const textEl = modal?.querySelector('.review-modal-text');
-  const imgEl = modal?.querySelector('.review-modal-img');
-
-  let lastFocusedElement = null;
-  let focusableNodes = [];
-  let firstFocusable = null;
-  let lastFocusable = null;
-
-  function updateFocusable() {
-    focusableNodes = panel.querySelectorAll('a, button, textarea, input, select, [tabindex]:not([tabindex="-1"])');
-    if (focusableNodes.length) {
-      firstFocusable = focusableNodes[0];
-      lastFocusable = focusableNodes[focusableNodes.length - 1];
-    } else {
-      firstFocusable = lastFocusable = closeBtn;
-    }
-  }
-  function trapTab(e) {
-    if (e.key !== 'Tab') return;
-    if (!firstFocusable) return;
-    if (e.shiftKey) {
-      if (document.activeElement === firstFocusable) {
-        e.preventDefault();
-        lastFocusable.focus();
-      }
-    } else {
-      if (document.activeElement === lastFocusable) {
-        e.preventDefault();
-        firstFocusable.focus();
-      }
-    }
-  }
-
-  function openModal() {
-    lastFocusedElement = document.activeElement;
-    modal.setAttribute('aria-hidden', 'false');
-    modal.classList.add('open');
-    lockScroll();               
-    updateFocusable();
-
-    // if (header.classList.contains('header--hidden')) {
-
-    //   setTimeout(() => {
-    //     header.classList.add('header--hidden');
-    //     header.classList.remove('header--visible');
-    //     header.style.backgroundColor = 'white';
-    //   }, 1);
-    // }
-
-    // if (header.classList.contains('header--visible')) {
-
-    //   setTimeout(() => {
-    //     header.classList.add('header--hidden');
-    //     header.classList.remove('header--visible');
-    //     header.style.backgroundColor = 'white';
-    //   }, 1);
-    // }
-
-    (firstFocusable || closeBtn).focus();
-    document.addEventListener('keydown', onKeydown);
-  }
-
-
-  function closeModal() {
-    modal.classList.remove('open');
-    modal.setAttribute('aria-hidden', 'true');
-    unlockScroll();        
-    
-    // if (header.classList.contains('header--visible')) {
-
-    //   setTimeout(() => {
-    //     header.classList.remove('header--hidden');
-    //     header.classList.add('header--visible');
-    //   }, 1);
-    // }
-
-    // if (header.classList.contains('header--hidden')) {
-
-    //   setTimeout(() => {
-    //     header.classList.add('header--hidden');
-    //     header.classList.remove('header--visible');
-    //     header.style.backgroundColor = 'white';
-    //   }, 1);
-    // }
-    
-    document.removeEventListener('keydown', onKeydown);
-    safeFocus(lastFocusedElement);
-  }
-
-  function onKeydown(e) {
-    if (e.key === 'Escape') {
-      closeModal();
-      return;
-    }
-    trapTab(e);
-  }
-
-  overlay?.addEventListener('click', closeModal);
-  closeBtn?.addEventListener('click', closeModal);
-  panel?.addEventListener('click', (e) => e.stopPropagation());
-
-  const CARDS_SELECTOR = '.reviews-card';
-  const BTN_SELECTOR = '.read-more-review-btn';
-  const TEXT_SELECTOR = '.reviews-card-text';
-  const AUTHOR_SELECTOR = '.reviews-card-author';
-  const IMG_SELECTOR = '.reviews-card-right-side img';
-
+(() => {
   function debounce(fn, ms = 120) {
     let t;
     return (...args) => {
@@ -780,39 +618,338 @@ document.addEventListener('DOMContentLoaded', () => {
     };
   }
 
+  function safeFocus(el) {
+    if (!el || typeof el.focus !== 'function') return;
+    try {
+      el.focus({ preventScroll: true });
+    } catch (err) {
+      const cur = window.pageYOffset || document.documentElement.scrollTop || 0;
+      el.focus();
+      setTimeout(() => window.scrollTo(0, cur), 0);
+    }
+  }
+
+  let _lockedScrollPos = 0;
+  let _scrollLockCount = 0;
+  function lockScroll() {
+    if (_scrollLockCount++ > 0) return;
+    _lockedScrollPos = window.pageYOffset || document.documentElement.scrollTop || 0;
+    document.documentElement.style.scrollBehavior = 'auto';
+    document.documentElement.classList.add('no-scroll-modal');
+    document.body.classList.add('no-scroll-modal');
+    document.body.style.position = 'fixed';
+    document.body.style.top = `-${_lockedScrollPos}px`;
+    document.body.style.left = '0';
+    document.body.style.right = '0';
+    document.body.style.width = '100%';
+    document.body.style.overflow = 'hidden';
+  }
+  function unlockScroll() {
+    if (--_scrollLockCount > 0) return;
+    document.body.style.position = '';
+    document.body.style.top = '';
+    document.body.style.left = '';
+    document.body.style.right = '';
+    document.body.style.width = '';
+    document.body.style.overflow = '';
+    document.documentElement.classList.remove('no-scroll-modal');
+    document.body.classList.remove('no-scroll-modal');
+    window.scrollTo(0, _lockedScrollPos);
+    setTimeout(() => { document.documentElement.style.scrollBehavior = ''; }, 0);
+  }
+
+  const CONTAINER_SELECTOR = '.reviews-cards';
+  const CARD_SELECTOR = '.reviews-card';
+  const TEXT_SELECTOR = '.reviews-card-text';
+  const BTN_SELECTOR = '.read-more-review-btn';
+  const AUTHOR_SELECTOR = '.reviews-card-author';
+  const THUMBS_SELECTOR = '.reviews-card-right-side img, .documents-card-right-side img, .documents-card img'; // как было
+
+  let reviewModal, reviewModalOverlay, reviewModalPanel, reviewModalClose, reviewModalAuthor, reviewModalText;
+  let imageModal, imageModalOverlay, imageModalPanel, imageModalClose, imageModalPrev, imageModalNext, imageModalSwiperContainer, imageModalSwiperWrapper, imageModalCaption;
+  let imageSwiper = null; 
+
+  const header = document.querySelector('header');
+
+  // Модалка отзыва
+  function initReviewModalElements() {
+    reviewModal = document.getElementById('review-modal');
+    if (!reviewModal) return;
+    reviewModalOverlay = reviewModal.querySelector('.review-modal-overlay');
+    reviewModalPanel = reviewModal.querySelector('.review-modal-panel');
+    reviewModalClose = reviewModal.querySelector('.review-modal-close');
+    reviewModalAuthor = reviewModal.querySelector('.review-modal-author');
+    reviewModalText = reviewModal.querySelector('.review-modal-text');
+
+    let lastFocused = null;
+    let firstFocusable = null;
+    let lastFocusable = null;
+
+    function updateFocusable() {
+      if (!reviewModalPanel) return;
+      const nodes = reviewModalPanel.querySelectorAll('a, button, textarea, input, select, [tabindex]:not([tabindex="-1"])');
+      if (nodes.length) {
+        firstFocusable = nodes[0];
+        lastFocusable = nodes[nodes.length - 1];
+      } else {
+        firstFocusable = lastFocusable = reviewModalClose;
+      }
+    }
+
+    function trapTab(e) {
+      if (e.key !== 'Tab') return;
+      if (!firstFocusable) return;
+      if (e.shiftKey) {
+        if (document.activeElement === firstFocusable) {
+          e.preventDefault();
+          lastFocusable.focus();
+        }
+      } else {
+        if (document.activeElement === lastFocusable) {
+          e.preventDefault();
+          firstFocusable.focus();
+        }
+      }
+    }
+
+    function onKey(e) {
+      if (e.key === 'Escape') { closeReviewModal(); return; }
+      trapTab(e);
+    }
+
+    function openReviewModal() {
+      lastFocused = document.activeElement;
+      reviewModal.setAttribute('aria-hidden', 'false');
+      reviewModal.classList.add('open');
+      lockScroll();
+      updateFocusable();
+      (firstFocusable || reviewModalClose).focus();
+      document.addEventListener('keydown', onKey);
+    }
+
+    function closeReviewModal() {
+      reviewModal.classList.remove('open');
+      reviewModal.setAttribute('aria-hidden', 'true');
+      unlockScroll();
+      document.removeEventListener('keydown', onKey);
+      safeFocus(lastFocused);
+    }
+
+    if (reviewModalOverlay) reviewModalOverlay.addEventListener('click', closeReviewModal);
+    if (reviewModalClose) reviewModalClose.addEventListener('click', closeReviewModal);
+    if (reviewModalPanel) reviewModalPanel.addEventListener('click', (e) => e.stopPropagation());
+
+    return {
+      setContent(authorHtml, textHtml) {
+        if (reviewModalAuthor) reviewModalAuthor.innerHTML = authorHtml || '';
+        if (reviewModalText) reviewModalText.innerHTML = textHtml || '';
+      },
+      open: openReviewModal,
+      close: closeReviewModal
+    };
+  }
+
+  // Модалка изображения отзыва
+  function initImageModalElements() {
+    imageModal = document.getElementById('image-modal');
+    if (!imageModal) return;
+    imageModalOverlay = imageModal.querySelector('.image-modal-overlay');
+    imageModalPanel = imageModal.querySelector('.image-modal-panel');
+    imageModalClose = imageModal.querySelector('.image-modal-close');
+    imageModalPrev = imageModal.querySelector('.image-modal-prev');
+    imageModalNext = imageModal.querySelector('.image-modal-next');
+    imageModalSwiperContainer = imageModal.querySelector('.image-modal-swiper');
+    imageModalSwiperWrapper = imageModalSwiperContainer?.querySelector('.swiper-wrapper');
+    imageModalCaption = document.getElementById('image-modal-caption');
+
+    function onKey(e) {
+      if (e.key === 'Escape') { closeImageModal(); return; }
+      if (e.key === 'ArrowLeft') { e.preventDefault(); if (imageSwiper) imageSwiper.slidePrev(); return; }
+      if (e.key === 'ArrowRight') { e.preventDefault(); if (imageSwiper) imageSwiper.slideNext(); return; }
+    }
+
+    let lastFocused = null;
+    function openImageModal(startIndex = 0) {
+      lastFocused = document.activeElement;
+      buildImageSlides(); 
+      if (!imageModal) return;
+      imageModal.setAttribute('aria-hidden', 'false');
+      imageModal.classList.add('open');
+      lockScroll();
+      if (header) {
+        header.classList.add('modal-open');
+        header.classList.remove('header--hidden');
+        header.classList.add('header--visible');
+      }
+      initSwiperInstance(startIndex);
+      if (imageModalClose) imageModalClose.focus();
+      document.addEventListener('keydown', onKey);
+    }
+
+    function closeImageModal() {
+      if (!imageModal) return;
+      imageModal.classList.remove('open');
+      imageModal.setAttribute('aria-hidden', 'true');
+      if (header) {
+        header.classList.remove('modal-open');
+        window.requestAnimationFrame(() => window.dispatchEvent(new Event('scroll')));
+      }
+      unlockScroll();
+      document.removeEventListener('keydown', onKey);
+      safeFocus(lastFocused);
+    }
+
+    if (imageModalOverlay) imageModalOverlay.addEventListener('click', closeImageModal);
+    if (imageModalClose) imageModalClose.addEventListener('click', closeImageModal);
+
+    function getThumbs() {
+      return Array.from(document.querySelectorAll(THUMBS_SELECTOR));
+    }
+
+    function buildImageSlides() {
+      if (!imageModalSwiperWrapper) return;
+      const thumbs = getThumbs();
+      imageModalSwiperWrapper.innerHTML = ''; 
+      thumbs.forEach((t, idx) => {
+        const src = t.getAttribute('src') || t.dataset.src;
+        const alt = t.getAttribute('alt') || '';
+        const slide = document.createElement('div');
+        slide.className = 'swiper-slide';
+        slide.setAttribute('role', 'group');
+        slide.setAttribute('aria-roledescription', 'slide');
+        slide.setAttribute('aria-label', `${idx + 1} of ${thumbs.length}`);
+        const img = document.createElement('img');
+        img.src = src;
+        img.alt = alt;
+        img.loading = 'lazy';
+        img.draggable = false;
+        img.addEventListener('load', () => {
+          img.classList.add('loaded');
+          applyScaleToImg(img);
+        });
+        slide.appendChild(img);
+        imageModalSwiperWrapper.appendChild(slide);
+      });
+      if (imageModalCaption) {
+        const first = imageModalSwiperWrapper.querySelector('img');
+        imageModalCaption.textContent = first?.alt || '';
+      }
+    }
+
+    function applyScaleToImg(imgEl) {
+      if (!imgEl) return;
+      imgEl.style.width = '100%';
+      imgEl.style.height = '100%';
+      imgEl.style.objectFit = 'cover';
+    }
+
+    function updateCaption(index) {
+      if (!imageModalCaption || !imageModalSwiperWrapper) return;
+      const imgs = imageModalSwiperWrapper.querySelectorAll('img');
+      const img = imgs[index];
+      imageModalCaption.textContent = img?.alt || '';
+    }
+
+    function initSwiperInstance(startIndex = 0) {
+      try {
+        if (imageSwiper) {
+          imageSwiper.update();
+          setTimeout(() => imageSwiper.slideTo(startIndex, 0), 0);
+          return;
+        }
+        if (typeof Swiper === 'undefined') {
+          console.warn('Swiper is not loaded - image modal will work but without navigation/swiping.');
+          updateCaption(0);
+          return;
+        }
+        imageSwiper = new Swiper(imageModalSwiperContainer, {
+          slidesPerView: 1,
+          centeredSlides: true,
+          spaceBetween: 16,
+          loop: false,
+          speed: 360,
+          navigation: { nextEl: imageModalNext, prevEl: imageModalPrev },
+          keyboard: { enabled: false },
+          on: {
+            slideChange: function () {
+              const imgs = imageModalSwiperWrapper.querySelectorAll('img');
+              const currentImg = imgs[this.activeIndex];
+              if (currentImg) setTimeout(() => applyScaleToImg(currentImg), 80);
+              updateCaption(this.activeIndex);
+            },
+            init: function () {
+              if (imageModalClose) imageModalClose.focus();
+            }
+          }
+        });
+
+        imageModalSwiperWrapper.addEventListener('pointerdown', (e) => {
+          const img = e.target.closest('img');
+          if (!img) return;
+          try {
+            img.classList.remove('dragging');
+            img.setPointerCapture(e.pointerId);
+            const onPointerMove = () => img.classList.add('dragging');
+            const onPointerUp = (ev) => {
+              img.classList.remove('dragging');
+              try { img.releasePointerCapture(ev.pointerId); } catch (err) {}
+              img.removeEventListener('pointermove', onPointerMove);
+              img.removeEventListener('pointerup', onPointerUp);
+            };
+            img.addEventListener('pointermove', onPointerMove);
+            img.addEventListener('pointerup', onPointerUp);
+          } catch (err) { /* ignore */ }
+        });
+        // сдвинем к стартовому слайду
+        setTimeout(() => imageSwiper.slideTo(Math.max(0, startIndex), 0), 10);
+      } catch (err) {
+        console.error('initSwiperInstance error', err);
+      }
+    }
+
+    return {
+      open: openImageModal,
+      close: closeImageModal,
+      getThumbs
+    };
+  }
+
   function isTruncated(el) {
     if (!el) return false;
-
     return el.scrollHeight > el.clientHeight + 1;
   }
 
-  const cards = document.querySelectorAll(CARDS_SELECTOR);
-  cards.forEach((card, index) => {
+  let cardIndexCounter = 0;
+
+  function initCard(card) {
+    if (!card || card.dataset.reviewsInit === '1') return;
+    card.dataset.reviewsInit = '1';
     const textNode = card.querySelector(TEXT_SELECTOR);
     const btn = card.querySelector(BTN_SELECTOR);
     const authorNode = card.querySelector(AUTHOR_SELECTOR);
-    const imgNode = card.querySelector(IMG_SELECTOR);
+    const imgNode = card.querySelector('img');
 
-    if (!textNode || !btn) return;
+    if (!textNode) return;
 
     textNode.classList.add('collapsed');
 
-    const textId = textNode.id || `review-text-${index}`;
-    textNode.id = textId;
-    btn.setAttribute('aria-controls', textId);
-    btn.setAttribute('aria-expanded', 'false');
+    const id = textNode.id || `review-text-${Date.now()}-${(cardIndexCounter++)}`;
+    textNode.id = id;
+    if (btn) {
+      btn.setAttribute('aria-controls', id);
+      btn.setAttribute('aria-expanded', 'false');
+    }
 
     const recompute = () => {
       void textNode.offsetHeight;
+      if (!btn) return;
       if (!isTruncated(textNode)) {
         btn.style.display = 'none';
         btn.setAttribute('aria-expanded', 'false');
       } else {
-        btn.style.display = ''; 
+        btn.style.display = '';
       }
     };
-
-    requestAnimationFrame(recompute);
 
     const ro = (typeof ResizeObserver !== 'undefined') ? new ResizeObserver(debounce(recompute, 120)) : null;
     if (ro) ro.observe(textNode);
@@ -822,30 +959,132 @@ document.addEventListener('DOMContentLoaded', () => {
 
     window.addEventListener('resize', debounce(recompute, 150));
 
-    btn.addEventListener('click', (ev) => {
-      ev.preventDefault();
-      ev.stopPropagation();
+    requestAnimationFrame(recompute);
 
-      if (btn.style.display === 'none') return;
+    if (btn) {
+      btn.addEventListener('click', (ev) => {
+        ev.preventDefault();
+        ev.stopPropagation();
+        if (btn.style.display === 'none') return;
+        const authorHtml = authorNode ? authorNode.innerHTML.trim() : '';
+        const textHtml = textNode ? textNode.innerHTML.trim() : '';
+        if (reviewModalAPI) {
+          reviewModalAPI.setContent(authorHtml, textHtml);
+          reviewModalAPI.open();
+        }
+      });
+    }
 
-      if (authorNode) {
-        authorEl.innerHTML = authorNode.innerHTML.trim();
-      } else {
-        authorEl.textContent = '';
+    if (imgNode) {
+      imgNode.style.cursor = 'pointer';
+    }
+  }
+
+  function initAllCards(container) {
+    const cards = (container || document).querySelectorAll ? (container || document).querySelectorAll(CARD_SELECTOR) : [];
+    cards.forEach(c => initCard(c));
+  }
+
+  function attachContainerDelegation(container) {
+    if (!container) return;
+
+    container.addEventListener('click', (e) => {
+      const clickedImg = e.target.closest('img');
+      if (!clickedImg) return;
+
+      if (clickedImg.closest('.reviews-card-right-side') || clickedImg.closest('.documents-card')) {
+        e.preventDefault();
+        e.stopPropagation();
+        const thumbs = Array.from(document.querySelectorAll(THUMBS_SELECTOR));
+        const idx = thumbs.findIndex(t => t === clickedImg);
+        if (idx === -1) return;
+        if (imageModalAPI) imageModalAPI.open(idx);
       }
-
-      if (textNode) {
-        textEl.innerHTML = textNode.innerHTML.trim();
-      } else {
-        textEl.textContent = '';
-      }
-
-      openModal();
     });
-  });
 
-  window.reviewsRecomputeButtons = function() {
-    document.querySelectorAll(CARDS_SELECTOR).forEach((card, i) => {
+    container.addEventListener('click', (e) => {
+      const btn = e.target.closest(BTN_SELECTOR);
+      if (!btn) return;
+      const card = btn.closest(CARD_SELECTOR);
+      if (card && card.dataset.reviewsInit !== '1') initCard(card);
+    });
+  }
+
+  function observeContainer(container) {
+    if (!container) return;
+    const mo = new MutationObserver((mutations) => {
+      let added = false;
+      mutations.forEach(m => {
+        if (m.addedNodes && m.addedNodes.length) {
+          m.addedNodes.forEach(node => {
+            if (!(node instanceof HTMLElement)) return;
+            if (node.matches && node.matches(CARD_SELECTOR)) {
+              initCard(node);
+              added = true;
+            } else if (node.querySelectorAll) {
+              const inner = node.querySelectorAll(CARD_SELECTOR);
+              if (inner.length) {
+                inner.forEach(c => initCard(c));
+                added = true;
+              }
+            }
+          });
+        }
+      });
+      if (added) {
+        window.reviewsRecomputeButtons && window.reviewsRecomputeButtons();
+      }
+    });
+    mo.observe(container, { childList: true, subtree: true });
+  }
+
+  let reviewModalAPI = null;
+  let imageModalAPI = null;
+  function boot() {
+    reviewModalAPI = initReviewModalElements();
+    imageModalAPI = initImageModalElements();
+
+    const container = document.querySelector(CONTAINER_SELECTOR);
+    if (!container) {
+      initAllCards(document);
+      return;
+    }
+
+    initAllCards(container);
+
+    attachContainerDelegation(container);
+
+    observeContainer(container);
+
+    window.reviews = window.reviews || {};
+    window.reviews.recomputeButtons = () => {
+      document.querySelectorAll(CARD_SELECTOR).forEach((card) => {
+        const text = card.querySelector(TEXT_SELECTOR);
+        const btn = card.querySelector(BTN_SELECTOR);
+        if (!text || !btn) return;
+        void text.offsetHeight;
+        if (isTruncated(text)) btn.style.display = '';
+        else btn.style.display = 'none';
+      });
+    };
+    window.reviews.initCards = (root = container) => initAllCards(root);
+    window.reviews.openImageModal = (index = 0) => imageModalAPI && imageModalAPI.open(index);
+    window.reviews.openReviewModalWith = (authorHtml, textHtml) => {
+      if (reviewModalAPI) {
+        reviewModalAPI.setContent(authorHtml, textHtml);
+        reviewModalAPI.open();
+      }
+    };
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', boot);
+  } else {
+    boot();
+  }
+
+  window.reviewsRecomputeButtons = () => {
+    document.querySelectorAll(CARD_SELECTOR).forEach((card) => {
       const text = card.querySelector(TEXT_SELECTOR);
       const btn = card.querySelector(BTN_SELECTOR);
       if (!text || !btn) return;
@@ -854,260 +1093,7 @@ document.addEventListener('DOMContentLoaded', () => {
       else btn.style.display = 'none';
     });
   };
-});
-
-
-
-// Модальное окно для просмотра фотографий отзыва
-
-document.addEventListener('DOMContentLoaded', () => {
-  const THUMBS_SELECTOR = '.reviews-card-right-side img, .documents-card-right-side img, .documents-card img';
-  const thumbs = Array.from(document.querySelectorAll(THUMBS_SELECTOR));
-  if (!thumbs.length) return;
-
-  const modal = document.getElementById('image-modal');
-  const overlay = modal?.querySelector('.image-modal-overlay');
-  const panel = modal?.querySelector('.image-modal-panel');
-  const closeBtn = modal?.querySelector('.image-modal-close');
-  const prevBtn = modal?.querySelector('.image-modal-prev');
-  const nextBtn = modal?.querySelector('.image-modal-next');
-  const swiperContainer = modal?.querySelector('.image-modal-swiper');
-  const swiperWrapper = swiperContainer?.querySelector('.swiper-wrapper');
-
-  let swiper = null;
-  let createdSlides = false;
-  let lastFocused = null;
-
-  function buildSlides() {
-    if (!swiperWrapper) return;
-    swiperWrapper.innerHTML = '';
-    thumbs.forEach((t, idx) => {
-      const src = t.getAttribute('src');
-      const alt = t.getAttribute('alt') || '';
-      const slide = document.createElement('div');
-      slide.className = 'swiper-slide';
-      slide.setAttribute('role', 'group');
-      slide.setAttribute('aria-roledescription', 'slide');
-      slide.setAttribute('aria-label', `${idx + 1} of ${thumbs.length}`);
-      const img = document.createElement('img');
-      img.src = src;
-      img.alt = alt;
-      img.loading = 'lazy';
-      img.draggable = false;
-      img.addEventListener('load', () => {
-        img.classList.add('loaded');
-        applyScaleToImg(img);
-      });
-      slide.appendChild(img);
-      swiperWrapper.appendChild(slide);
-    });
-    createdSlides = true;
-  }
-
-  function applyScaleToImg(imgEl) {
-    if (!imgEl) return;
-    imgEl.style.width = '100%';
-    imgEl.style.height = '100%';
-    imgEl.style.objectFit = 'cover';
-  }
-
-  function initSwiper(startIndex = 0) {
-    if (!swiperContainer) return;
-    if (!createdSlides) buildSlides();
-    if (swiper) {
-      swiper.update();
-      setTimeout(() => swiper.slideTo(startIndex, 0), 0);
-      return;
-    }
-    swiper = new Swiper(swiperContainer, {
-      slidesPerView: 1,
-      centeredSlides: true,
-      spaceBetween: 16,
-      loop: false,
-      speed: 360,
-      navigation: { nextEl: nextBtn, prevEl: prevBtn },
-      keyboard: { enabled: false },
-      on: {
-        slideChange: function () {
-          const imgs = swiperWrapper.querySelectorAll('img');
-          const currentImg = imgs[swiper.activeIndex];
-          if (currentImg) setTimeout(() => applyScaleToImg(currentImg), 80);
-          updateCaption(swiper.activeIndex);
-        },
-        init: function () {
-          if (closeBtn) closeBtn.focus();
-        }
-      }
-    });
-
-    // drag handlers (как в вашем коде)
-    swiperWrapper.addEventListener('pointerdown', (e) => {
-      const img = e.target.closest('img');
-      if (!img) return;
-      img.classList.remove('dragging');
-      img.setPointerCapture(e.pointerId);
-      img.addEventListener('pointermove', onPointerMove);
-      img.addEventListener('pointerup', onPointerUp);
-      function onPointerMove() { img.classList.add('dragging'); }
-      function onPointerUp(ev) {
-        img.classList.remove('dragging');
-        try { img.releasePointerCapture(ev.pointerId); } catch (err) {}
-        img.removeEventListener('pointermove', onPointerMove);
-        img.removeEventListener('pointerup', onPointerUp);
-      }
-    });
-  }
-
-  const captionEl = document.getElementById('image-modal-caption');
-  function updateCaption(index) {
-    if (!captionEl) return;
-    const imgs = swiperWrapper.querySelectorAll('img');
-    const img = imgs[index];
-    captionEl.textContent = img?.alt || '';
-  }
-
-  // открыть модалку
-  function openImageModal(index = 0) {
-    lastFocused = document.activeElement;
-    initSwiper(index);
-    if (swiper) {
-      setTimeout(() => {
-        const idx = Math.max(0, Math.min(index, thumbs.length - 1));
-        swiper.slideTo(idx, 0);
-        const targetImg = swiperWrapper.querySelectorAll('img')[idx];
-        if (targetImg && targetImg.complete) applyScaleToImg(targetImg);
-        updateCaption(idx);
-      }, 0);
-    }
-    modal.setAttribute('aria-hidden', 'false');
-    modal.classList.add('open');
-
-    if (header) {
-      header.classList.add('modal-open');
-      header.classList.remove('header--hidden');
-      header.classList.add('header--visible');
-    }
-
-    // document.body.style.overflow = 'hidden';
-    // document.documentElement.classList.add('no-scroll-modal');
-    // document.body.classList.add('no-scroll-modal');
-
-    lockScroll();
-
-    // if (header.classList.contains('header--hidden')) {
-
-    //   setTimeout(() => {
-    //     header.classList.add('header--hidden');
-    //     header.classList.remove('header--visible');
-    //     header.style.backgroundColor = 'white';
-    //   }, 1);
-    // }
-
-    // if (header.classList.contains('header--visible')) {
-
-    //   setTimeout(() => {
-    //     header.classList.add('header--hidden');
-    //     header.classList.remove('header--visible');
-    //     header.style.backgroundColor = 'white';
-    //   }, 1);
-    // }
-
-    if (closeBtn) closeBtn.focus();
-    document.addEventListener('keydown', onKey);
-  }
-
-  function closeImageModal() {
-    modal.classList.remove('open');
-    modal.setAttribute('aria-hidden', 'true');
-
-    // document.body.style.overflow = '';
-    // document.documentElement.classList.remove('no-scroll-modal');
-    // document.body.classList.remove('no-scroll-modal');
-
-    if (header) {
-      header.classList.remove('modal-open');
-      window.requestAnimationFrame(() => window.dispatchEvent(new Event('scroll')));
-    }
-
-    unlockScroll();
-
-    // if (header.classList.contains('header--visible')) {
-
-    //   setTimeout(() => {
-    //     header.classList.remove('header--hidden');
-    //     header.classList.add('header--visible');
-    //   }, 1);
-    // }
-
-    // if (header.classList.contains('header--hidden')) {
-
-    //   setTimeout(() => {
-    //     header.classList.add('header--hidden');
-    //     header.classList.remove('header--visible');
-    //     header.style.backgroundColor = 'white';
-    //   }, 1);
-    // }
-
-    document.removeEventListener('keydown', onKey);
-    safeFocus(lastFocused);
-  }
-
-  function onKey(e) {
-    if (e.key === 'Escape') { closeImageModal(); return; }
-    if (e.key === 'ArrowLeft') { e.preventDefault(); if (swiper) swiper.slidePrev(); return; }
-    if (e.key === 'ArrowRight') { e.preventDefault(); if (swiper) swiper.slideNext(); return; }
-  }
-
-  thumbs.forEach((node, idx) => {
-    node.style.cursor = 'pointer';
-    node.addEventListener('click', (ev) => {
-      ev.preventDefault();
-      ev.stopPropagation();
-      openImageModal(idx);
-    });
-  });
-
-  const docCards = Array.from(document.querySelectorAll('.documents-card'));
-    docCards.forEach((card) => {
-      card.style.cursor = 'pointer';
-      card.addEventListener('click', (e) => {
-        if (e.target.closest('button, a')) return; 
-        const img = card.querySelector('img');
-        if (!img) return;
-        const idx = thumbs.findIndex(t => t === img);
-        if (idx !== -1) {
-          openImageModal(idx);
-        }
-      });
-  });
-
-  const docBtns = Array.from(document.querySelectorAll('.documents-card-btn'));
-    docBtns.forEach((btn) => {
-      btn.addEventListener('click', (e) => {
-        e.preventDefault();
-        e.stopPropagation(); 
-        const card = btn.closest('.documents-card');
-        const img = card?.querySelector('img');
-        if (!img) return;
-        const idx = thumbs.findIndex(t => t === img);
-        if (idx !== -1) {
-          openImageModal(idx);
-        }
-      });
-  });
-
-  overlay?.addEventListener('click', closeImageModal);
-  closeBtn?.addEventListener('click', closeImageModal);
-
-  window.addEventListener('resize', () => {
-    if (!modal.classList.contains('open')) return;
-    if (!swiper) return;
-    const imgs = swiperWrapper.querySelectorAll('img');
-    const currentImg = imgs[swiper.activeIndex];
-    if (currentImg) applyScaleToImg(currentImg);
-  });
-});
-
+})();
 
 
 
