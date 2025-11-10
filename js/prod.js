@@ -658,12 +658,12 @@ document.addEventListener('DOMContentLoaded', function () {
     setTimeout(() => { document.documentElement.style.scrollBehavior = ''; }, 0);
   }
 
-  const CONTAINER_SELECTOR = '.reviews-cards';
-  const CARD_SELECTOR = '.reviews-card';
+  const CONTAINER_SELECTOR = '.reviews-cards, .documents-cards';
+  const CARD_SELECTOR = '.reviews-card, .documents-card';
   const TEXT_SELECTOR = '.reviews-card-text';
   const BTN_SELECTOR = '.read-more-review-btn';
   const AUTHOR_SELECTOR = '.reviews-card-author';
-  const THUMBS_SELECTOR = '.reviews-card-right-side img, .documents-card-right-side img, .documents-card img'; // как было
+  const THUMBS_SELECTOR = '.reviews-card-right-side img, .documents-card-right-side img, .documents-card';
 
   let reviewModal, reviewModalOverlay, reviewModalPanel, reviewModalClose, reviewModalAuthor, reviewModalText;
   let imageModal, imageModalOverlay, imageModalPanel, imageModalClose, imageModalPrev, imageModalNext, imageModalSwiperContainer, imageModalSwiperWrapper, imageModalCaption;
@@ -803,7 +803,19 @@ document.addEventListener('DOMContentLoaded', function () {
     if (imageModalClose) imageModalClose.addEventListener('click', closeImageModal);
 
     function getThumbs() {
-      return Array.from(document.querySelectorAll(THUMBS_SELECTOR));
+      const nodes = Array.from(document.querySelectorAll(THUMBS_SELECTOR));
+      const imgs = [];
+      nodes.forEach(n => {
+        if (!n) return;
+        if (n.tagName && n.tagName.toLowerCase() === 'img') {
+          if (n.src) imgs.push(n);
+          return;
+        }
+
+        const innerImg = n.querySelector && n.querySelector('img');
+        if (innerImg && innerImg.src) imgs.push(innerImg);
+      });
+      return imgs;
     }
 
     function buildImageSlides() {
@@ -898,9 +910,8 @@ document.addEventListener('DOMContentLoaded', function () {
             };
             img.addEventListener('pointermove', onPointerMove);
             img.addEventListener('pointerup', onPointerUp);
-          } catch (err) { /* ignore */ }
+          } catch (err) { }
         });
-        // сдвинем к стартовому слайду
         setTimeout(() => imageSwiper.slideTo(Math.max(0, startIndex), 0), 10);
       } catch (err) {
         console.error('initSwiperInstance error', err);
@@ -994,11 +1005,48 @@ document.addEventListener('DOMContentLoaded', function () {
 
       if (clickedImg.closest('.reviews-card-right-side') || clickedImg.closest('.documents-card')) {
         e.preventDefault();
-        e.stopPropagation();
         const thumbs = Array.from(document.querySelectorAll(THUMBS_SELECTOR));
         const idx = thumbs.findIndex(t => t === clickedImg);
         if (idx === -1) return;
-        if (imageModalAPI) imageModalAPI.open(idx);
+        if (imageModalAPI) {
+          imageModalAPI.open(idx);
+          e.stopImmediatePropagation();
+          e.stopPropagation();
+        }
+      }
+    });
+
+    container.addEventListener('click', (e) => {
+      if (e.target.closest(BTN_SELECTOR)) return; 
+      if (e.target.closest('a, button, input, textarea, select, label, [role="button"]')) return;
+
+      const card = e.target.closest('.documents-card, .reviews-card');
+      if (!card) return;
+
+      const img = card.querySelector('.documents-card-right-side img, .reviews-card-right-side img');
+      if (!img) return;
+
+      e.preventDefault();
+      e.stopPropagation();
+
+      let thumbs = [];
+      try {
+        thumbs = (imageModalAPI && typeof imageModalAPI.getThumbs === 'function') ? imageModalAPI.getThumbs() : Array.from(document.querySelectorAll(THUMBS_SELECTOR));
+      } catch (err) {
+        thumbs = Array.from(document.querySelectorAll(THUMBS_SELECTOR));
+      }
+
+      const idx = thumbs.findIndex(t => {
+        if (!t) return false;
+        if (t.tagName && t.tagName.toLowerCase() === 'img') return t === img;
+        const inner = (t.querySelector && t.querySelector('img')) || null;
+        return inner === img;
+      });
+
+      if (idx !== -1 && imageModalAPI) {
+        imageModalAPI.open(idx);
+      } else if (idx === -1 && imageModalAPI) {
+        imageModalAPI.open(0);
       }
     });
 
@@ -1009,6 +1057,7 @@ document.addEventListener('DOMContentLoaded', function () {
       if (card && card.dataset.reviewsInit !== '1') initCard(card);
     });
   }
+
 
   function observeContainer(container) {
     if (!container) return;
@@ -1047,11 +1096,11 @@ document.addEventListener('DOMContentLoaded', function () {
     const container = document.querySelector(CONTAINER_SELECTOR);
     if (!container) {
       initAllCards(document);
+      attachContainerDelegation(document);
       return;
     }
 
     initAllCards(container);
-
     attachContainerDelegation(container);
 
     observeContainer(container);
@@ -1094,7 +1143,6 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   };
 })();
-
 
 // Яндекс карта
 
@@ -3187,9 +3235,11 @@ let kpScrollPos = 0;
 let kpLastFocused = null;
 
 function setPopupProduct(value) {
-  const input = document.querySelector('.js-Product');
-  if (input) {
-    input.value = value || '';
+  const inputs = document.querySelectorAll('.js-Product');
+  if (inputs.length) {
+    inputs.forEach(input => {
+      input.value = value || '';
+    });
   }
 }
 
