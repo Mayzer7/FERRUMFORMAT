@@ -5458,6 +5458,22 @@ input.error::placeholder {
     color: var(--black);
 }
 
+.our-work .our-work-card-image {
+    width: 100%;
+    aspect-ratio: 540 / 304;
+    overflow: hidden;
+}
+
+.our-work-card-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: bottom bottom; /* вот эта строка центрирует изображение */
+    display: block;
+}
+
+
+
 .our-work-content {
     position: relative;
     z-index: 2;
