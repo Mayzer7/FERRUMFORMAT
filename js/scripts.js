@@ -1018,7 +1018,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
     container.addEventListener('click', (e) => {
       if (e.target.closest(BTN_SELECTOR)) return; 
-      if (e.target.closest('a, button, input, textarea, select, label, [role="button"]')) return;
 
       const card = e.target.closest('.documents-card, .reviews-card');
       if (!card) return;
