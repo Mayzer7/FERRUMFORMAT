@@ -667,14 +667,14 @@ document.addEventListener('DOMContentLoaded', function () {
 
   let reviewModal, reviewModalOverlay, reviewModalPanel, reviewModalClose, reviewModalAuthor, reviewModalText;
   let imageModal, imageModalOverlay, imageModalPanel, imageModalClose, imageModalPrev, imageModalNext, imageModalSwiperContainer, imageModalSwiperWrapper, imageModalCaption;
-  let imageSwiper = null; 
+  let imageSwiper = null;
 
   const header = document.querySelector('header');
 
   // Модалка отзыва
   function initReviewModalElements() {
     reviewModal = document.getElementById('review-modal');
-    if (!reviewModal) return;
+    if (!reviewModal) return null;
     reviewModalOverlay = reviewModal.querySelector('.review-modal-overlay');
     reviewModalPanel = reviewModal.querySelector('.review-modal-panel');
     reviewModalClose = reviewModal.querySelector('.review-modal-close');
@@ -752,7 +752,7 @@ document.addEventListener('DOMContentLoaded', function () {
   // Модалка изображения отзыва
   function initImageModalElements() {
     imageModal = document.getElementById('image-modal');
-    if (!imageModal) return;
+    if (!imageModal) return null;
     imageModalOverlay = imageModal.querySelector('.image-modal-overlay');
     imageModalPanel = imageModal.querySelector('.image-modal-panel');
     imageModalClose = imageModal.querySelector('.image-modal-close');
@@ -771,7 +771,7 @@ document.addEventListener('DOMContentLoaded', function () {
     let lastFocused = null;
     function openImageModal(startIndex = 0) {
       lastFocused = document.activeElement;
-      buildImageSlides(); 
+      buildImageSlides();
       if (!imageModal) return;
       imageModal.setAttribute('aria-hidden', 'false');
       imageModal.classList.add('open');
@@ -811,7 +811,6 @@ document.addEventListener('DOMContentLoaded', function () {
           if (n.src) imgs.push(n);
           return;
         }
-
         const innerImg = n.querySelector && n.querySelector('img');
         if (innerImg && innerImg.src) imgs.push(innerImg);
       });
@@ -821,9 +820,9 @@ document.addEventListener('DOMContentLoaded', function () {
     function buildImageSlides() {
       if (!imageModalSwiperWrapper) return;
       const thumbs = getThumbs();
-      imageModalSwiperWrapper.innerHTML = ''; 
+      imageModalSwiperWrapper.innerHTML = '';
       thumbs.forEach((t, idx) => {
-        const src = t.getAttribute('src') || t.dataset.src;
+        const src = t.getAttribute('src') || t.dataset.src || '';
         const alt = t.getAttribute('alt') || '';
         const slide = document.createElement('div');
         slide.className = 'swiper-slide';
@@ -870,7 +869,6 @@ document.addEventListener('DOMContentLoaded', function () {
           return;
         }
         if (typeof Swiper === 'undefined') {
-          console.warn('Swiper is not loaded - image modal will work but without navigation/swiping.');
           updateCaption(0);
           return;
         }
@@ -991,8 +989,8 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   }
 
-  function initAllCards(container) {
-    const cards = (container || document).querySelectorAll ? (container || document).querySelectorAll(CARD_SELECTOR) : [];
+  function initAllCards(root = document) {
+    const cards = (root || document).querySelectorAll ? (root || document).querySelectorAll(CARD_SELECTOR) : [];
     cards.forEach(c => initCard(c));
   }
 
@@ -1017,7 +1015,7 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     container.addEventListener('click', (e) => {
-      if (e.target.closest(BTN_SELECTOR)) return; 
+      if (e.target.closest(BTN_SELECTOR)) return;
 
       const card = e.target.closest('.documents-card, .reviews-card');
       if (!card) return;
@@ -1057,7 +1055,6 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   }
 
-
   function observeContainer(container) {
     if (!container) return;
     const mo = new MutationObserver((mutations) => {
@@ -1092,17 +1089,19 @@ document.addEventListener('DOMContentLoaded', function () {
     reviewModalAPI = initReviewModalElements();
     imageModalAPI = initImageModalElements();
 
-    const container = document.querySelector(CONTAINER_SELECTOR);
-    if (!container) {
+    const containers = Array.from(document.querySelectorAll(CONTAINER_SELECTOR));
+    if (containers.length) {
+      containers.forEach((c) => {
+        initAllCards(c);
+        attachContainerDelegation(c);
+        observeContainer(c);
+      });
+    } else {
       initAllCards(document);
       attachContainerDelegation(document);
-      return;
     }
 
-    initAllCards(container);
-    attachContainerDelegation(container);
-
-    observeContainer(container);
+    initAllCards(document);
 
     window.reviews = window.reviews || {};
     window.reviews.recomputeButtons = () => {
@@ -1115,7 +1114,7 @@ document.addEventListener('DOMContentLoaded', function () {
         else btn.style.display = 'none';
       });
     };
-    window.reviews.initCards = (root = container) => initAllCards(root);
+    window.reviews.initCards = (root = document) => initAllCards(root);
     window.reviews.openImageModal = (index = 0) => imageModalAPI && imageModalAPI.open(index);
     window.reviews.openReviewModalWith = (authorHtml, textHtml) => {
       if (reviewModalAPI) {
@@ -1142,6 +1141,7 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   };
 })();
+
 
 
 
