@@ -663,7 +663,7 @@ document.addEventListener('DOMContentLoaded', function () {
   const TEXT_SELECTOR = '.reviews-card-text';
   const BTN_SELECTOR = '.read-more-review-btn';
   const AUTHOR_SELECTOR = '.reviews-card-author';
-  const THUMBS_SELECTOR = '.reviews-card-right-side img, .documents-card-right-side img, .documents-card';
+  const THUMBS_SELECTOR = '.reviews-card-right-side img, .documents-card-right-side img';
 
   let reviewModal, reviewModalOverlay, reviewModalPanel, reviewModalClose, reviewModalAuthor, reviewModalText;
   let imageModal, imageModalOverlay, imageModalPanel, imageModalClose, imageModalPrev, imageModalNext, imageModalSwiperContainer, imageModalSwiperWrapper, imageModalCaption;
