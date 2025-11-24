@@ -3910,19 +3910,115 @@ if (shareButton) {
     return is3DItem(item) ? (item.dataset && item.dataset.model || null) : null;
   }
 
-  function buildProgress(n, container) {
+  const MAX_VISIBLE_PROGRESS_TICKS = 12;
+
+  let progressInner = null;
+  let ticks = [];
+
+  function buildProgress(total, container) {
     container.innerHTML = '';
-    for (let i = 0; i < n; i++) {
+
+    container.style.overflow = 'hidden';
+    container.style.justifyContent = 'flex-start';
+
+    progressInner = document.createElement('div');
+    progressInner.className = 'progress-inner';
+    progressInner.style.display = 'flex';
+    progressInner.style.alignItems = 'center';
+    const cs = getComputedStyle(container);
+    const gap = (cs.gap || cs.columnGap || cs.rowGap) || '6px';
+    progressInner.style.gap = gap;
+    progressInner.style.transition = 'transform 360ms cubic-bezier(.2,.9,.2,1)';
+    progressInner.style.willChange = 'transform';
+    progressInner.style.padding = '0';
+    progressInner.style.margin = '0';
+    progressInner.style.boxSizing = 'content-box';
+
+    const fragment = document.createDocumentFragment();
+    for (let i = 0; i < total; i++) {
       const tick = document.createElement('div');
       tick.className = 'tick';
+      tick.dataset.idx = i;
       const bar = document.createElement('div');
       bar.className = 'bar';
       tick.appendChild(bar);
-      container.appendChild(tick);
+      fragment.appendChild(tick);
     }
-    return Array.from(container.children);
+    progressInner.appendChild(fragment);
+    container.appendChild(progressInner);
+
+    ticks = Array.from(progressInner.children);
+    container.setAttribute('aria-hidden', 'true');
+    return ticks;
   }
-  const ticks = buildProgress(thumbnails.length, progressContainer);
+
+  let progressWindowStart = 0;
+
+  let tickWidth = 0;
+  let gapPx = 6;
+  function recalcProgressMetrics() {
+    if (!progressInner || !ticks || ticks.length === 0) return;
+    const tickRect = ticks[0].getBoundingClientRect();
+    tickWidth = Math.round(tickRect.width);
+    const csInner = getComputedStyle(progressInner);
+    gapPx = parseFloat(csInner.gap || csInner.columnGap || '6') || 6;
+  }
+
+  function setProgressWindow(start) {
+    if (!progressInner || !ticks) return;
+    const total = ticks.length;
+    const visibleCount = Math.min(MAX_VISIBLE_PROGRESS_TICKS, total);
+
+    const maxStart = Math.max(0, total - visibleCount);
+    start = Math.max(0, Math.min(maxStart, start));
+    progressWindowStart = start;
+
+    recalcProgressMetrics();
+    const fullTick = tickWidth + gapPx;
+
+    const containerW = progressContainer.clientWidth;
+
+    const visibleTicksWidth = visibleCount * tickWidth + Math.max(0, visibleCount - 1) * gapPx;
+    const centerOffset = Math.round(Math.max(0, (containerW - visibleTicksWidth) / 2));
+
+    const translate = Math.round(-start * fullTick + centerOffset);
+
+    progressInner.style.transform = `translateX(${translate}px)`;
+
+    ticks.forEach((t, i) => {
+      if (i >= start && i < start + visibleCount) {
+        t.style.opacity = '1';
+        t.style.pointerEvents = 'auto';
+      } else {
+        t.style.opacity = '0.38';
+        t.style.pointerEvents = 'none';
+      }
+    });
+  }
+
+  function ensureProgressWindowIncludes(idx) {
+    if (!ticks || ticks.length <= MAX_VISIBLE_PROGRESS_TICKS) {
+      progressWindowStart = 0;
+      setProgressWindow(0);
+      return;
+    }
+    const start = progressWindowStart;
+    const end = start + MAX_VISIBLE_PROGRESS_TICKS - 1;
+    if (idx < start) {
+      setProgressWindow(idx);
+    } else if (idx > end) {
+      setProgressWindow(idx - MAX_VISIBLE_PROGRESS_TICKS + 1);
+    } else {
+      setProgressWindow(start);
+    }
+  }
+
+  ticks = buildProgress(thumbnails.length, progressContainer);
+
+  setTimeout(() => {
+    recalcProgressMetrics();
+    setProgressWindow(0);
+  }, 30);
 
   mainImg.addEventListener('dragstart', e => e.preventDefault());
 
@@ -3939,7 +4035,12 @@ if (shareButton) {
         t.classList.remove('product-img-active');
       }
     });
-    ticks.forEach(t => t.classList.remove('active'));
+
+    ticks.forEach(t => {
+      t.classList.remove('active');
+      const bar = t.querySelector('.bar');
+      if (bar) bar.style.width = '0%';
+    });
 
     const thumb = thumbnails[idx];
     if (!thumb) return;
@@ -3950,7 +4051,14 @@ if (shareButton) {
     } else {
       thumb.classList.add('product-img-active');
     }
-    if (ticks[idx]) ticks[idx].classList.add('active');
+
+    ensureProgressWindowIncludes(idx);
+
+    if (ticks[idx]) {
+      ticks[idx].classList.add('active');
+      const bar = ticks[idx].querySelector('.bar');
+      if (bar) bar.style.width = '100%';
+    }
   }
 
   function getThumbGap() {
@@ -4001,6 +4109,7 @@ if (shareButton) {
     setTimeout(() => {
       mainImg.src = large;
       updateActiveClasses(idx);
+
       requestAnimationFrame(() => {
         setTimeout(() => {
           mainImg.classList.remove('fading');
@@ -4009,6 +4118,7 @@ if (shareButton) {
 
           scrollThumbIntoView(thumb);
           updateArrowsState();
+          ensureProgressWindowIncludes(currentIndex);
         }, 60);
       });
     }, 180);
@@ -4049,7 +4159,6 @@ if (shareButton) {
         if (modelPath && clickedOpen3D && typeof window.__open3DModal === 'function') {
           ev.preventDefault();
           ev.stopPropagation();
-          // опционально имя:
           const name = t.dataset.modelName || t.getAttribute('alt') || '';
           window.__open3DModal({ src: modelPath, name });
           return;
@@ -4236,6 +4345,11 @@ if (shareButton) {
   }
   
   thumbnailsContainer.addEventListener('scroll', updateButtonsVisibility, { passive: true });
+  window.addEventListener('resize', () => {
+    recalcProgressMetrics();
+    setProgressWindow(progressWindowStart);
+    updateButtonsVisibility();
+  });
   window.addEventListener('resize', updateButtonsVisibility);
   updateButtonsVisibility();
 
