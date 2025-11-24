@@ -12135,7 +12135,8 @@ section {
   box-shadow: 0 0 0 3px rgba(0,0,0,0.06);
 }
 
-.open-product-tag-texts {
+.open-product-tag-texts,
+.open-product-tag[data-open-tag="2"] p {
     max-width: 1042px;
     width: 100%;
     margin-top: 20px;
@@ -12513,7 +12514,8 @@ section {
         padding: 15px 8px;
     }
 
-    .open-product-tag-texts {
+    .open-product-tag-texts,
+    .open-product-tag[data-open-tag="2"] p {
         max-width: 900px;
         font-size: 14px;
     }
